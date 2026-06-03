@@ -5,8 +5,9 @@ let redis: Redis | null = null
 function getRedisClient(): Redis | null {
   if (redis) return redis
 
-  const url = process.env.UPSTASH_REDIS_REST_URL
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+  // Support both UPSTASH_REDIS_REST_* (manual) and KV_REST_API_* (Vercel integration)
+  const url   = process.env.UPSTASH_REDIS_REST_URL   || process.env.KV_REST_API_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
 
   if (
     !url || !token ||
