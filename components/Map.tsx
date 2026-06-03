@@ -38,55 +38,9 @@ interface MapProps {
 
 export default function Map({ reports = [] }: MapProps) {
   return (
-    <section className="map-section" aria-label="US canine disease outbreak map" style={{ position: 'relative' }}>
+    <section className="map-section" aria-label="US canine disease outbreak map">
       <div className="map-label">Live Outbreak Map · US</div>
-
-      <div style={{ position: 'absolute', inset: 0 }}>
-        <LeafletMap reports={reports} pinColor={pinColor} recencyClass={recencyClass} />
-
-        {reports.length === 0 && (
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 1000,
-            textAlign: 'center',
-            pointerEvents: 'none',
-          }}>
-            <div style={{
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: '13px',
-              color: '#888888',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              marginBottom: '8px',
-            }}>
-              No reports yet
-            </div>
-            <div style={{
-              fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: '9px',
-              color: '#666666',
-              letterSpacing: '0.08em',
-            }}>
-              Be the first to report a case
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Legend */}
-      <div className="map-legend">
-        <div className="legend-title">Map Key</div>
-        <div className="legend-section">
-          <div className="legend-section-title">Recency</div>
-          <div className="legend-item"><div className="legend-dot red" /> Last 48h</div>
-          <div className="legend-item"><div className="legend-dot amber" /> Last 7 days</div>
-          <div className="legend-item"><div className="legend-dot green" /> Last 30 days</div>
-          <div className="legend-item"><div className="legend-dot gray" /> Historical</div>
-        </div>
-      </div>
+      <LeafletMap reports={reports} pinColor={pinColor} recencyClass={recencyClass} />
     </section>
   )
 }

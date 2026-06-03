@@ -113,9 +113,98 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
   }, [])
 
   return (
-    <div
-      ref={containerRef}
-      style={{ width: '100%', height: '60vh', minHeight: '400px', maxHeight: '600px', background: '#060606', touchAction: 'none' }}
-    />
+    <div style={{ position: 'relative', width: '100%' }}>
+
+      {/* Leaflet map canvas */}
+      <div
+        ref={containerRef}
+        style={{
+          width: '100%',
+          height: '60vh',
+          minHeight: '400px',
+          maxHeight: '600px',
+          background: '#060606',
+          touchAction: 'none',
+        }}
+      />
+
+      {/* Empty state overlay — centered over map */}
+      {reports.length === 0 && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 1000,
+          textAlign: 'center',
+          pointerEvents: 'none',
+          background: 'rgba(6,6,6,0.75)',
+          backdropFilter: 'blur(4px)',
+          padding: '16px 28px',
+          border: '1px solid #222',
+        }}>
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: '11px',
+            color: '#888',
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            marginBottom: '6px',
+          }}>No reports yet</div>
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: '9px',
+            color: '#666',
+            letterSpacing: '0.08em',
+          }}>Be the first to report a case</div>
+        </div>
+      )}
+
+      {/* PIN KEY legend — bottom-right corner over map */}
+      <div style={{
+        position: 'absolute',
+        bottom: '16px',
+        right: '16px',
+        zIndex: 1000,
+        background: 'rgba(10,10,10,0.85)',
+        border: '1px solid #2a2a2a',
+        padding: '10px 14px',
+        backdropFilter: 'blur(8px)',
+        pointerEvents: 'none',
+      }}>
+        <div style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: '9px',
+          color: '#888',
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          marginBottom: '8px',
+        }}>PIN KEY</div>
+        {[
+          { label: 'Last 48h',    color: '#ef4444' },
+          { label: 'Last 7 days', color: '#f59e0b' },
+          { label: 'Last 30 days',color: '#00ff88' },
+          { label: 'Historical',  color: '#2a2a2a' },
+        ].map(({ label, color }) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: color,
+              flexShrink: 0,
+              border: color === '#2a2a2a' ? '1px solid #444' : 'none',
+            }} />
+            <span style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: '9px',
+              color: '#777',
+              letterSpacing: '0.06em',
+            }}>{label}</span>
+          </div>
+        ))}
+      </div>
+
+    </div>
   )
 }

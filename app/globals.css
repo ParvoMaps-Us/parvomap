@@ -258,11 +258,8 @@ nav a:hover { color: var(--text); }
 /* ─── MAP SECTION ─── */
 .map-section {
   position: relative;
-  height: 60vh;
-  min-height: 420px;
   background: #060606;
   border-bottom: 1px solid var(--border);
-  overflow: hidden;
 }
 .map-bg {
   position: absolute;
