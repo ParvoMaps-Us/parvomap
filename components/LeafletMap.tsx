@@ -27,7 +27,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     console.log('Screen:', screenWidth, 'Inner:', innerWidth, 'Mobile:', isMobile)
 
     const startCenter: [number, number] = isMobile ? [38, -96] : [38.5, -90]
-    const startZoom = isMobile ? 3 : 4.5
+    const startZoom = isMobile ? 3 : 4
 
     const map = L.map(containerRef.current, {
       center: startCenter,
@@ -164,10 +164,12 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       {/* Leaflet map canvas */}
       <div
         ref={containerRef}
+        className="map-container"
         style={{
           width: '100%',
-          height: 'min(60vh, 400px)',
-          minHeight: '280px',
+          height: 'calc(100vh - 140px)',
+          minHeight: '500px',
+          maxHeight: '800px',
           background: '#060606',
           touchAction: 'none',
         }}

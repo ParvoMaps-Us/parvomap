@@ -1007,6 +1007,13 @@ html body .leaflet-bar a:last-child {
     display: none !important;
   }
 
+  /* Map container — override desktop height on mobile */
+  .map-container {
+    height: min(55vh, 420px) !important;
+    min-height: 300px !important;
+    max-height: none !important;
+  }
+
   /* Pin key — hide overlay, show flat row */
   .pin-key-legend {
     display: none !important;
