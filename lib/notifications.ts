@@ -4,8 +4,8 @@ import type { PendingReport } from './redis'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-const FROM_HELLO  = 'hello@parvomap.us'
-const FROM_ALERTS = 'alerts@parvomap.us'
+const FROM_HELLO  = 'hello@parvomaps.us'
+const FROM_ALERTS = 'alerts@parvomaps.us'
 
 // ─── VERIFICATION EMAIL ───────────────────────────────────────────────────────
 
@@ -13,7 +13,7 @@ export async function sendVerificationEmail(
   report: PendingReport,
   token: string
 ): Promise<void> {
-  const verifyUrl  = `https://parvomap.us/api/verify?token=${token}`
+  const verifyUrl  = `https://parvomaps.us/api/verify?token=${token}`
   const diseaseName = getDiseaseName(report.disease)
 
   await resend.emails.send({
@@ -56,7 +56,7 @@ export async function sendVerificationEmail(
 
     <p style="color:#444;font-size:11px;line-height:1.6;">
       ParvoMap · US Canine Disease Tracker<br>
-      parvomap.us · Reports are anonymous<br><br>
+      parvomaps.us · Reports are anonymous<br><br>
       Yard decontamination in Utah?
       <a href="https://scoopie.us" style="color:#555;text-decoration:underline;">Scoopie BioRest™</a>
     </p>
@@ -73,7 +73,7 @@ export async function sendVerificationConfirmation(
   nearbyCount: number
 ): Promise<void> {
   const diseaseName = getDiseaseName(report.disease)
-  const mapUrl = `https://parvomap.us/?verified=success`
+  const mapUrl = `https://parvomaps.us/?verified=success`
 
   await resend.emails.send({
     from:    FROM_HELLO,
@@ -110,7 +110,7 @@ export async function sendVerificationConfirmation(
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
 
     <p style="color:#444;font-size:11px;line-height:1.6;">
-      ParvoMap · parvomap.us<br>
+      ParvoMap · parvomaps.us<br>
       Yard decontamination in Utah?
       <a href="https://scoopie.us" style="color:#555;text-decoration:underline;">Scoopie BioRest™</a>
     </p>
@@ -217,7 +217,7 @@ export async function sendDelayedUtahOutreach(report: PendingReport): Promise<vo
 
     <p style="color:#444;font-size:11px;line-height:1.6;">
       You received this because you submitted a report on ParvoMap. This is a one-time follow-up.<br>
-      ParvoMap · parvomap.us · Scoopie LLC · scoopie.us · 385-412-7152
+      ParvoMap · parvomaps.us · Scoopie LLC · scoopie.us · 385-412-7152
     </p>
   </div>
 </body>
