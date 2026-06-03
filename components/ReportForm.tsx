@@ -90,12 +90,12 @@ export default function ReportForm() {
           <div className="form-group">
             <label>Source <span className="opt">(optional)</span></label>
             <select name="source">
-              <option value="">Select source...</option>
-              <option value="vet">Veterinarian confirmed</option>
-              <option value="self">My dog was affected</option>
-              <option value="neighbor">Neighbor&apos;s dog</option>
-              <option value="shelter">Animal shelter</option>
-              <option value="news">Local news / social media</option>
+              <option value="">Select source (optional)</option>
+              <option value="vet-diagnosed">Veterinarian diagnosed</option>
+              <option value="positive-test">Positive test result</option>
+              <option value="owner-observed">Strong symptoms — owner observed</option>
+              <option value="neighbor-report">Reported by neighbor</option>
+              <option value="social-media">Seen on social media / community</option>
               <option value="other">Other</option>
             </select>
           </div>

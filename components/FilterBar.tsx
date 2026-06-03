@@ -56,9 +56,9 @@ export default function FilterBar() {
     const bar = document.getElementById('filter-bar')
     if (!bar) return
     const timer = setTimeout(() => {
-      bar.scrollTo({ left: 80, behavior: 'smooth' })
-      setTimeout(() => bar.scrollTo({ left: 0, behavior: 'smooth' }), 600)
-    }, 2000)
+      bar.scrollTo({ left: 100, behavior: 'smooth' })
+      setTimeout(() => bar.scrollTo({ left: 0, behavior: 'smooth' }), 700)
+    }, 2500)
     return () => clearTimeout(timer)
   }, [])
 
@@ -129,7 +129,7 @@ export default function FilterBar() {
         right: 0,
         top: 0,
         bottom: 0,
-        width: '60px',
+        width: '80px',
         background: 'linear-gradient(to right, transparent, #000)',
         pointerEvents: 'none',
       }} />

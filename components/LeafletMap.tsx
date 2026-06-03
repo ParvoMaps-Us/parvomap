@@ -19,7 +19,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     const L = require('leaflet')
 
     const map = L.map(containerRef.current, {
-      center: [39.5, -95],
+      center: [38.5, -90],
       zoom: 4.5,
       minZoom: 3,
       maxZoom: 18,
@@ -58,6 +58,30 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     tileLayer.addTo(map)
 
+    // Scroll/zoom hint
+    if (containerRef.current) {
+      const hint = document.createElement('div')
+      hint.textContent = 'Scroll to zoom · Pinch on mobile'
+      hint.style.cssText = `
+        position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
+        background:rgba(10,10,10,0.85);border:1px solid #2a2a2a;
+        color:#666;font-family:'IBM Plex Mono',monospace;font-size:10px;
+        letter-spacing:0.1em;padding:6px 14px;pointer-events:none;
+        z-index:1001;white-space:nowrap;opacity:0;transition:opacity 0.3s;
+      `
+      containerRef.current.style.position = 'relative'
+      containerRef.current.appendChild(hint)
+
+      let hintDismissed = false
+      const showHint = () => { if (!hintDismissed) hint.style.opacity = '1' }
+      const hideHint = () => { hint.style.opacity = '0' }
+      const dismissHint = () => { hintDismissed = true; hint.style.opacity = '0' }
+
+      containerRef.current.addEventListener('mouseenter', showHint)
+      containerRef.current.addEventListener('mouseleave', hideHint)
+      map.on('zoom', dismissHint)
+    }
+
     reports.forEach(report => {
       if (!report.lat || !report.lng) return
 
@@ -85,7 +109,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         ? `${Math.round(age / 3600000)}h ago`
         : `${Math.round(age / 86400000)}d ago`
 
-      const popup = L.popup({ className: 'parvo-popup', closeButton: false, offset: [0, -6] }).setContent(`
+      const popup = L.popup({ className: 'parvo-popup', closeButton: true, offset: [0, -6] }).setContent(`
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #2a2a2a;border-radius:4px;min-width:160px;">
           <div style="color:#fff;font-weight:700;margin-bottom:6px;font-size:12px;">ZIP ${report.zip}</div>
           <div style="color:#888;margin-bottom:2px;">${report.city ?? ''}</div>
@@ -128,7 +152,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         }}
       />
 
-      {/* Empty state overlay — centered over map */}
+      {/* Empty state overlay — no border, transparent bg */}
       {reports.length === 0 && (
         <div style={{
           position: 'absolute',
@@ -138,53 +162,53 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           zIndex: 1000,
           textAlign: 'center',
           pointerEvents: 'none',
-          background: 'rgba(6,6,6,0.75)',
-          backdropFilter: 'blur(4px)',
-          padding: '16px 28px',
-          border: '1px solid #222',
+          background: 'transparent',
+          border: 'none',
+          padding: 0,
         }}>
           <div style={{
             fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: '11px',
-            color: '#888',
-            letterSpacing: '0.14em',
+            fontSize: '12px',
+            color: '#777777',
+            letterSpacing: '0.12em',
             textTransform: 'uppercase',
             marginBottom: '6px',
           }}>No reports yet</div>
           <div style={{
             fontFamily: "'IBM Plex Mono', monospace",
-            fontSize: '9px',
-            color: '#666',
+            fontSize: '10px',
+            color: '#555555',
             letterSpacing: '0.08em',
           }}>Be the first to report a case</div>
         </div>
       )}
 
-      {/* PIN KEY legend — bottom-right corner over map */}
+      {/* PIN KEY legend — bottom-right, over map */}
       <div style={{
         position: 'absolute',
-        bottom: '16px',
+        bottom: '24px',
         right: '16px',
         zIndex: 1000,
-        background: 'rgba(10,10,10,0.85)',
+        background: 'rgba(10,10,10,0.90)',
         border: '1px solid #2a2a2a',
         padding: '10px 14px',
+        minWidth: '120px',
         backdropFilter: 'blur(8px)',
         pointerEvents: 'none',
       }}>
         <div style={{
           fontFamily: "'IBM Plex Mono', monospace",
           fontSize: '9px',
-          color: '#888',
-          letterSpacing: '0.1em',
+          color: '#888888',
+          letterSpacing: '0.12em',
           textTransform: 'uppercase',
           marginBottom: '8px',
         }}>PIN KEY</div>
         {[
-          { label: 'Last 48h',    color: '#ef4444' },
-          { label: 'Last 7 days', color: '#f59e0b' },
-          { label: 'Last 30 days',color: '#00ff88' },
-          { label: 'Historical',  color: '#2a2a2a' },
+          { label: 'Last 48h',     color: '#ef4444' },
+          { label: 'Last 7 days',  color: '#f59e0b' },
+          { label: 'Last 30 days', color: '#00ff88' },
+          { label: 'Historical',   color: '#3a3a3a' },
         ].map(({ label, color }) => (
           <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <div style={{
@@ -193,12 +217,12 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
               borderRadius: '50%',
               background: color,
               flexShrink: 0,
-              border: color === '#2a2a2a' ? '1px solid #444' : 'none',
+              border: color === '#3a3a3a' ? '1px solid #666' : 'none',
             }} />
             <span style={{
               fontFamily: "'IBM Plex Mono', monospace",
               fontSize: '9px',
-              color: '#777',
+              color: '#888888',
               letterSpacing: '0.06em',
             }}>{label}</span>
           </div>
