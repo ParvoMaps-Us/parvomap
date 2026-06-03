@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/delayed-email",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/expire-verifications",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-digest",
+      "schedule": "0 15 * * 1"
+    }
+  ]
+}
