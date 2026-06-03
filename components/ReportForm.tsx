@@ -51,14 +51,6 @@ export default function ReportForm() {
 
   return (
     <section id="report">
-      {/* Alert strip */}
-      <div className="alert-strip">
-        <span className="alert-icon">⚠ Active Alert</span>
-        <span className="alert-text">
-          <strong>Parvovirus elevated</strong> — 6 reports in the last 48h across TX, CA, and GA
-        </span>
-      </div>
-
       <div className="section-header" style={{ marginTop: 0 }}>
         <div className="section-num">02</div>
         <div className="section-title">Report a Case</div>

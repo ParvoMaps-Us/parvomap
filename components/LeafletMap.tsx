@@ -19,13 +19,18 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     const L = require('leaflet')
 
     const map = L.map(containerRef.current, {
-      center: [37.8, -96],
+      center: [39.5, -98.35],
       zoom: 4,
       minZoom: 3,
       maxZoom: 18,
       zoomControl: true,
       attributionControl: true,
-      scrollWheelZoom: false,
+      scrollWheelZoom: true,
+      touchZoom: true,
+      doubleClickZoom: true,
+      dragging: true,
+      zoomSnap: 0.5,
+      zoomDelta: 0.5,
     })
 
     map.setMaxBounds([
