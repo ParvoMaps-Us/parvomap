@@ -139,6 +139,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
   }, [])
 
   return (
+    <>
     <div style={{ position: 'relative', width: '100%' }}>
 
       {/* Leaflet map canvas */}
@@ -259,5 +260,6 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         </div>
       ))}
     </div>
+    </>
   )
 }
