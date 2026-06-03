@@ -2,6 +2,18 @@ import { NextRequest } from 'next/server'
 import { ReportSchema } from '@/lib/report-schema'
 import { calculateConfidence } from '@/lib/confidence'
 import type { SOURCE_VALUES } from '@/lib/report-schema'
+import { geocodeZip } from '@/lib/geocode'
+import { isUtahZip } from '@/lib/utah-zips'
+import {
+  savePendingReport,
+  queueDelayedEmail,
+  type PendingReport,
+} from '@/lib/redis'
+import {
+  generateVerificationToken,
+  saveVerificationToken,
+} from '@/lib/verification'
+import { sendVerificationEmail } from '@/lib/notifications'
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,25 +32,53 @@ export async function POST(req: NextRequest) {
       hasNotes: !!notes,
     })
 
+    // Geocode ZIP → lat/lng/city/state
+    const geo = await geocodeZip(zip)
+
     const id = crypto.randomUUID()
-    const report = {
+    const report: PendingReport = {
       id,
       disease,
       zip,
-      email: email || null,
-      source: source || null,
-      breed: breed || null,
-      notes: notes || null,
+      state:     geo?.state  ?? '',
+      city:      geo?.city   ?? undefined,
+      county:    geo?.county ?? undefined,
+      lat:       geo?.lat    ?? undefined,
+      lng:       geo?.lng    ?? undefined,
+      email:     email || null,
+      source:    source || undefined,
+      breed:     breed || null,
+      notes:     notes || undefined,
       confidence,
-      verified: false,
+      verified:  false,
       timestamp: Date.now(),
     }
 
-    // TODO: store to Redis pending queue + send verification email
-    // For now return success — will wire in next session
-    console.log('Report received:', { id, disease, zip, confidence })
+    // Persist pending report to Redis (25 h TTL)
+    await savePendingReport(report)
 
-    return Response.json({ ok: true, id })
+    // Send verification email (non-blocking — don't fail the response if email fails)
+    if (email) {
+      const token = generateVerificationToken()
+      await saveVerificationToken(token, id)
+      sendVerificationEmail(report, token).catch(err =>
+        console.error('Verification email failed:', err)
+      )
+
+      // Queue delayed BioRest outreach for Utah reporters
+      if (isUtahZip(zip)) {
+        queueDelayedEmail(id).catch(console.error)
+      }
+    }
+
+    console.log('Report received:', { id, disease, zip, state: geo?.state, confidence })
+
+    return Response.json({
+      ok:        true,
+      id,
+      verified:  false,
+      emailSent: !!email,
+    })
   } catch (e) {
     console.error('Report POST error:', e)
     return Response.json({ error: 'Server error' }, { status: 500 })

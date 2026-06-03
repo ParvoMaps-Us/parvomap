@@ -26,6 +26,7 @@ function getRedisClient(): Redis | null {
   }
 }
 
+/** Public shape stored in the verified sorted set (no PII) */
 export interface Report {
   id: string
   disease: string
@@ -38,6 +39,75 @@ export interface Report {
   verified: boolean
   source?: string
   notes?: string
+  confidence: number
+}
+
+/** Full shape stored in the pending hash (includes PII) */
+export interface PendingReport extends Report {
+  email?: string | null
+  breed?: string | null
+  county?: string
+}
+
+const PENDING_TTL = 60 * 60 * 25 // 25 hours (1 h buffer over the 24 h token TTL)
+
+/** Save a full pending report (with PII) for up to 25 h */
+export async function savePendingReport(report: PendingReport): Promise<void> {
+  const client = getRedisClient()
+  if (!client) throw new Error('Redis not configured')
+  await client.set(`reports:pending:${report.id}`, JSON.stringify(report), {
+    ex: PENDING_TTL,
+  })
+}
+
+/** Retrieve a pending report by ID */
+export async function getPendingReport(id: string): Promise<PendingReport | null> {
+  const client = getRedisClient()
+  if (!client) return null
+  const raw = await client.get<string>(`reports:pending:${id}`)
+  if (!raw) return null
+  return JSON.parse(raw) as PendingReport
+}
+
+/** Delete a pending report (called after successful verification) */
+export async function deletePendingReport(id: string): Promise<void> {
+  const client = getRedisClient()
+  if (!client) return
+  await client.del(`reports:pending:${id}`)
+}
+
+/** Move a verified report into the public sorted set (strips PII) */
+export async function publishVerifiedReport(report: PendingReport): Promise<void> {
+  const client = getRedisClient()
+  if (!client) throw new Error('Redis not configured')
+
+  const publicReport: Report = {
+    id:         report.id,
+    disease:    report.disease,
+    zip:        report.zip,
+    state:      report.state,
+    city:       report.city,
+    lat:        report.lat,
+    lng:        report.lng,
+    timestamp:  report.timestamp,
+    verified:   true,
+    source:     report.source ?? undefined,
+    notes:      report.notes ?? undefined,
+    confidence: report.confidence,
+  }
+
+  await client.zadd('reports:verified', {
+    score:  report.timestamp,
+    member: JSON.stringify(publicReport),
+  })
+}
+
+/** Queue a delayed outreach email for a Utah reporter (fires ~30 min after submission) */
+export async function queueDelayedEmail(reportId: string): Promise<void> {
+  const client = getRedisClient()
+  if (!client) return
+  const fireAt = Date.now() + 30 * 60 * 1000 // 30 minutes from now
+  await client.zadd('delayed-emails:queue', { score: fireAt, member: reportId })
 }
 
 const EMPTY_STATS = {
