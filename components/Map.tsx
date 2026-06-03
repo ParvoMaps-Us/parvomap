@@ -22,14 +22,51 @@ export default function Map() {
       <div className="map-grid" />
       <div className="map-label">Live Outbreak Map · US</div>
 
-      {/* US outline SVG */}
+      {/* US outline SVG — simplified but recognizable contiguous US shape */}
       <svg className="map-svg" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         <path
-          d="M 180,120 L 100,140 L 80,180 L 60,220 L 80,260 L 120,300 L 140,340 L 180,360 L 240,380 L 300,400 L 360,420 L 420,440 L 480,450 L 540,440 L 600,420 L 660,400 L 720,380 L 780,360 L 820,320 L 840,280 L 820,240 L 800,200 L 760,160 L 720,140 L 680,130 L 640,120 L 600,115 L 560,118 L 520,120 L 480,118 L 440,115 L 400,112 L 360,110 L 320,112 L 280,115 L 240,118 Z"
+          d="M 160,80 L 155,95 L 148,100 L 140,98 L 128,105 L 118,112 L 110,125
+             L 100,132 L 88,138 L 78,150 L 72,165 L 68,182 L 65,200
+             L 68,218 L 72,235 L 80,250 L 85,268 L 82,285 L 78,300
+             L 90,310 L 105,318 L 115,330 L 120,348 L 128,360 L 140,368
+             L 155,372 L 170,375 L 190,378 L 215,382 L 240,388 L 260,395
+             L 280,400 L 308,408 L 335,415 L 362,420 L 390,428 L 415,435
+             L 440,442 L 462,450 L 480,455 L 498,458 L 518,458 L 538,455
+             L 558,450 L 578,445 L 600,440 L 622,432 L 645,425 L 668,418
+             L 690,410 L 712,402 L 732,392 L 750,380 L 765,368 L 778,355
+             L 788,340 L 795,325 L 800,308 L 802,292 L 800,275 L 795,260
+             L 788,245 L 778,232 L 768,220 L 758,208 L 750,195 L 745,182
+             L 742,168 L 740,155 L 742,142 L 745,130 L 748,118 L 745,108
+             L 738,100 L 728,95 L 715,92 L 700,90 L 685,88 L 668,87
+             L 650,86 L 632,85 L 615,84 L 598,83 L 580,82 L 562,81
+             L 544,80 L 525,80 L 506,80 L 488,80 L 470,80 L 452,80
+             L 434,80 L 415,80 L 396,80 L 378,80 L 360,80 L 342,80
+             L 324,80 L 306,80 L 288,81 L 270,82 L 252,83 L 235,85
+             L 218,87 L 202,89 L 188,85 L 175,82 Z
+             M 65,200 L 55,205 L 48,215 L 45,228 L 48,240 L 55,250 L 65,258 L 72,255 L 78,245 L 78,228 L 72,215 Z"
           fill="none"
-          stroke="rgba(255,255,255,0.3)"
-          strokeWidth="1.5"
+          stroke="rgba(255,255,255,0.35)"
+          strokeWidth="1.2"
+          strokeLinejoin="round"
         />
+        {/* Florida peninsula */}
+        <path
+          d="M 640,420 L 648,438 L 652,455 L 655,472 L 655,490 L 650,505 L 642,515 L 632,510 L 625,498 L 620,482 L 618,465 L 620,448 L 625,435 L 632,425 Z"
+          fill="none"
+          stroke="rgba(255,255,255,0.35)"
+          strokeWidth="1.2"
+          strokeLinejoin="round"
+        />
+        {/* Alaska inset */}
+        <path
+          d="M 100,480 L 88,475 L 75,472 L 62,475 L 52,482 L 48,492 L 52,502 L 62,508 L 75,510 L 88,508 L 100,500 Z"
+          fill="none"
+          stroke="rgba(255,255,255,0.25)"
+          strokeWidth="1"
+        />
+        {/* Hawaii inset */}
+        <ellipse cx="175" cy="520" rx="18" ry="10" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1" />
+        <ellipse cx="205" cy="515" rx="12" ry="7" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1" />
       </svg>
 
       {/* Pins */}
