@@ -60,7 +60,19 @@ export default function FilterBar() {
         Unverified: {showUnverified ? 'ON' : 'OFF'}
       </button>
 
-      <div className="filter-group-label">INFECTIOUS</div>
+      <div style={{
+        fontFamily: 'IBM Plex Mono, monospace',
+        fontSize: '8px',
+        letterSpacing: '0.14em',
+        color: '#444',
+        textTransform: 'uppercase',
+        padding: '0 10px 0 14px',
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
+        height: '38px',
+        display: 'flex',
+        alignItems: 'center',
+      }}>INFECTIOUS</div>
       {INFECTIOUS.map(d => (
         <button
           key={d.key}
@@ -74,7 +86,20 @@ export default function FilterBar() {
         </button>
       ))}
 
-      <div className="filter-group-label">ENVIRONMENTAL</div>
+      <div style={{
+        fontFamily: 'IBM Plex Mono, monospace',
+        fontSize: '8px',
+        letterSpacing: '0.14em',
+        color: '#444',
+        textTransform: 'uppercase',
+        padding: '0 10px 0 14px',
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
+        borderLeft: '1px solid #222',
+        height: '38px',
+        display: 'flex',
+        alignItems: 'center',
+      }}>ENVIRONMENTAL</div>
       {ENVIRONMENTAL.map(d => (
         <button
           key={d.key}
@@ -88,7 +113,20 @@ export default function FilterBar() {
         </button>
       ))}
 
-      <div className="filter-group-label">TICK-BORNE</div>
+      <div style={{
+        fontFamily: 'IBM Plex Mono, monospace',
+        fontSize: '8px',
+        letterSpacing: '0.14em',
+        color: '#444',
+        textTransform: 'uppercase',
+        padding: '0 10px 0 14px',
+        whiteSpace: 'nowrap',
+        flexShrink: 0,
+        borderLeft: '1px solid #222',
+        height: '38px',
+        display: 'flex',
+        alignItems: 'center',
+      }}>TICK-BORNE</div>
       {TICK.map(d => (
         <button
           key={d.key}

@@ -8,25 +8,6 @@ interface StatsBarProps {
 export default function StatsBar({ last30, last7, last48, states }: StatsBarProps) {
   const isEmpty = last30 === 0 && last7 === 0 && last48 === 0
 
-  if (isEmpty) {
-    return (
-      <div className="stats-bar" style={{ justifyContent: 'center' }}>
-        <a
-          href="#report"
-          style={{
-            fontFamily: 'IBM Plex Mono, monospace',
-            fontSize: '12px',
-            color: 'var(--green)',
-            letterSpacing: '0.05em',
-            textDecoration: 'none',
-          }}
-        >
-          Be the first to report a case in your area →
-        </a>
-      </div>
-    )
-  }
-
   return (
     <div className="stats-bar">
       <div className="stat-item">
@@ -56,7 +37,25 @@ export default function StatsBar({ last30, last7, last48, states }: StatsBarProp
           <div className="stat-label">US States affected</div>
         </div>
       </div>
-      <div className="stats-updated">LAST UPDATED · LIVE</div>
+      {isEmpty ? (
+        <a
+          href="#report"
+          style={{
+            fontFamily: 'IBM Plex Mono, monospace',
+            fontSize: '11px',
+            color: 'var(--green)',
+            letterSpacing: '0.05em',
+            textDecoration: 'none',
+            marginLeft: 'auto',
+            paddingRight: '20px',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          No reports yet — be the first →
+        </a>
+      ) : (
+        <div className="stats-updated">LAST UPDATED · LIVE</div>
+      )}
     </div>
   )
 }

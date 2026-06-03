@@ -792,5 +792,11 @@ footer {
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip { background: transparent; box-shadow: none; padding: 0; }
 .leaflet-popup-content { margin: 0; }
-.leaflet-control-attribution { background: rgba(0,0,0,0.6) !important; color: #444 !important; font-size: 9px !important; }
-.leaflet-control-attribution a { color: #555 !important; }
+.leaflet-control-attribution {
+  background: rgba(10,10,10,0.7) !important;
+  color: #333 !important;
+  font-size: 8px !important;
+  border: none !important;
+  backdrop-filter: blur(4px);
+}
+.leaflet-control-attribution a { color: #444 !important; }
