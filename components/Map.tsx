@@ -56,9 +56,8 @@ export default function Map({ reports = [] }: MapProps) {
           }}>
             <div style={{
               fontFamily: 'IBM Plex Mono, monospace',
-              fontSize: '11px',
-              color: '#888888',
               fontSize: '13px',
+              color: '#888888',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               marginBottom: '8px',
