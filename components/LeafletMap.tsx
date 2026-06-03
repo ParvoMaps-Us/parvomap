@@ -20,17 +20,17 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     const map = L.map(containerRef.current, {
       center: [39.5, -98.35],
-      zoom: 4,
+      zoom: 4.5,
       minZoom: 3,
       maxZoom: 18,
-      zoomControl: true,
-      attributionControl: true,
       scrollWheelZoom: true,
       touchZoom: true,
       doubleClickZoom: true,
       dragging: true,
       zoomSnap: 0.5,
       zoomDelta: 0.5,
+      zoomControl: true,
+      attributionControl: true,
     })
 
     map.setMaxBounds([
@@ -86,7 +86,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         : `${Math.round(age / 86400000)}d ago`
 
       const popup = L.popup({ className: 'parvo-popup', closeButton: false, offset: [0, -6] }).setContent(`
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #333;border-radius:4px;min-width:160px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #2a2a2a;border-radius:4px;min-width:160px;">
           <div style="color:#fff;font-weight:700;margin-bottom:6px;font-size:12px;">ZIP ${report.zip}</div>
           <div style="color:#888;margin-bottom:2px;">${report.city ?? ''}</div>
           <div style="margin-top:6px;display:flex;justify-content:space-between;gap:16px;">
@@ -97,7 +97,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             <span style="color:#aaa;">Reported</span>
             <span style="color:#e0e0e0;">${ageLabel}</span>
           </div>
-          <div style="margin-top:8px;font-size:9px;color:#555;letter-spacing:0.08em;">Anonymous community report</div>
+          <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Anonymous community report</div>
         </div>
       `)
 
@@ -115,7 +115,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
   return (
     <div
       ref={containerRef}
-      style={{ width: '100%', height: '100%', minHeight: '420px', background: '#0a0a0a' }}
+      style={{ width: '100%', height: '60vh', minHeight: '400px', maxHeight: '600px', background: '#060606', touchAction: 'none' }}
     />
   )
 }

@@ -57,7 +57,7 @@ export default function Map({ reports = [] }: MapProps) {
             <div style={{
               fontFamily: 'IBM Plex Mono, monospace',
               fontSize: '11px',
-              color: '#444',
+              color: '#777',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               marginBottom: '8px',
@@ -67,7 +67,7 @@ export default function Map({ reports = [] }: MapProps) {
             <div style={{
               fontFamily: 'IBM Plex Mono, monospace',
               fontSize: '9px',
-              color: '#333',
+              color: '#666',
               letterSpacing: '0.08em',
             }}>
               Be the first to report a case

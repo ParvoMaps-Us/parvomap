@@ -16,8 +16,8 @@
   --red:          #ef4444;
   --red-dim:      rgba(239,68,68,0.15);
   --text:         #f0f0f0;
-  --text-muted:   #888888;
-  --text-dim:     #444444;
+  --text-muted:   #aaaaaa;
+  --text-dim:     #666666;
   --mono:         'IBM Plex Mono', monospace;
 
   --d-parvo:      #ef4444;
@@ -316,7 +316,7 @@ nav a:hover { color: var(--text); }
   width: 7px !important;
   height: 7px !important;
   animation: none !important;
-  box-shadow: 0 0 0 1.5px #444 !important;
+  box-shadow: 0 0 0 1.5px #666 !important;
 }
 .pin[data-state="historical"] {
   background: #2a2a2a !important;
@@ -433,7 +433,7 @@ nav a:hover { color: var(--text); }
 .legend-dot.red   { background: var(--red); animation: blink 1.2s infinite; }
 .legend-dot.amber { background: var(--amber); }
 .legend-dot.green { background: var(--green); }
-.legend-dot.gray  { background: #333; }
+.legend-dot.gray  { background: #555; }
 
 /* ─── FILTER BAR ─── */
 .filter-bar {
@@ -794,9 +794,9 @@ footer {
 .leaflet-popup-content { margin: 0; }
 .leaflet-control-attribution {
   background: rgba(10,10,10,0.7) !important;
-  color: #333 !important;
+  color: #666 !important;
   font-size: 8px !important;
   border: none !important;
   backdrop-filter: blur(4px);
 }
-.leaflet-control-attribution a { color: #444 !important; }
+.leaflet-control-attribution a { color: #666 !important; }

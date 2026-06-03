@@ -25,6 +25,28 @@ const TICK = [
   { key: 'tickspot', label: 'Tick Sighting', color: 'var(--d-tickspot)', count: 3 },
 ]
 
+const groupLabelStyle: React.CSSProperties = {
+  fontFamily: "'IBM Plex Mono', monospace",
+  fontSize: '8px',
+  letterSpacing: '0.14em',
+  color: '#888888',
+  textTransform: 'uppercase',
+  padding: '0 10px 0 16px',
+  whiteSpace: 'nowrap',
+  flexShrink: 0,
+  borderLeft: '1px solid #333333',
+  height: '38px',
+  display: 'flex',
+  alignItems: 'center',
+  userSelect: 'none',
+}
+
+const firstGroupLabelStyle: React.CSSProperties = {
+  ...groupLabelStyle,
+  borderLeft: 'none',
+  paddingLeft: '14px',
+}
+
 export default function FilterBar() {
   const [active, setActive] = useState('all')
   const [showHistorical, setShowHistorical] = useState(true)
@@ -42,113 +64,75 @@ export default function FilterBar() {
 
   return (
     <div style={{ position: 'relative' }}>
-    <nav className="filter-bar" id="filter-bar" aria-label="Filter map by disease"
-      style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
-      <div className="filter-label">Filter</div>
-      <button
-        className={`filter-all-btn ${showHistorical ? 'active' : ''}`}
-        style={{ marginRight: 4, borderColor: 'rgba(255,255,255,0.1)' }}
-        onClick={() => setShowHistorical(h => !h)}
-      >
-        Historical: {showHistorical ? 'ON' : 'OFF'}
-      </button>
-      <button
-        className={`filter-all-btn ${showUnverified ? 'active' : ''}`}
-        style={{ marginRight: 12, borderColor: 'rgba(255,255,255,0.1)' }}
-        onClick={() => setShowUnverified(u => !u)}
-      >
-        Unverified: {showUnverified ? 'ON' : 'OFF'}
-      </button>
-
-      <div style={{
-        fontFamily: 'IBM Plex Mono, monospace',
-        fontSize: '8px',
-        letterSpacing: '0.14em',
-        color: '#555',
-        textTransform: 'uppercase',
-        padding: '0 10px 0 14px',
-        whiteSpace: 'nowrap',
-        flexShrink: 0,
-        height: '38px',
-        display: 'flex',
-        alignItems: 'center',
-      }}>INFECTIOUS</div>
-      {INFECTIOUS.map(d => (
+      <nav className="filter-bar" id="filter-bar" aria-label="Filter map by disease"
+        style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
+        <div className="filter-label">Filter</div>
         <button
-          key={d.key}
-          className={`filter-btn ${active === d.key ? 'active' : ''}`}
-          style={{ '--d-color': d.color } as React.CSSProperties}
-          onClick={() => setActive(d.key)}
+          className={`filter-all-btn ${showHistorical ? 'active' : ''}`}
+          style={{ marginRight: 4, borderColor: '#333' }}
+          onClick={() => setShowHistorical(h => !h)}
         >
-          {d.key !== 'all' && <span className="filter-swatch" style={{ background: d.color }} />}
-          {d.label}
-          <span className="filter-count">{d.count}</span>
+          Historical: {showHistorical ? 'ON' : 'OFF'}
         </button>
-      ))}
-
-      <div style={{
-        fontFamily: 'IBM Plex Mono, monospace',
-        fontSize: '8px',
-        letterSpacing: '0.14em',
-        color: '#555',
-        textTransform: 'uppercase',
-        padding: '0 10px 0 14px',
-        whiteSpace: 'nowrap',
-        flexShrink: 0,
-        borderLeft: '1px solid #222',
-        height: '38px',
-        display: 'flex',
-        alignItems: 'center',
-      }}>ENVIRONMENTAL</div>
-      {ENVIRONMENTAL.map(d => (
         <button
-          key={d.key}
-          className={`filter-btn ${active === d.key ? 'active' : ''}`}
-          style={{ '--d-color': d.color } as React.CSSProperties}
-          onClick={() => setActive(d.key)}
+          className={`filter-all-btn ${showUnverified ? 'active' : ''}`}
+          style={{ marginRight: 12, borderColor: '#333' }}
+          onClick={() => setShowUnverified(u => !u)}
         >
-          <span className="filter-swatch" style={{ background: d.color }} />
-          {d.label}
-          <span className="filter-count">{d.count}</span>
+          Unverified: {showUnverified ? 'ON' : 'OFF'}
         </button>
-      ))}
 
+        <div style={firstGroupLabelStyle}>INFECTIOUS</div>
+        {INFECTIOUS.map(d => (
+          <button
+            key={d.key}
+            className={`filter-btn ${active === d.key ? 'active' : ''}`}
+            style={{ '--d-color': d.color } as React.CSSProperties}
+            onClick={() => setActive(d.key)}
+          >
+            {d.key !== 'all' && <span className="filter-swatch" style={{ background: d.color }} />}
+            {d.label}
+            <span className="filter-count">{d.count}</span>
+          </button>
+        ))}
+
+        <div style={groupLabelStyle}>TICK-BORNE</div>
+        {TICK.map(d => (
+          <button
+            key={d.key}
+            className={`filter-btn ${active === d.key ? 'active' : ''}`}
+            style={{ '--d-color': d.color } as React.CSSProperties}
+            onClick={() => setActive(d.key)}
+          >
+            <span className="filter-swatch" style={{ background: d.color }} />
+            {d.label}
+            <span className="filter-count">{d.count}</span>
+          </button>
+        ))}
+
+        <div style={groupLabelStyle}>ENVIRONMENTAL</div>
+        {ENVIRONMENTAL.map(d => (
+          <button
+            key={d.key}
+            className={`filter-btn ${active === d.key ? 'active' : ''}`}
+            style={{ '--d-color': d.color } as React.CSSProperties}
+            onClick={() => setActive(d.key)}
+          >
+            <span className="filter-swatch" style={{ background: d.color }} />
+            {d.label}
+            <span className="filter-count">{d.count}</span>
+          </button>
+        ))}
+      </nav>
       <div style={{
-        fontFamily: 'IBM Plex Mono, monospace',
-        fontSize: '8px',
-        letterSpacing: '0.14em',
-        color: '#555',
-        textTransform: 'uppercase',
-        padding: '0 10px 0 14px',
-        whiteSpace: 'nowrap',
-        flexShrink: 0,
-        borderLeft: '1px solid #222',
-        height: '38px',
-        display: 'flex',
-        alignItems: 'center',
-      }}>TICK-BORNE</div>
-      {TICK.map(d => (
-        <button
-          key={d.key}
-          className={`filter-btn ${active === d.key ? 'active' : ''}`}
-          style={{ '--d-color': d.color } as React.CSSProperties}
-          onClick={() => setActive(d.key)}
-        >
-          <span className="filter-swatch" style={{ background: d.color }} />
-          {d.label}
-          <span className="filter-count">{d.count}</span>
-        </button>
-      ))}
-    </nav>
-    <div style={{
-      position: 'absolute',
-      right: 0,
-      top: 0,
-      bottom: 0,
-      width: '60px',
-      background: 'linear-gradient(to right, transparent, #000)',
-      pointerEvents: 'none',
-    }} />
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        bottom: 0,
+        width: '60px',
+        background: 'linear-gradient(to right, transparent, #000)',
+        pointerEvents: 'none',
+      }} />
     </div>
   )
 }
