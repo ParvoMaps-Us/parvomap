@@ -26,27 +26,27 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     console.log('Screen:', screenWidth, 'Inner:', innerWidth, 'Mobile:', isMobile)
 
-    const startCenter: [number, number] = isMobile ? [45, -100] : [38.5, -90]
-    const startZoom = isMobile ? 2 : 4.5
+    const startCenter: [number, number] = isMobile ? [38, -96] : [38.5, -90]
+    const startZoom = isMobile ? 3 : 4.5
 
     const map = L.map(containerRef.current, {
       center: startCenter,
       zoom: startZoom,
-      minZoom: 1,
+      minZoom: 2,
       maxZoom: 18,
       scrollWheelZoom: !isMobile,
       touchZoom: true,
       doubleClickZoom: true,
       dragging: true,
-      zoomSnap: 0.25,
+      zoomSnap: 0.5,
       zoomDelta: 0.5,
       zoomControl: true,
       attributionControl: true,
     })
 
     map.setMaxBounds([
-      [5, -180],
-      [80, -40],
+      [10, -170],
+      [72, -50],
     ])
 
     mapRef.current = map
@@ -75,9 +75,9 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     setTimeout(() => {
       map.invalidateSize()
       if (window.screen.width <= 768 || window.innerWidth <= 768) {
-        map.setView([45, -100], 2)
+        map.setView([38, -96], 3)
       }
-    }, 100)
+    }, 150)
 
     // Scroll/zoom hint
     if (containerRef.current) {
