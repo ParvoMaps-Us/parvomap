@@ -18,28 +18,35 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     const L = require('leaflet')
 
-    const isMobile = window.matchMedia('(max-width: 767px)').matches
+    // Belt-and-suspenders mobile detection: use screen.width as the
+    // authoritative signal since innerWidth can be wrong before layout settles
+    const screenWidth = window.screen.width
+    const innerWidth = window.innerWidth
+    const isMobile = screenWidth <= 768 || innerWidth <= 768
 
-    console.log('isMobile:', isMobile, 'width:', window.innerWidth)
+    console.log('Screen:', screenWidth, 'Inner:', innerWidth, 'Mobile:', isMobile)
+
+    const startCenter: [number, number] = isMobile ? [45, -100] : [38.5, -90]
+    const startZoom = isMobile ? 2 : 4.5
 
     const map = L.map(containerRef.current, {
-      center: isMobile ? [42, -96] : [38.5, -90],
-      zoom: isMobile ? 2.5 : 4.5,
-      minZoom: 2,
+      center: startCenter,
+      zoom: startZoom,
+      minZoom: 1,
       maxZoom: 18,
       scrollWheelZoom: !isMobile,
       touchZoom: true,
       doubleClickZoom: true,
       dragging: true,
-      zoomSnap: 0.5,
+      zoomSnap: 0.25,
       zoomDelta: 0.5,
       zoomControl: true,
       attributionControl: true,
     })
 
     map.setMaxBounds([
-      [15, -170],
-      [72, -50],
+      [5, -180],
+      [80, -40],
     ])
 
     mapRef.current = map
@@ -61,6 +68,16 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     })
 
     tileLayer.addTo(map)
+
+    // Force Leaflet to re-measure the container after the browser paints.
+    // Without this, the map can initialize against a zero-height container
+    // and miscalculate the viewport, ignoring the zoom/center we set.
+    setTimeout(() => {
+      map.invalidateSize()
+      if (window.screen.width <= 768 || window.innerWidth <= 768) {
+        map.setView([45, -100], 2)
+      }
+    }, 100)
 
     // Scroll/zoom hint
     if (containerRef.current) {
