@@ -786,3 +786,11 @@ footer {
   animation: spin 0.7s linear infinite;
   display: inline-block;
 }
+
+/* ─── LEAFLET OVERRIDES ─── */
+.leaflet-container { background: #0a0a0a; }
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip { background: transparent; box-shadow: none; padding: 0; }
+.leaflet-popup-content { margin: 0; }
+.leaflet-control-attribution { background: rgba(0,0,0,0.6) !important; color: #444 !important; font-size: 9px !important; }
+.leaflet-control-attribution a { color: #555 !important; }

@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const INFECTIOUS = [
   { key: 'all', label: 'All', color: '#f0f0f0', count: 26 },
@@ -30,8 +30,20 @@ export default function FilterBar() {
   const [showHistorical, setShowHistorical] = useState(true)
   const [showUnverified, setShowUnverified] = useState(true)
 
+  useEffect(() => {
+    const bar = document.getElementById('filter-bar')
+    if (!bar) return
+    const timer = setTimeout(() => {
+      bar.scrollTo({ left: 80, behavior: 'smooth' })
+      setTimeout(() => bar.scrollTo({ left: 0, behavior: 'smooth' }), 600)
+    }, 2000)
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
-    <nav className="filter-bar" aria-label="Filter map by disease">
+    <div style={{ position: 'relative' }}>
+    <nav className="filter-bar" id="filter-bar" aria-label="Filter map by disease"
+      style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
       <div className="filter-label">Filter</div>
       <button
         className={`filter-all-btn ${showHistorical ? 'active' : ''}`}
@@ -90,5 +102,15 @@ export default function FilterBar() {
         </button>
       ))}
     </nav>
+    <div style={{
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      bottom: 0,
+      width: '60px',
+      background: 'linear-gradient(to right, transparent, #000)',
+      pointerEvents: 'none',
+    }} />
+    </div>
   )
 }
