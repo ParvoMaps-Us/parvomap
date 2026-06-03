@@ -8,12 +8,12 @@ export default function Header() {
           Parvo<span style={{ color: '#f0f0f0' }}>Map</span>{' '}
           <span className="logo-dot" />
         </div>
-        <div className="logo-tag">US Canine Disease Tracker</div>
+        <div className="logo-tag header-tagline">US Canine Disease Tracker</div>
       </div>
       <nav>
-        <Link href="/diseases">Diseases</Link>
-        <Link href="/alerts">Alerts</Link>
-        <Link href="/pro">Pro</Link>
+        <Link href="/diseases" className="nav-link">Diseases</Link>
+        <Link href="/alerts" className="nav-link">Alerts</Link>
+        <Link href="/pro" className="nav-link">Pro</Link>
         <a href="#report" className="btn-report">+ Report a Case</a>
       </nav>
     </header>

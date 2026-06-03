@@ -18,10 +18,12 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     const L = require('leaflet')
 
+    const isMobile = window.innerWidth < 768
+
     const map = L.map(containerRef.current, {
-      center: [38.5, -90],
-      zoom: 4.5,
-      minZoom: 3,
+      center: isMobile ? [38, -96] : [38.5, -90],
+      zoom: isMobile ? 2.5 : 4.5,
+      minZoom: 2,
       maxZoom: 18,
       scrollWheelZoom: true,
       touchZoom: true,
@@ -144,9 +146,8 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         ref={containerRef}
         style={{
           width: '100%',
-          height: '60vh',
-          minHeight: '400px',
-          maxHeight: '600px',
+          height: 'min(60vh, 400px)',
+          minHeight: '280px',
           background: '#060606',
           touchAction: 'none',
         }}

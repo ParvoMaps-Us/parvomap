@@ -82,7 +82,7 @@ export default function FilterBar() {
           Unverified: {showUnverified ? 'ON' : 'OFF'}
         </button>
 
-        <div style={firstGroupLabelStyle}>INFECTIOUS</div>
+        <div style={firstGroupLabelStyle} className="filter-group-label-el">INFECTIOUS</div>
         {INFECTIOUS.map(d => (
           <button
             key={d.key}
@@ -96,7 +96,7 @@ export default function FilterBar() {
           </button>
         ))}
 
-        <div style={groupLabelStyle}>TICK-BORNE</div>
+        <div style={groupLabelStyle} className="filter-group-label-el">TICK-BORNE</div>
         {TICK.map(d => (
           <button
             key={d.key}
@@ -110,7 +110,7 @@ export default function FilterBar() {
           </button>
         ))}
 
-        <div style={groupLabelStyle}>ENVIRONMENTAL</div>
+        <div style={groupLabelStyle} className="filter-group-label-el">ENVIRONMENTAL</div>
         {ENVIRONMENTAL.map(d => (
           <button
             key={d.key}

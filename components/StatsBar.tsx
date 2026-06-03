@@ -15,6 +15,7 @@ export default function StatsBar({ last30, last7, last48, states }: StatsBarProp
         <div>
           <div className="stat-num green">{last30}</div>
           <div className="stat-label">Last 30 days</div>
+          <div className="stat-label-short">30D</div>
         </div>
       </div>
       <div className="stat-item">
@@ -22,6 +23,7 @@ export default function StatsBar({ last30, last7, last48, states }: StatsBarProp
         <div>
           <div className="stat-num amber">{last7}</div>
           <div className="stat-label">Last 7 days</div>
+          <div className="stat-label-short">7D</div>
         </div>
       </div>
       <div className="stat-item">
@@ -29,12 +31,14 @@ export default function StatsBar({ last30, last7, last48, states }: StatsBarProp
         <div>
           <div className="stat-num red">{last48}</div>
           <div className="stat-label">Last 48 hours</div>
+          <div className="stat-label-short">48H</div>
         </div>
       </div>
       <div className="stat-item" style={{ borderRight: 'none' }}>
         <div>
           <div className="stat-num" style={{ color: 'var(--text-muted)', fontSize: '16px' }}>{states}</div>
           <div className="stat-label">US States affected</div>
+          <div className="stat-label-short">STATES</div>
         </div>
       </div>
       {isEmpty ? (
