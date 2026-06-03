@@ -23,14 +23,44 @@ export default function ReportForm() {
   const [notes, setNotes] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-    // TODO: POST to /api/report
-    await new Promise(r => setTimeout(r, 800))
+    setError('')
+
+    const form = e.currentTarget
+    const data = {
+      disease,
+      zip:    (form.elements.namedItem('zip')    as HTMLInputElement).value.trim(),
+      email:  (form.elements.namedItem('email')  as HTMLInputElement).value.trim(),
+      source: (form.elements.namedItem('source') as HTMLSelectElement).value || undefined,
+      breed:  (form.elements.namedItem('breed')  as HTMLInputElement).value.trim() || undefined,
+      notes:  notes.trim() || undefined,
+    }
+
+    try {
+      const res = await fetch('/api/report', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(data),
+      })
+
+      const json = await res.json()
+
+      if (!res.ok) {
+        setError(json?.error?.formErrors?.[0] ?? json?.error ?? 'Submission failed — please try again.')
+        setLoading(false)
+        return
+      }
+
+      setSubmitted(true)
+    } catch {
+      setError('Network error — please check your connection and try again.')
+    }
+
     setLoading(false)
-    setSubmitted(true)
   }
 
   if (submitted) {
@@ -130,6 +160,20 @@ export default function ReportForm() {
             🔒 Reports are anonymous. Email is used only to verify your report and send nearby alerts.
             We never share or sell your information. ZIP code only — no street address collected.
           </div>
+
+          {error && (
+            <div className="form-group full" style={{
+              color: 'var(--red)',
+              fontFamily: 'var(--mono)',
+              fontSize: '11px',
+              letterSpacing: '0.04em',
+              padding: '8px 12px',
+              border: '1px solid rgba(239,68,68,0.3)',
+              background: 'rgba(239,68,68,0.06)',
+            }}>
+              ⚠ {error}
+            </div>
+          )}
 
           <div className="form-group full">
             <button type="submit" className="btn-submit" disabled={!disease || loading}>
