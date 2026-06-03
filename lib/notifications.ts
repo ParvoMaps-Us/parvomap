@@ -7,6 +7,19 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM_HELLO  = 'hello@parvomaps.us'
 const FROM_ALERTS = 'alerts@parvomaps.us'
 
+// Resend's SDK returns API errors as a value ({ data, error }) instead of
+// throwing — so a rejected send (bad key, unverified domain, wrong account)
+// looks like success unless we inspect `error`. Wrap every send to surface it.
+async function sendEmail(opts: Parameters<typeof resend.emails.send>[0]) {
+  const { data, error } = await resend.emails.send(opts)
+  if (error) {
+    throw new Error(
+      `Resend send failed: ${error.name ?? 'error'} — ${error.message ?? JSON.stringify(error)}`
+    )
+  }
+  return data
+}
+
 // ─── VERIFICATION EMAIL ───────────────────────────────────────────────────────
 
 export async function sendVerificationEmail(
@@ -16,7 +29,7 @@ export async function sendVerificationEmail(
   const verifyUrl  = `https://parvomaps.us/api/verify?token=${token}`
   const diseaseName = getDiseaseName(report.disease)
 
-  await resend.emails.send({
+  await sendEmail({
     from:    FROM_HELLO,
     to:      report.email!,
     subject: `Verify your ParvoMap report — ${diseaseName} near ZIP ${report.zip}`,
@@ -75,7 +88,7 @@ export async function sendVerificationConfirmation(
   const diseaseName = getDiseaseName(report.disease)
   const mapUrl = `https://parvomaps.us/?verified=success`
 
-  await resend.emails.send({
+  await sendEmail({
     from:    FROM_HELLO,
     to:      report.email!,
     subject: `Your report is live — ${diseaseName} near ZIP ${report.zip}`,
@@ -137,7 +150,7 @@ export async function sendInternalAlert(report: PendingReport): Promise<void> {
     ['REPORTED',   new Date(report.timestamp).toLocaleString()],
   ]
 
-  await resend.emails.send({
+  await sendEmail({
     from:    FROM_ALERTS,
     to:      alertEmail,
     subject: `ParvoMap Utah Lead — ${diseaseName} — ZIP ${report.zip}`,
@@ -172,7 +185,7 @@ export async function sendDelayedUtahOutreach(report: PendingReport): Promise<vo
 
   const firstName = 'there'
 
-  await resend.emails.send({
+  await sendEmail({
     from:    FROM_HELLO,
     to:      report.email,
     subject: `Is your yard safe after this exposure? — Scoopie BioRest™`,

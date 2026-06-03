@@ -57,8 +57,9 @@ export async function POST(req: NextRequest) {
     // Persist pending report to Redis (25 h TTL)
     await savePendingReport(report)
 
-    // Send verification email (non-blocking — don't fail the response if email fails)
+    // Send verification email (don't fail the response if email fails)
     let emailSent = false
+    let emailError: string | undefined // TODO: debug only — remove once email is confirmed working
     if (email) {
       const token = generateVerificationToken()
       await saveVerificationToken(token, id)
@@ -70,6 +71,7 @@ export async function POST(req: NextRequest) {
         await sendVerificationEmail(report, token)
         emailSent = true
       } catch (err) {
+        emailError = err instanceof Error ? err.message : String(err)
         console.error('Verification email failed:', err)
       }
 
@@ -90,6 +92,7 @@ export async function POST(req: NextRequest) {
       id,
       verified:  false,
       emailSent,
+      ...(emailError ? { emailError } : {}), // TODO: debug only — remove once email is confirmed working
     })
   } catch (e) {
     console.error('Report POST error:', e)
