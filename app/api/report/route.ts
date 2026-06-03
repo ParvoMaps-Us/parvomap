@@ -58,26 +58,38 @@ export async function POST(req: NextRequest) {
     await savePendingReport(report)
 
     // Send verification email (non-blocking — don't fail the response if email fails)
+    let emailSent = false
     if (email) {
       const token = generateVerificationToken()
       await saveVerificationToken(token, id)
-      sendVerificationEmail(report, token).catch(err =>
+
+      // Await the send so the serverless function stays alive until Resend
+      // responds — a fire-and-forget promise gets frozen/dropped after the
+      // response returns on Vercel, silently swallowing the email.
+      try {
+        await sendVerificationEmail(report, token)
+        emailSent = true
+      } catch (err) {
         console.error('Verification email failed:', err)
-      )
+      }
 
       // Queue delayed BioRest outreach for Utah reporters
       if (isUtahZip(zip)) {
-        queueDelayedEmail(id).catch(console.error)
+        try {
+          await queueDelayedEmail(id)
+        } catch (err) {
+          console.error('Failed to queue delayed email:', err)
+        }
       }
     }
 
-    console.log('Report received:', { id, disease, zip, state: geo?.state, confidence })
+    console.log('Report received:', { id, disease, zip, state: geo?.state, confidence, emailSent })
 
     return Response.json({
       ok:        true,
       id,
       verified:  false,
-      emailSent: !!email,
+      emailSent,
     })
   } catch (e) {
     console.error('Report POST error:', e)
