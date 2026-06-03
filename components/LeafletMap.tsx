@@ -19,7 +19,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     const L = require('leaflet')
 
     const map = L.map(containerRef.current, {
-      center: [39.5, -98.35],
+      center: [39.5, -95],
       zoom: 4.5,
       minZoom: 3,
       maxZoom: 18,
