@@ -18,14 +18,16 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     const L = require('leaflet')
 
-    const isMobile = window.innerWidth < 768
+    const isMobile = window.matchMedia('(max-width: 767px)').matches
+
+    console.log('isMobile:', isMobile, 'width:', window.innerWidth)
 
     const map = L.map(containerRef.current, {
       center: isMobile ? [42, -96] : [38.5, -90],
       zoom: isMobile ? 2.5 : 4.5,
       minZoom: 2,
       maxZoom: 18,
-      scrollWheelZoom: true,
+      scrollWheelZoom: !isMobile,
       touchZoom: true,
       doubleClickZoom: true,
       dragging: true,

@@ -633,8 +633,8 @@ textarea { resize: vertical; min-height: 80px; }
   font-size: 16px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  background: var(--green);
-  color: #000;
+  background: #00ff88 !important;
+  color: #000000 !important;
   border: none;
   padding: 14px 32px;
   cursor: pointer;
@@ -646,9 +646,14 @@ textarea { resize: vertical; min-height: 80px; }
   margin-top: 8px;
   transition: background 0.15s, transform 0.1s;
 }
-.btn-submit:hover { background: var(--green-dim); }
+.btn-submit:hover { background: #00cc6a !important; }
 .btn-submit:active { transform: scale(0.99); }
-.btn-submit:disabled { background: #1a1a1a; color: var(--text-dim); cursor: not-allowed; }
+.btn-submit:disabled {
+  background: #1a1a1a !important;
+  color: var(--text-dim) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 
 /* ─── DISEASE PICKER ─── */
 .disease-opt {
@@ -793,32 +798,43 @@ footer {
 .leaflet-grab { cursor: grab; }
 .leaflet-dragging .leaflet-grab { cursor: grabbing; }
 
-/* Zoom control */
-.leaflet-touch .leaflet-bar,
-.leaflet-control-zoom {
+/* Zoom control — high specificity to beat Leaflet touch overrides */
+html body .leaflet-touch .leaflet-bar,
+html body .leaflet-control-zoom,
+html body .leaflet-bar {
   border: 1px solid #2a2a2a !important;
   box-shadow: none !important;
-  border-radius: 2px !important;
+  background: none !important;
 }
-.leaflet-touch .leaflet-control-zoom a,
-.leaflet-control-zoom a {
+html body .leaflet-touch .leaflet-bar a,
+html body .leaflet-touch .leaflet-control-zoom a,
+html body .leaflet-control-zoom a,
+html body .leaflet-bar a {
   background-color: #111111 !important;
   color: #888888 !important;
   border-color: #2a2a2a !important;
-  font-size: 18px !important;
-  font-weight: 300 !important;
-  line-height: 30px !important;
   width: 30px !important;
   height: 30px !important;
+  line-height: 30px !important;
+  font-size: 18px !important;
+  font-weight: 300 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-radius: 0 !important;
 }
-.leaflet-touch .leaflet-control-zoom a:hover,
-.leaflet-control-zoom a:hover {
+html body .leaflet-touch .leaflet-bar a:hover,
+html body .leaflet-control-zoom a:hover {
   background-color: #1a1a1a !important;
   color: #00ff88 !important;
+}
+html body .leaflet-touch .leaflet-bar a:first-child,
+html body .leaflet-bar a:first-child {
+  border-radius: 2px 2px 0 0 !important;
+  border-bottom: 1px solid #2a2a2a !important;
+}
+html body .leaflet-touch .leaflet-bar a:last-child,
+html body .leaflet-bar a:last-child {
+  border-radius: 0 0 2px 2px !important;
 }
 
 /* Attribution */

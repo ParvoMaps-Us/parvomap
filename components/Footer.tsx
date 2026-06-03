@@ -12,7 +12,7 @@ export default function Footer() {
       </div>
       <div className="footer-links">
         <a href="https://scoopie.us" className="scoopie-link" target="_blank" rel="noopener noreferrer">
-          🐾 Parvo in Utah? → Scoopie.us
+          🐾 Dog illness in Utah? → Scoopie BioRest™
         </a>
         <div className="footer-copy">
           © {year} ParvoMap · parvomaps.us<br />
