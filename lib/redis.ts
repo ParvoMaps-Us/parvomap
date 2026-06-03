@@ -5,9 +5,11 @@ let redis: Redis | null = null
 function getRedisClient(): Redis | null {
   if (redis) return redis
 
-  // Support both UPSTASH_REDIS_REST_* (manual) and KV_REST_API_* (Vercel integration)
-  const url   = process.env.UPSTASH_REDIS_REST_URL   || process.env.KV_REST_API_URL
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
+  // Support both UPSTASH_REDIS_REST_* (manual) and KV_REST_API_* (Vercel/Upstash integration).
+  // Explicitly skip placeholder values set during local dev scaffolding.
+  const isReal = (v?: string) => !!v && !v.includes('placeholder')
+  const url   = isReal(process.env.UPSTASH_REDIS_REST_URL)   ? process.env.UPSTASH_REDIS_REST_URL   : process.env.KV_REST_API_URL
+  const token = isReal(process.env.UPSTASH_REDIS_REST_TOKEN) ? process.env.UPSTASH_REDIS_REST_TOKEN : process.env.KV_REST_API_TOKEN
 
   if (
     !url || !token ||
