@@ -7,6 +7,6 @@
     {
       "path": "/api/cron/expire-verifications",
       "schedule": "0 6 * * *"
-    },
+    }
   ]
 }
