@@ -21,7 +21,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     const isMobile = window.innerWidth < 768
 
     const map = L.map(containerRef.current, {
-      center: isMobile ? [38, -96] : [38.5, -90],
+      center: isMobile ? [42, -96] : [38.5, -90],
       zoom: isMobile ? 2.5 : 4.5,
       minZoom: 2,
       maxZoom: 18,
@@ -184,8 +184,8 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         </div>
       )}
 
-      {/* PIN KEY legend — bottom-right, over map */}
-      <div style={{
+      {/* PIN KEY legend — bottom-right, over map. Hidden on mobile via CSS. */}
+      <div className="pin-key-legend" style={{
         position: 'absolute',
         bottom: '24px',
         right: '16px',
@@ -230,6 +230,34 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         ))}
       </div>
 
+    </div>
+
+    {/* Mobile-only legend row — flat strip below the map */}
+    <div className="mobile-legend-row">
+      {[
+        { color: '#ef4444', label: 'Last 48h' },
+        { color: '#f59e0b', label: 'Last 7 days' },
+        { color: '#00ff88', label: 'Last 30 days' },
+        { color: '#2a2a2a', label: 'Historical', border: '1px solid #666' },
+      ].map(item => (
+        <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
+          <div style={{
+            width: '7px',
+            height: '7px',
+            borderRadius: '50%',
+            background: item.color,
+            flexShrink: 0,
+            border: item.border ?? 'none',
+          }} />
+          <span style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: '9px',
+            color: '#777',
+            letterSpacing: '0.06em',
+            whiteSpace: 'nowrap',
+          }}>{item.label}</span>
+        </div>
+      ))}
     </div>
   )
 }
