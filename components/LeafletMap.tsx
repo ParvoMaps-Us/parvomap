@@ -113,6 +113,9 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       map.on('zoom', dismissHint)
     }
 
+    // Markers live in a layer group so we can clear and re-cluster on zoom.
+    const markerLayer = L.layerGroup().addTo(map)
+
     const addReportMarker = (report: Report) => {
       if (!report.lat || !report.lng) return
 
@@ -159,7 +162,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
       L.marker([report.lat, report.lng], { icon })
         .bindPopup(popup)
-        .addTo(map)
+        .addTo(markerLayer)
     }
 
     const addHotspotMarker = (group: Report[]) => {
@@ -199,26 +202,34 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
       L.marker([lat, lng], { icon, zIndexOffset: 1000 })
         .bindPopup(popup)
-        .addTo(map)
+        .addTo(markerLayer)
     }
 
-    // Group reports into ~1.4mi grid cells; a cell with enough reports becomes a
-    // single biohazard hotspot marker instead of a cluster of overlapping dots.
+    // Cluster cell scales with zoom: zoomed out → ~1.4mi cells (hotspots emerge);
+    // zoomed in → much smaller cells, so a dense spot breaks apart into the
+    // individual pins it's made of. Re-rendered on every zoom.
     const BIOHAZARD_THRESHOLD = 10
-    const CELL = 0.02 // degrees (~1.4 mi)
-    const cells = new Map<string, Report[]>()
-    reports.forEach(r => {
-      if (r.lat == null || r.lng == null) return
-      const key = `${Math.round(r.lat / CELL)}_${Math.round(r.lng / CELL)}`
-      const arr = cells.get(key)
-      if (arr) arr.push(r)
-      else cells.set(key, [r])
-    })
 
-    cells.forEach(group => {
-      if (group.length >= BIOHAZARD_THRESHOLD) addHotspotMarker(group)
-      else group.forEach(addReportMarker)
-    })
+    const renderMarkers = () => {
+      markerLayer.clearLayers()
+      const zoom = map.getZoom()
+      const cell = Math.min(0.04, Math.max(0.0005, 0.02 * Math.pow(2, 11 - zoom)))
+      const cells = new Map<string, Report[]>()
+      reports.forEach(r => {
+        if (r.lat == null || r.lng == null) return
+        const key = `${Math.round(r.lat / cell)}_${Math.round(r.lng / cell)}`
+        const arr = cells.get(key)
+        if (arr) arr.push(r)
+        else cells.set(key, [r])
+      })
+      cells.forEach(group => {
+        if (group.length >= BIOHAZARD_THRESHOLD) addHotspotMarker(group)
+        else group.forEach(addReportMarker)
+      })
+    }
+
+    renderMarkers()
+    map.on('zoomend', renderMarkers)
 
     return () => {
       map.remove()
