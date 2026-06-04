@@ -71,8 +71,23 @@ export default function ReportForm() {
   // Any report can note a suspected location (e.g. the dog park where exposure
   // likely happened). Place-based hazards (algae, ticks) word it as a hazard spot.
   const isPlaceHazard = (LOCATION_DETAIL_DISEASES as readonly string[]).includes(disease)
-  // Show once a disease is picked, or when prefilled from a map pin's "Report this area".
-  const showLocationDetail = disease !== '' || locationDetail !== ''
+  const isNews = reporterType === 'news'
+  // Show once a disease is picked, when prefilled from a map pin, or for news
+  // (where the article's area is the whole point).
+  const showLocationDetail = disease !== '' || locationDetail !== '' || isNews
+
+  // The location field's wording depends on context (news vs hazard vs dog illness).
+  const locLabel = isNews
+    ? 'City or area the article is about'
+    : isPlaceHazard ? 'Specific location' : 'Where was your dog likely exposed?'
+  const locHint = isNews
+    ? '(the area the article covers — not your station)'
+    : isPlaceHazard ? '(helps others avoid the exact spot)' : '(optional — e.g. a dog park)'
+  const locPlaceholder = isNews
+    ? 'Start typing the city or place from the article…'
+    : isPlaceHazard
+      ? 'Start typing a lake, canyon, or trail…'
+      : 'Start typing a dog park, daycare, or place…'
   const isSighting = reporterType === 'individual' && individualKind === 'sighting'
   // Submit is blocked until the branching questions are answered.
   const reporterAnswered =
@@ -199,19 +214,12 @@ export default function ReportForm() {
           {showLocationDetail && (
             <div className="form-group full">
               <label>
-                {isPlaceHazard ? 'Specific location' : 'Where was your dog likely exposed?'}{' '}
-                <span className="opt">
-                  {isPlaceHazard ? '(helps others avoid the exact spot)' : '(optional — e.g. a dog park)'}
-                </span>
+                {locLabel} <span className="opt">{locHint}</span>
               </label>
               <LocationAutocomplete
                 value={locationDetail}
                 bias={zipCenter}
-                placeholder={
-                  isPlaceHazard
-                    ? 'Start typing a lake, canyon, or trail…'
-                    : 'Start typing a dog park, daycare, or place…'
-                }
+                placeholder={locPlaceholder}
                 onChange={text => {
                   setLocationDetail(text)
                   setLocationCoords(null) // typing invalidates any picked place
@@ -306,6 +314,11 @@ export default function ReportForm() {
               value={zip}
               onChange={e => setZip(e.target.value.replace(/\D/g, ''))}
             />
+            {isNews && (
+              <div style={{ marginTop: 4, fontSize: 10, color: '#888', fontFamily: 'var(--mono)' }}>
+                ZIP of the area the article is about — not your station.
+              </div>
+            )}
           </div>
 
           {/* "How confirmed" only applies when it's an actual case, not a sighting */}
