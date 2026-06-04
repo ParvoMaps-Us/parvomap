@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LOCATION_DETAIL_DISEASES } from '@/lib/report-schema'
 import LocationAutocomplete from './LocationAutocomplete'
 
@@ -27,12 +27,30 @@ export default function ReportForm() {
   const [reporterType, setReporterType] = useState<ReporterType | ''>('')
   // For an individual: 'affected' (own dog) or 'sighting' (saw it elsewhere).
   const [individualKind, setIndividualKind] = useState<'affected' | 'sighting' | ''>('')
+  const [zip, setZip] = useState('')
   const [locationDetail, setLocationDetail] = useState('')
   const [locationCoords, setLocationCoords] = useState<{ lat: number; lng: number } | null>(null)
+  // Bias autocomplete to the entered ZIP so suggestions are local in any state.
+  const [zipCenter, setZipCenter] = useState<{ lat: number; lng: number } | null>(null)
   const [notes, setNotes] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  // Resolve the ZIP to a centroid (client-side) to localize place suggestions.
+  useEffect(() => {
+    if (!/^\d{5}$/.test(zip)) { setZipCenter(null); return }
+    let cancelled = false
+    fetch(`https://api.zippopotam.us/us/${zip}`)
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => {
+        if (cancelled || !data?.places?.[0]) return
+        const p = data.places[0]
+        setZipCenter({ lat: parseFloat(p.latitude), lng: parseFloat(p.longitude) })
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [zip])
 
   // Any report can note a suspected location (e.g. the dog park where exposure
   // likely happened). Place-based hazards (algae, ticks) word it as a hazard spot.
@@ -53,7 +71,7 @@ export default function ReportForm() {
       disease,
       reporterType,
       sighting: isSighting,
-      zip:    (form.elements.namedItem('zip')    as HTMLInputElement).value.trim(),
+      zip:    zip.trim(),
       email:  (form.elements.namedItem('email')  as HTMLInputElement).value.trim(),
       source: (form.elements.namedItem('source') as HTMLSelectElement)?.value || undefined,
       breed:  (form.elements.namedItem('breed')  as HTMLInputElement).value.trim() || undefined,
@@ -110,6 +128,7 @@ export default function ReportForm() {
               setDisease('')
               setReporterType('')
               setIndividualKind('')
+              setZip('')
               setLocationDetail('')
               setLocationCoords(null)
               setNotes('')
@@ -166,6 +185,7 @@ export default function ReportForm() {
               </label>
               <LocationAutocomplete
                 value={locationDetail}
+                bias={zipCenter}
                 placeholder={
                   isPlaceHazard
                     ? 'Start typing a lake, canyon, or trail…'
@@ -236,7 +256,16 @@ export default function ReportForm() {
 
           <div className="form-group">
             <label>ZIP Code <span className="req">*</span></label>
-            <input type="text" name="zip" placeholder="e.g. 84101" maxLength={5} pattern="\d{5}" required />
+            <input
+              type="text"
+              name="zip"
+              placeholder="e.g. 84101"
+              maxLength={5}
+              pattern="\d{5}"
+              required
+              value={zip}
+              onChange={e => setZip(e.target.value.replace(/\D/g, ''))}
+            />
           </div>
 
           {/* "How confirmed" only applies when it's an actual case, not a sighting */}

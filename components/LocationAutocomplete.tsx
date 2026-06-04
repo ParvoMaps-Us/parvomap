@@ -16,13 +16,13 @@ interface Suggestion {
 interface Props {
   value: string
   placeholder?: string
+  bias?: { lat: number; lng: number } | null // localize suggestions (e.g. to the entered ZIP)
   onChange: (text: string) => void           // free typing (clears any prior coords)
   onSelect: (place: PlaceSelection) => void   // picked a suggestion (captures coords)
 }
 
-// Bias suggestions toward Utah (where Scoopie operates) without hard-limiting.
-const BIAS_LAT = 40.3
-const BIAS_LNG = -111.7
+// Fallback bias when no ZIP is entered yet: geographic center of the contiguous US.
+const US_CENTER = { lat: 39.83, lng: -98.58 }
 
 function labelFor(p: Record<string, unknown>): string {
   const parts = [p.name, p.city ?? p.county, p.state]
@@ -31,7 +31,7 @@ function labelFor(p: Record<string, unknown>): string {
   return Array.from(new Set(parts)).join(', ')
 }
 
-export default function LocationAutocomplete({ value, placeholder, onChange, onSelect }: Props) {
+export default function LocationAutocomplete({ value, placeholder, bias, onChange, onSelect }: Props) {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -61,9 +61,10 @@ export default function LocationAutocomplete({ value, placeholder, onChange, onS
       abortRef.current = ctrl
       setLoading(true)
       try {
+        const center = bias ?? US_CENTER
         const url =
           `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}` +
-          `&limit=5&lang=en&lat=${BIAS_LAT}&lon=${BIAS_LNG}`
+          `&limit=5&lang=en&lat=${center.lat}&lon=${center.lng}`
         const res = await fetch(url, { signal: ctrl.signal })
         const data = await res.json()
         const out: Suggestion[] = (data.features ?? [])
