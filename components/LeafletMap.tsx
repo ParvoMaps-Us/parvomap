@@ -9,6 +9,16 @@ interface Props {
   recencyClass: (timestamp: number) => string
 }
 
+/** Escape user-supplied text before injecting into popup HTML (XSS-safe). */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<any>(null)
@@ -134,6 +144,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #2a2a2a;border-radius:4px;min-width:160px;">
           <div style="color:#fff;font-weight:700;margin-bottom:6px;font-size:12px;">ZIP ${report.zip}</div>
           <div style="color:#888;margin-bottom:2px;">${report.city ?? ''}</div>
+          ${report.locationDetail ? `<div style="color:#00ff88;margin:4px 0 2px;font-size:11px;line-height:1.4;">📍 ${escapeHtml(report.locationDetail)}</div>` : ''}
           <div style="margin-top:6px;display:flex;justify-content:space-between;gap:16px;">
             <span style="color:#aaa;">Disease</span>
             <span style="color:${color};font-weight:600;text-transform:capitalize;">${report.disease}</span>

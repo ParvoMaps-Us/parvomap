@@ -49,6 +49,8 @@ export interface Report {
   source?: string
   notes?: string
   confidence: number
+  // Specific spot for place-based hazards (e.g. "Utah Lake"). Public, non-PII.
+  locationDetail?: string
 }
 
 /** Full shape stored in the pending hash (includes PII) */
@@ -105,6 +107,7 @@ export async function publishVerifiedReport(report: PendingReport): Promise<void
     source:     report.source ?? undefined,
     notes:      report.notes ?? undefined,
     confidence: report.confidence,
+    locationDetail: report.locationDetail ?? undefined,
   }
 
   await client.zadd('reports:verified', {

@@ -12,6 +12,10 @@ export const SOURCE_VALUES = [
 // Who is submitting. Drives follow-up questions, confidence, and lead routing.
 export const REPORTER_TYPES = ['individual', 'vet', 'facility'] as const
 
+// Place-based environmental hazards: tied to a specific lake/canyon/trail, not a
+// sick dog. These get an optional "specific location" field on the form.
+export const LOCATION_DETAIL_DISEASES = ['cyano', 'tickspot'] as const
+
 export const ReportSchema = z.object({
   disease: z.string().min(1, 'Disease is required'),
   zip: z.string().regex(/^\d{5}$/, 'ZIP must be 5 digits'),
@@ -23,6 +27,8 @@ export const ReportSchema = z.object({
   source: z.enum(SOURCE_VALUES).optional(),
   breed: z.string().max(50).optional(),
   notes: z.string().max(280).optional(),
+  // Specific spot for place-based hazards (lake/canyon/trail name or coordinates).
+  locationDetail: z.string().max(120).optional(),
 })
 
 export type ReportInput = z.infer<typeof ReportSchema>

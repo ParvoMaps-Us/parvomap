@@ -5,6 +5,7 @@ import type { SOURCE_VALUES } from '@/lib/report-schema'
 import { geocodeZip } from '@/lib/geocode'
 import { isUtahZip } from '@/lib/utah-zips'
 import { getsReporterOutreach } from '@/lib/lead'
+import { parseCoordinates } from '@/lib/coords'
 import {
   savePendingReport,
   queueDelayedEmail,
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: parsed.error.flatten() }, { status: 400, headers: cors })
     }
 
-    const { disease, zip, reporterType, sighting, email, source, breed, notes } = parsed.data
+    const { disease, zip, reporterType, sighting, email, source, breed, notes, locationDetail } = parsed.data
 
     const confidence = calculateConfidence({
       source: source as typeof SOURCE_VALUES[number] | undefined,
@@ -67,6 +68,11 @@ export async function POST(req: NextRequest) {
     // Geocode ZIP → lat/lng/city/state
     const geo = await geocodeZip(zip)
 
+    // If the reporter typed coordinates into the location field, drop the pin
+    // exactly there instead of the ZIP centroid (more accurate for a specific
+    // lake/trail). Plain place names fall back to the ZIP centroid.
+    const coords = parseCoordinates(locationDetail)
+
     const id = crypto.randomUUID()
     const report: PendingReport = {
       id,
@@ -75,14 +81,15 @@ export async function POST(req: NextRequest) {
       state:     geo?.state  ?? '',
       city:      geo?.city   ?? undefined,
       county:    geo?.county ?? undefined,
-      lat:       geo?.lat    ?? undefined,
-      lng:       geo?.lng    ?? undefined,
+      lat:       coords?.lat ?? geo?.lat ?? undefined,
+      lng:       coords?.lng ?? geo?.lng ?? undefined,
       email:     email || null,
       source:    source || undefined,
       breed:     breed || null,
       notes:     notes || undefined,
       reporterType,
       sighting,
+      locationDetail: locationDetail || undefined,
       confidence,
       verified:  false,
       timestamp: Date.now(),

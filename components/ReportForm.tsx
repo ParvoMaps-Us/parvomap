@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { LOCATION_DETAIL_DISEASES } from '@/lib/report-schema'
 
 const DISEASES = [
   { key: 'parvo', label: 'Parvovirus', color: 'var(--d-parvo)' },
@@ -30,6 +31,8 @@ export default function ReportForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Place-based hazards (algae bloom, tick sighting) get a "specific location" field.
+  const showLocationDetail = (LOCATION_DETAIL_DISEASES as readonly string[]).includes(disease)
   const isSighting = reporterType === 'individual' && individualKind === 'sighting'
   // Submit is blocked until the branching questions are answered.
   const reporterAnswered =
@@ -50,6 +53,8 @@ export default function ReportForm() {
       source: (form.elements.namedItem('source') as HTMLSelectElement)?.value || undefined,
       breed:  (form.elements.namedItem('breed')  as HTMLInputElement).value.trim() || undefined,
       notes:  notes.trim() || undefined,
+      locationDetail:
+        (form.elements.namedItem('locationDetail') as HTMLInputElement)?.value.trim() || undefined,
     }
 
     // On the bare apex, post directly to the canonical www host. A relative
@@ -132,6 +137,21 @@ export default function ReportForm() {
               ))}
             </div>
           </div>
+
+          {/* Specific location — only for place-based hazards (algae, ticks) */}
+          {showLocationDetail && (
+            <div className="form-group full">
+              <label>
+                Specific location <span className="opt">(helps others avoid the exact spot)</span>
+              </label>
+              <input
+                type="text"
+                name="locationDetail"
+                placeholder="e.g. Utah Lake — Lindon Harbor, Battle Creek Canyon trail, or 40.34, -111.73"
+                maxLength={120}
+              />
+            </div>
+          )}
 
           {/* Reporter type — drives follow-up questions and lead routing */}
           <div className="form-group full">
