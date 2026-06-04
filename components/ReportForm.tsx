@@ -31,8 +31,10 @@ export default function ReportForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Place-based hazards (algae bloom, tick sighting) get a "specific location" field.
-  const showLocationDetail = (LOCATION_DETAIL_DISEASES as readonly string[]).includes(disease)
+  // Any report can note a suspected location (e.g. the dog park where exposure
+  // likely happened). Place-based hazards (algae, ticks) word it as a hazard spot.
+  const isPlaceHazard = (LOCATION_DETAIL_DISEASES as readonly string[]).includes(disease)
+  const showLocationDetail = disease !== ''
   const isSighting = reporterType === 'individual' && individualKind === 'sighting'
   // Submit is blocked until the branching questions are answered.
   const reporterAnswered =
@@ -138,16 +140,23 @@ export default function ReportForm() {
             </div>
           </div>
 
-          {/* Specific location — only for place-based hazards (algae, ticks) */}
+          {/* Suspected location — a hazard spot, or where a dog was likely exposed */}
           {showLocationDetail && (
             <div className="form-group full">
               <label>
-                Specific location <span className="opt">(helps others avoid the exact spot)</span>
+                {isPlaceHazard ? 'Specific location' : 'Where was your dog likely exposed?'}{' '}
+                <span className="opt">
+                  {isPlaceHazard ? '(helps others avoid the exact spot)' : '(optional — e.g. a dog park)'}
+                </span>
               </label>
               <input
                 type="text"
                 name="locationDetail"
-                placeholder="e.g. Utah Lake — Lindon Harbor, Battle Creek Canyon trail, or 40.34, -111.73"
+                placeholder={
+                  isPlaceHazard
+                    ? 'e.g. Utah Lake — Lindon Harbor, or 40.34, -111.73'
+                    : 'e.g. Provo Dog Park, Riverside Doggy Daycare, or 40.34, -111.73'
+                }
                 maxLength={120}
               />
             </div>
