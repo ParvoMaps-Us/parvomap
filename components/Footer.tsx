@@ -1,3 +1,5 @@
+import { BIOREST_ENABLED } from '@/lib/flags'
+
 export default function Footer() {
   const year = new Date().getFullYear()
   return (
@@ -11,9 +13,15 @@ export default function Footer() {
         All other disease pins expire after 90 days.
       </div>
       <div className="footer-links">
-        <a href="https://scoopie.us" className="scoopie-link" target="_blank" rel="noopener noreferrer">
-          🐾 Dog illness in Utah? → Scoopie BioRest™
-        </a>
+        {BIOREST_ENABLED ? (
+          <a href="https://scoopie.us" className="scoopie-link" target="_blank" rel="noopener noreferrer">
+            🐾 Dog illness in Utah? → Scoopie BioRest™
+          </a>
+        ) : (
+          <span className="scoopie-link" style={{ opacity: 0.55, cursor: 'default' }}>
+            🐾 Scoopie BioRest™ — Coming Soon
+          </span>
+        )}
         <a
           href="mailto:parvomaps.us@gmail.com?subject=ParvoMap%20feedback%20%E2%80%94%20feature%20or%20bug"
           className="footer-feedback"

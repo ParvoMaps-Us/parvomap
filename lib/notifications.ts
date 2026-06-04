@@ -1,6 +1,7 @@
 import { Resend } from 'resend'
 import { getDiseaseName } from './diseases'
 import { getLeadType } from './lead'
+import { BIOREST_ENABLED } from './flags'
 import type { PendingReport } from './redis'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -70,9 +71,9 @@ export async function sendVerificationEmail(
 
     <p style="color:#444;font-size:11px;line-height:1.6;">
       ParvoMap · US Canine Disease Tracker<br>
-      parvomaps.us · Reports are anonymous<br><br>
+      parvomaps.us · Reports are anonymous${BIOREST_ENABLED ? `<br><br>
       Yard decontamination in Utah?
-      <a href="https://scoopie.us" style="color:#555;text-decoration:underline;">Scoopie BioRest™</a>
+      <a href="https://scoopie.us" style="color:#555;text-decoration:underline;">Scoopie BioRest™</a>` : ''}
     </p>
   </div>
 </body>
@@ -124,9 +125,9 @@ export async function sendVerificationConfirmation(
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
 
     <p style="color:#444;font-size:11px;line-height:1.6;">
-      ParvoMap · parvomaps.us<br>
+      ParvoMap · parvomaps.us${BIOREST_ENABLED ? `<br>
       Yard decontamination in Utah?
-      <a href="https://scoopie.us" style="color:#555;text-decoration:underline;">Scoopie BioRest™</a>
+      <a href="https://scoopie.us" style="color:#555;text-decoration:underline;">Scoopie BioRest™</a>` : ''}
     </p>
   </div>
 </body>

@@ -6,6 +6,7 @@ import { geocodeZip } from '@/lib/geocode'
 import { isUtahZip } from '@/lib/utah-zips'
 import { getsReporterOutreach } from '@/lib/lead'
 import { parseCoordinates } from '@/lib/coords'
+import { BIOREST_ENABLED } from '@/lib/flags'
 import {
   savePendingReport,
   queueDelayedEmail,
@@ -120,9 +121,10 @@ export async function POST(req: NextRequest) {
       }
 
       // Queue delayed BioRest outreach — only for Utah residential leads
-      // (an individual whose own dog is affected). Vets, facilities, and
-      // sighting-only reports don't get the automated "your yard" pitch.
-      if (isUtahZip(zip) && getsReporterOutreach(report)) {
+      // (an individual whose own dog is affected), and only while the Scoopie
+      // BioRest integration is live. Vets, facilities, and sighting-only
+      // reports don't get the automated "your yard" pitch.
+      if (BIOREST_ENABLED && isUtahZip(zip) && getsReporterOutreach(report)) {
         try {
           await queueDelayedEmail(id)
         } catch (err) {

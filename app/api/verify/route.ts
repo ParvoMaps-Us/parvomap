@@ -15,6 +15,7 @@ import {
 } from '@/lib/notifications'
 import { isUtahZip } from '@/lib/utah-zips'
 import { getLeadType } from '@/lib/lead'
+import { BIOREST_ENABLED } from '@/lib/flags'
 
 const SITE = 'https://www.parvomaps.us'
 
@@ -84,8 +85,8 @@ export async function GET(req: NextRequest) {
       )
 
       // Notify Scoopie only for qualifying Utah leads (residential or
-      // commercial). Vets and sighting-only reports generate no lead.
-      if (isUtahZip(report.zip) && getLeadType(report)) {
+      // commercial), and only while the BioRest integration is live.
+      if (BIOREST_ENABLED && isUtahZip(report.zip) && getLeadType(report)) {
         emailJobs.push(
           sendInternalAlert(report).catch(e =>
             console.error('Internal alert email failed:', e)
