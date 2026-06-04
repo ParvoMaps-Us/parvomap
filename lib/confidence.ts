@@ -11,8 +11,9 @@ const SOURCE_SCORES: Record<Source, number> = {
   'other':            0,
 }
 
-const REPORTER_SCORES: Record<'individual' | 'vet' | 'facility', number> = {
+const REPORTER_SCORES: Record<'individual' | 'vet' | 'facility' | 'news', number> = {
   vet:        20, // clinical report — highest trust
+  news:       15, // published article — sourced
   facility:   10, // boarding/commercial staff
   individual:  0,
 }
@@ -25,7 +26,7 @@ export function calculateConfidence({
   hasNotes,
 }: {
   source?: Source
-  reporterType?: 'individual' | 'vet' | 'facility'
+  reporterType?: 'individual' | 'vet' | 'facility' | 'news'
   sighting?: boolean
   hasEmail?: boolean
   hasNotes?: boolean

@@ -20,7 +20,7 @@ const DISEASES = [
   { key: 'tickspot', label: 'Tick Sighting', color: 'var(--d-tickspot)' },
 ]
 
-type ReporterType = 'individual' | 'vet' | 'facility'
+type ReporterType = 'individual' | 'vet' | 'facility' | 'news'
 
 export default function ReportForm() {
   const [disease, setDisease] = useState('')
@@ -28,6 +28,7 @@ export default function ReportForm() {
   // For an individual: 'affected' (own dog) or 'sighting' (saw it elsewhere).
   const [individualKind, setIndividualKind] = useState<'affected' | 'sighting' | ''>('')
   const [zip, setZip] = useState('')
+  const [sourceUrl, setSourceUrl] = useState('')
   const [locationDetail, setLocationDetail] = useState('')
   const [locationCoords, setLocationCoords] = useState<{ lat: number; lng: number } | null>(null)
   // Bias autocomplete to the entered ZIP so suggestions are local in any state.
@@ -75,7 +76,9 @@ export default function ReportForm() {
   const isSighting = reporterType === 'individual' && individualKind === 'sighting'
   // Submit is blocked until the branching questions are answered.
   const reporterAnswered =
-    reporterType !== '' && (reporterType !== 'individual' || individualKind !== '')
+    reporterType !== '' &&
+    (reporterType !== 'individual' || individualKind !== '') &&
+    (reporterType !== 'news' || sourceUrl.trim() !== '')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -95,6 +98,7 @@ export default function ReportForm() {
       locationDetail: locationDetail.trim() || undefined,
       locationLat: locationCoords?.lat,
       locationLng: locationCoords?.lng,
+      sourceUrl: sourceUrl.trim() || undefined,
     }
 
     // On the bare apex, post directly to the canonical www host. A relative
@@ -145,6 +149,7 @@ export default function ReportForm() {
               setReporterType('')
               setIndividualKind('')
               setZip('')
+              setSourceUrl('')
               setLocationDetail('')
               setLocationCoords(null)
               setNotes('')
@@ -232,6 +237,7 @@ export default function ReportForm() {
                 ['individual', '🐕 Individual / dog owner'],
                 ['vet',        '🏥 Veterinarian / clinic'],
                 ['facility',   '🏢 Boarding / commercial facility'],
+                ['news',       '📰 News / media outlet'],
               ] as const).map(([val, label]) => (
                 <button
                   key={val}
@@ -267,6 +273,24 @@ export default function ReportForm() {
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* News/media: paste the source article link */}
+          {reporterType === 'news' && (
+            <div className="form-group full">
+              <label>
+                Article link <span className="req">*</span>{' '}
+                <span className="opt">(paste the news article URL)</span>
+              </label>
+              <input
+                type="url"
+                inputMode="url"
+                placeholder="https://…"
+                maxLength={500}
+                value={sourceUrl}
+                onChange={e => setSourceUrl(e.target.value)}
+              />
             </div>
           )}
 

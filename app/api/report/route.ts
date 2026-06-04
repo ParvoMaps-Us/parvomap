@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: parsed.error.flatten() }, { status: 400, headers: cors })
     }
 
-    const { disease, zip, reporterType, sighting, email, source, breed, notes, locationDetail, locationLat, locationLng } = parsed.data
+    const { disease, zip, reporterType, sighting, email, source, breed, notes, locationDetail, locationLat, locationLng, sourceUrl } = parsed.data
 
     const confidence = calculateConfidence({
       source: source as typeof SOURCE_VALUES[number] | undefined,
@@ -94,6 +94,7 @@ export async function POST(req: NextRequest) {
       reporterType,
       sighting,
       locationDetail: locationDetail || undefined,
+      sourceUrl: sourceUrl || undefined,
       confidence,
       verified:  false,
       timestamp: Date.now(),

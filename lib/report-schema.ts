@@ -10,7 +10,7 @@ export const SOURCE_VALUES = [
 ] as const
 
 // Who is submitting. Drives follow-up questions, confidence, and lead routing.
-export const REPORTER_TYPES = ['individual', 'vet', 'facility'] as const
+export const REPORTER_TYPES = ['individual', 'vet', 'facility', 'news'] as const
 
 // Place-based environmental hazards: tied to a specific lake/canyon/trail, not a
 // sick dog. These get an optional "specific location" field on the form.
@@ -32,6 +32,12 @@ export const ReportSchema = z.object({
   // Exact coordinates captured when the reporter picks a place from autocomplete.
   locationLat: z.number().min(-90).max(90).optional(),
   locationLng: z.number().min(-180).max(180).optional(),
+  // Source article link for news/media reports. http(s) only (popup renders it).
+  sourceUrl: z
+    .string()
+    .max(500)
+    .optional()
+    .refine(u => !u || /^https?:\/\/.+/i.test(u), 'Link must be a valid http(s) URL'),
 })
 
 export type ReportInput = z.infer<typeof ReportSchema>
