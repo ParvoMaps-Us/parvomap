@@ -21,7 +21,11 @@ function getRedisClient(): Redis | null {
   }
 
   try {
-    redis = new Redis({ url, token })
+    // The SDK auto-parses JSON on read by default. This code stores values with
+    // JSON.stringify and reads them with JSON.parse, so leaving auto-parse on
+    // means get() returns an object and JSON.parse(object) throws. Disable it so
+    // reads return the raw string our JSON.parse expects.
+    redis = new Redis({ url, token, automaticDeserialization: false })
     return redis
   } catch (e) {
     console.error('Redis init failed:', e)
