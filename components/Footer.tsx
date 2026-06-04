@@ -14,6 +14,12 @@ export default function Footer() {
         <a href="https://scoopie.us" className="scoopie-link" target="_blank" rel="noopener noreferrer">
           🐾 Dog illness in Utah? → Scoopie BioRest™
         </a>
+        <a
+          href="mailto:parvomaps.us@gmail.com?subject=ParvoMap%20feedback%20%E2%80%94%20feature%20or%20bug"
+          className="footer-feedback"
+        >
+          💡 Suggest a feature or report a bug
+        </a>
         <div className="footer-copy">
           © {year} ParvoMap · parvomaps.us<br />
           Community-powered canine disease surveillance

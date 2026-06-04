@@ -770,6 +770,18 @@ footer {
   transition: background 0.15s, border-color 0.15s;
 }
 .scoopie-link:hover { background: var(--amber-dim); border-color: rgba(245,158,11,0.4); }
+.footer-feedback {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.15s;
+}
+.footer-feedback:hover { color: var(--accent, #00ff88); text-decoration: underline; }
 .footer-copy {
   font-family: var(--mono);
   font-size: 9px;
