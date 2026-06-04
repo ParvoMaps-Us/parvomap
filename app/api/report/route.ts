@@ -15,13 +15,42 @@ import {
 } from '@/lib/verification'
 import { sendVerificationEmail } from '@/lib/notifications'
 
+// Allow the form to POST from either canonical host. Without this, a page
+// loaded on the bare apex (parvomaps.us) that posts to /api/report gets a
+// 308 redirect to www — a cross-origin redirect the browser silently blocks,
+// so the report never reaches the server. Reflect known origins instead.
+const ALLOWED_ORIGINS = new Set([
+  'https://parvomaps.us',
+  'https://www.parvomaps.us',
+])
+
+function corsHeaders(origin: string | null): Record<string, string> {
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    return {
+      'Access-Control-Allow-Origin':  origin,
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Vary':                         'Origin',
+    }
+  }
+  return {}
+}
+
+export async function OPTIONS(req: NextRequest) {
+  return new Response(null, {
+    status:  204,
+    headers: corsHeaders(req.headers.get('origin')),
+  })
+}
+
 export async function POST(req: NextRequest) {
+  const cors = corsHeaders(req.headers.get('origin'))
   try {
     const body = await req.json()
     const parsed = ReportSchema.safeParse(body)
 
     if (!parsed.success) {
-      return Response.json({ error: parsed.error.flatten() }, { status: 400 })
+      return Response.json({ error: parsed.error.flatten() }, { status: 400, headers: cors })
     }
 
     const { disease, zip, email, source, breed, notes } = parsed.data
@@ -59,7 +88,6 @@ export async function POST(req: NextRequest) {
 
     // Send verification email (don't fail the response if email fails)
     let emailSent = false
-    let emailError: string | undefined // TODO: debug only — remove once email is confirmed working
     if (email) {
       const token = generateVerificationToken()
       await saveVerificationToken(token, id)
@@ -71,7 +99,6 @@ export async function POST(req: NextRequest) {
         await sendVerificationEmail(report, token)
         emailSent = true
       } catch (err) {
-        emailError = err instanceof Error ? err.message : String(err)
         console.error('Verification email failed:', err)
       }
 
@@ -92,11 +119,10 @@ export async function POST(req: NextRequest) {
       id,
       verified:  false,
       emailSent,
-      ...(emailError ? { emailError } : {}), // TODO: debug only — remove once email is confirmed working
-    })
+    }, { headers: cors })
   } catch (e) {
     console.error('Report POST error:', e)
-    return Response.json({ error: 'Server error' }, { status: 500 })
+    return Response.json({ error: 'Server error' }, { status: 500, headers: cors })
   }
 }
 

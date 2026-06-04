@@ -40,8 +40,17 @@ export default function ReportForm() {
       notes:  notes.trim() || undefined,
     }
 
+    // On the bare apex, post directly to the canonical www host. A relative
+    // POST from the apex would 308-redirect cross-origin, which the browser
+    // silently blocks (it won't follow a cross-origin redirect for a JSON
+    // POST). A direct cross-origin request is preflighted and allowed instead.
+    const endpoint =
+      typeof window !== 'undefined' && window.location.hostname === 'parvomaps.us'
+        ? 'https://www.parvomaps.us/api/report'
+        : '/api/report'
+
     try {
-      const res = await fetch('/api/report', {
+      const res = await fetch(endpoint, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(data),
