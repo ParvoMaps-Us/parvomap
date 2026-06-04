@@ -15,7 +15,7 @@ import {
 } from '@/lib/notifications'
 import { isUtahZip } from '@/lib/utah-zips'
 
-const SITE = 'https://parvomap.us'
+const SITE = 'https://www.parvomaps.us'
 
 /** Rough haversine distance in miles between two lat/lng points */
 function distanceMiles(
@@ -37,20 +37,20 @@ export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get('token')
 
   if (!token) {
-    return Response.redirect(`${SITE}/?verify=missing`)
+    return Response.redirect(`${SITE}/?verified=missing`)
   }
 
   try {
     // 1. Look up reportId from token
     const reportId = await getReportIdForToken(token)
     if (!reportId) {
-      return Response.redirect(`${SITE}/?verify=expired`)
+      return Response.redirect(`${SITE}/?verified=expired`)
     }
 
     // 2. Fetch pending report
     const report = await getPendingReport(reportId)
     if (!report) {
-      return Response.redirect(`${SITE}/?verify=expired`)
+      return Response.redirect(`${SITE}/?verified=expired`)
     }
 
     // 3. Publish to verified sorted set (strips PII)
@@ -91,12 +91,13 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Fire all non-blocking (don't await — redirect immediately)
-    Promise.allSettled(emailJobs)
+    // Await so the serverless function stays alive until the sends complete —
+    // a fire-and-forget here gets frozen/dropped after the redirect returns.
+    await Promise.allSettled(emailJobs)
 
-    return Response.redirect(`${SITE}/?verify=success`)
+    return Response.redirect(`${SITE}/?verified=success`)
   } catch (e) {
     console.error('Verify GET error:', e)
-    return Response.redirect(`${SITE}/?verify=error`)
+    return Response.redirect(`${SITE}/?verified=error`)
   }
 }
