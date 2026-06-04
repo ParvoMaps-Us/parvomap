@@ -116,6 +116,31 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     // Markers live in a layer group so we can clear and re-cluster on zoom.
     const markerLayer = L.layerGroup().addTo(map)
 
+    // Double-click a marker → fast fly-zoom in (also declusters a hotspot).
+    const flyZoom = (lat: number, lng: number) =>
+      map.flyTo([lat, lng], Math.max(map.getZoom() + 4, 15), { duration: 0.6 })
+
+    // "⚠ Report this area" CTA appended to popups; clicking it prefills the
+    // form's location and scrolls to the report section.
+    const reportBtnHtml =
+      `<button class="report-area-btn" style="margin-top:10px;width:100%;background:#00ff88;color:#000;border:none;border-radius:3px;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">⚠ Report this area</button>`
+
+    const wireMarker = (
+      marker: any,
+      lat: number,
+      lng: number,
+      detail: { locationDetail?: string; lat: number; lng: number; zip: string },
+    ) => {
+      marker.on('dblclick', (ev: any) => { L.DomEvent.stop(ev); flyZoom(lat, lng) })
+      marker.on('popupopen', (e: any) => {
+        const btn = e.popup.getElement()?.querySelector('.report-area-btn')
+        btn?.addEventListener('click', () => {
+          map.closePopup()
+          window.dispatchEvent(new CustomEvent('parvomap:report-area', { detail }))
+        })
+      })
+    }
+
     const addReportMarker = (report: Report) => {
       if (!report.lat || !report.lng) return
 
@@ -157,12 +182,19 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             <span style="color:#e0e0e0;">${ageLabel}</span>
           </div>
           <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Anonymous community report</div>
+          ${report.locationDetail ? reportBtnHtml : ''}
         </div>
       `)
 
-      L.marker([report.lat, report.lng], { icon })
+      const marker = L.marker([report.lat, report.lng], { icon })
         .bindPopup(popup)
         .addTo(markerLayer)
+      wireMarker(marker, report.lat, report.lng, {
+        locationDetail: report.locationDetail,
+        lat: report.lat,
+        lng: report.lng,
+        zip: report.zip,
+      })
     }
 
     const addHotspotMarker = (group: Report[]) => {
@@ -196,13 +228,15 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           <div style="color:#fff;margin-bottom:6px;">${escapeHtml(area)}</div>
           <div style="color:#aaa;margin-bottom:6px;">${valid.length} reports in this area</div>
           ${breakdown}
-          <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Zoom in for individual reports</div>
+          <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Double-click to zoom in · individual reports</div>
+          ${reportBtnHtml}
         </div>
       `)
 
-      L.marker([lat, lng], { icon, zIndexOffset: 1000 })
+      const marker = L.marker([lat, lng], { icon, zIndexOffset: 1000 })
         .bindPopup(popup)
         .addTo(markerLayer)
+      wireMarker(marker, lat, lng, { locationDetail: area, lat, lng, zip: valid[0].zip })
     }
 
     // Cluster cell scales with zoom: zoomed out → ~1.4mi cells (hotspots emerge);

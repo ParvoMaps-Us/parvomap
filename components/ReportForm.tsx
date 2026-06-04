@@ -52,10 +52,26 @@ export default function ReportForm() {
     return () => { cancelled = true }
   }, [zip])
 
+  // A map pin's "⚠ Report this area" button prefills the location and scrolls here.
+  useEffect(() => {
+    function onReportArea(e: Event) {
+      const d = (e as CustomEvent).detail as {
+        locationDetail?: string; lat?: number; lng?: number; zip?: string
+      }
+      if (d.zip) setZip(d.zip)
+      if (d.locationDetail) setLocationDetail(d.locationDetail)
+      if (d.lat != null && d.lng != null) setLocationCoords({ lat: d.lat, lng: d.lng })
+      document.getElementById('report')?.scrollIntoView({ behavior: 'smooth' })
+    }
+    window.addEventListener('parvomap:report-area', onReportArea)
+    return () => window.removeEventListener('parvomap:report-area', onReportArea)
+  }, [])
+
   // Any report can note a suspected location (e.g. the dog park where exposure
   // likely happened). Place-based hazards (algae, ticks) word it as a hazard spot.
   const isPlaceHazard = (LOCATION_DETAIL_DISEASES as readonly string[]).includes(disease)
-  const showLocationDetail = disease !== ''
+  // Show once a disease is picked, or when prefilled from a map pin's "Report this area".
+  const showLocationDetail = disease !== '' || locationDetail !== ''
   const isSighting = reporterType === 'individual' && individualKind === 'sighting'
   // Submit is blocked until the branching questions are answered.
   const reporterAnswered =
