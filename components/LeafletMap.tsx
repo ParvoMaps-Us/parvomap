@@ -113,7 +113,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       map.on('zoom', dismissHint)
     }
 
-    reports.forEach(report => {
+    const addReportMarker = (report: Report) => {
       if (!report.lat || !report.lng) return
 
       const color = pinColor(report)
@@ -160,6 +160,64 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       L.marker([report.lat, report.lng], { icon })
         .bindPopup(popup)
         .addTo(map)
+    }
+
+    const addHotspotMarker = (group: Report[]) => {
+      const valid = group.filter(r => r.lat != null && r.lng != null)
+      const lat = valid.reduce((s, r) => s + r.lat!, 0) / valid.length
+      const lng = valid.reduce((s, r) => s + r.lng!, 0) / valid.length
+
+      // disease breakdown, most common first
+      const counts: Record<string, number> = {}
+      valid.forEach(r => { counts[r.disease] = (counts[r.disease] ?? 0) + 1 })
+      const breakdown = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([d, n]) => `<div style="display:flex;justify-content:space-between;gap:16px;"><span style="color:#aaa;text-transform:capitalize;">${escapeHtml(d)}</span><span style="color:#ef4444;font-weight:600;">${n}</span></div>`)
+        .join('')
+      const area = valid[0].locationDetail || valid[0].city || `ZIP ${valid[0].zip}`
+
+      const icon = L.divIcon({
+        className: '',
+        html: `<div style="position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+          <div style="position:absolute;width:40px;height:40px;border-radius:50%;background:rgba(239,68,68,0.22);border:2px solid #ef4444;box-shadow:0 0 16px #ef4444aa;"></div>
+          <span style="position:relative;font-size:20px;line-height:1;">☣️</span>
+          <span style="position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-family:monospace;font-size:10px;font-weight:700;border-radius:9px;padding:1px 5px;border:1px solid #0a0a0a;">${valid.length}</span>
+        </div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
+      })
+
+      const popup = L.popup({ className: 'parvo-popup', closeButton: true, offset: [0, -10] }).setContent(`
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #ef4444;border-radius:4px;min-width:180px;">
+          <div style="color:#ef4444;font-weight:700;margin-bottom:6px;font-size:12px;letter-spacing:0.08em;">☣ OUTBREAK HOTSPOT</div>
+          <div style="color:#fff;margin-bottom:6px;">${escapeHtml(area)}</div>
+          <div style="color:#aaa;margin-bottom:6px;">${valid.length} reports in this area</div>
+          ${breakdown}
+          <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Zoom in for individual reports</div>
+        </div>
+      `)
+
+      L.marker([lat, lng], { icon, zIndexOffset: 1000 })
+        .bindPopup(popup)
+        .addTo(map)
+    }
+
+    // Group reports into ~1.4mi grid cells; a cell with enough reports becomes a
+    // single biohazard hotspot marker instead of a cluster of overlapping dots.
+    const BIOHAZARD_THRESHOLD = 10
+    const CELL = 0.02 // degrees (~1.4 mi)
+    const cells = new Map<string, Report[]>()
+    reports.forEach(r => {
+      if (r.lat == null || r.lng == null) return
+      const key = `${Math.round(r.lat / CELL)}_${Math.round(r.lng / CELL)}`
+      const arr = cells.get(key)
+      if (arr) arr.push(r)
+      else cells.set(key, [r])
+    })
+
+    cells.forEach(group => {
+      if (group.length >= BIOHAZARD_THRESHOLD) addHotspotMarker(group)
+      else group.forEach(addReportMarker)
     })
 
     return () => {
