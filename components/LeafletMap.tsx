@@ -11,7 +11,7 @@ interface Props {
 
 // Non-individual reporter types get a distinct emoji marker; individuals stay dots.
 const REPORTER_EMOJI: Record<string, string> = {
-  vet:      '🩺',
+  vet:      '🏥',
   facility: '🏢',
   news:     '📰',
 }
