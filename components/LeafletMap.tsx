@@ -9,6 +9,13 @@ interface Props {
   recencyClass: (timestamp: number) => string
 }
 
+// Non-individual reporter types get a distinct emoji marker; individuals stay dots.
+const REPORTER_EMOJI: Record<string, string> = {
+  vet:      '🩺',
+  facility: '🏢',
+  news:     '📰',
+}
+
 /** Escape user-supplied text before injecting into popup HTML (XSS-safe). */
 function escapeHtml(s: string): string {
   return s
@@ -148,8 +155,9 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       const rc = recencyClass(report.timestamp)
       const glowColor = rc === 'red' ? '#ef4444' : rc === 'amber' ? '#f59e0b' : '#00ff88'
 
-      // News/media reports get a 📰 marker so a sourced report is recognizable at a glance.
-      const icon = report.reporterType === 'news'
+      // Vet/facility/news get a distinct emoji marker; individuals stay as dots.
+      const emoji = report.reporterType ? REPORTER_EMOJI[report.reporterType] : undefined
+      const icon = emoji
         ? L.divIcon({
             className: '',
             html: `<div style="
@@ -157,7 +165,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
               font-size:15px;line-height:1;
               filter:drop-shadow(0 0 4px ${glowColor});
               cursor:pointer;
-            ">📰</div>`,
+            ">${emoji}</div>`,
             iconSize: [22, 22],
             iconAnchor: [11, 11],
           })
