@@ -18,12 +18,22 @@ const DISEASES = [
   { key: 'tickspot', label: 'Tick Sighting', color: 'var(--d-tickspot)' },
 ]
 
+type ReporterType = 'individual' | 'vet' | 'facility'
+
 export default function ReportForm() {
   const [disease, setDisease] = useState('')
+  const [reporterType, setReporterType] = useState<ReporterType | ''>('')
+  // For an individual: 'affected' (own dog) or 'sighting' (saw it elsewhere).
+  const [individualKind, setIndividualKind] = useState<'affected' | 'sighting' | ''>('')
   const [notes, setNotes] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  const isSighting = reporterType === 'individual' && individualKind === 'sighting'
+  // Submit is blocked until the branching questions are answered.
+  const reporterAnswered =
+    reporterType !== '' && (reporterType !== 'individual' || individualKind !== '')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -33,9 +43,11 @@ export default function ReportForm() {
     const form = e.currentTarget
     const data = {
       disease,
+      reporterType,
+      sighting: isSighting,
       zip:    (form.elements.namedItem('zip')    as HTMLInputElement).value.trim(),
       email:  (form.elements.namedItem('email')  as HTMLInputElement).value.trim(),
-      source: (form.elements.namedItem('source') as HTMLSelectElement).value || undefined,
+      source: (form.elements.namedItem('source') as HTMLSelectElement)?.value || undefined,
       breed:  (form.elements.namedItem('breed')  as HTMLInputElement).value.trim() || undefined,
       notes:  notes.trim() || undefined,
     }
@@ -121,23 +133,70 @@ export default function ReportForm() {
             </div>
           </div>
 
+          {/* Reporter type — drives follow-up questions and lead routing */}
+          <div className="form-group full">
+            <label>Who&apos;s reporting? <span className="req">*</span></label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 6 }}>
+              {([
+                ['individual', '🐕 Individual / dog owner'],
+                ['vet',        '🏥 Veterinarian / clinic'],
+                ['facility',   '🏢 Boarding / commercial facility'],
+              ] as const).map(([val, label]) => (
+                <button
+                  key={val}
+                  type="button"
+                  className={`disease-opt ${reporterType === val ? 'active' : ''}`}
+                  onClick={() => {
+                    setReporterType(val)
+                    if (val !== 'individual') setIndividualKind('')
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Individual sub-question — affected owner vs. secondhand sighting */}
+          {reporterType === 'individual' && (
+            <div className="form-group full">
+              <label>Is your own dog affected? <span className="req">*</span></label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 6 }}>
+                {([
+                  ['affected', '🐾 My dog is sick / was exposed'],
+                  ['sighting', '👀 Just reporting a sighting'],
+                ] as const).map(([val, label]) => (
+                  <button
+                    key={val}
+                    type="button"
+                    className={`disease-opt ${individualKind === val ? 'active' : ''}`}
+                    onClick={() => setIndividualKind(val)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="form-group">
             <label>ZIP Code <span className="req">*</span></label>
             <input type="text" name="zip" placeholder="e.g. 84101" maxLength={5} pattern="\d{5}" required />
           </div>
 
-          <div className="form-group">
-            <label>Source <span className="opt">(optional)</span></label>
-            <select name="source">
-              <option value="">Select source (optional)</option>
-              <option value="vet-diagnosed">Veterinarian diagnosed</option>
-              <option value="positive-test">Positive test result</option>
-              <option value="owner-observed">Strong symptoms — owner observed</option>
-              <option value="neighbor-report">Reported by neighbor</option>
-              <option value="social-media">Seen on social media / community</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
+          {/* "How confirmed" only applies when it's an actual case, not a sighting */}
+          {!isSighting && (
+            <div className="form-group">
+              <label>How was it confirmed? <span className="opt">(optional)</span></label>
+              <select name="source">
+                <option value="">Select…</option>
+                <option value="vet-diagnosed">Veterinarian diagnosed</option>
+                <option value="positive-test">Positive test result</option>
+                <option value="owner-observed">Strong symptoms observed</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          )}
 
           <div className="form-group">
             <label>Your Email <span className="opt">(to verify & notify)</span></label>
@@ -185,7 +244,7 @@ export default function ReportForm() {
           )}
 
           <div className="form-group full">
-            <button type="submit" className="btn-submit" disabled={!disease || loading}>
+            <button type="submit" className="btn-submit" disabled={!disease || !reporterAnswered || loading}>
               {loading ? <span className="spinner" /> : '→ Submit Report'}
             </button>
           </div>

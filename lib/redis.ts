@@ -56,6 +56,8 @@ export interface PendingReport extends Report {
   email?: string | null
   breed?: string | null
   county?: string
+  reporterType?: 'individual' | 'vet' | 'facility'
+  sighting?: boolean
 }
 
 const PENDING_TTL = 60 * 60 * 25 // 25 hours (1 h buffer over the 24 h token TTL)

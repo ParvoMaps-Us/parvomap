@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import { getDiseaseName } from './diseases'
+import { getLeadType } from './lead'
 import type { PendingReport } from './redis'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -140,7 +141,11 @@ export async function sendInternalAlert(report: PendingReport): Promise<void> {
   if (!alertEmail) return
 
   const diseaseName = getDiseaseName(report.disease)
+  const leadType = getLeadType(report) // 'residential' | 'commercial'
+  const leadLabel = leadType === 'commercial' ? 'COMMERCIAL (facility)' : 'RESIDENTIAL'
   const rows: [string, string][] = [
+    ['LEAD TYPE',  leadLabel],
+    ['REPORTER',   report.reporterType ?? 'Unknown'],
     ['DISEASE',    diseaseName],
     ['ZIP',        report.zip],
     ['CITY',       report.city ? `${report.city}, ${report.state ?? ''}` : 'Unknown'],
@@ -153,7 +158,7 @@ export async function sendInternalAlert(report: PendingReport): Promise<void> {
   await sendEmail({
     from:    FROM_ALERTS,
     to:      alertEmail,
-    subject: `ParvoMap Utah Lead — ${diseaseName} — ZIP ${report.zip}`,
+    subject: `ParvoMap Utah Lead [${leadLabel}] — ${diseaseName} — ZIP ${report.zip}`,
     html: `
 <div style="font-family:monospace;background:#0a0a0a;color:#f0f0f0;padding:24px;max-width:480px;">
   <div style="color:#00ff88;font-size:16px;font-weight:bold;margin-bottom:16px;letter-spacing:0.1em;">

@@ -4,6 +4,7 @@ import { calculateConfidence } from '@/lib/confidence'
 import type { SOURCE_VALUES } from '@/lib/report-schema'
 import { geocodeZip } from '@/lib/geocode'
 import { isUtahZip } from '@/lib/utah-zips'
+import { getsReporterOutreach } from '@/lib/lead'
 import {
   savePendingReport,
   queueDelayedEmail,
@@ -53,10 +54,12 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: parsed.error.flatten() }, { status: 400, headers: cors })
     }
 
-    const { disease, zip, email, source, breed, notes } = parsed.data
+    const { disease, zip, reporterType, sighting, email, source, breed, notes } = parsed.data
 
     const confidence = calculateConfidence({
       source: source as typeof SOURCE_VALUES[number] | undefined,
+      reporterType,
+      sighting,
       hasEmail: !!email,
       hasNotes: !!notes,
     })
@@ -78,6 +81,8 @@ export async function POST(req: NextRequest) {
       source:    source || undefined,
       breed:     breed || null,
       notes:     notes || undefined,
+      reporterType,
+      sighting,
       confidence,
       verified:  false,
       timestamp: Date.now(),
@@ -102,8 +107,10 @@ export async function POST(req: NextRequest) {
         console.error('Verification email failed:', err)
       }
 
-      // Queue delayed BioRest outreach for Utah reporters
-      if (isUtahZip(zip)) {
+      // Queue delayed BioRest outreach — only for Utah residential leads
+      // (an individual whose own dog is affected). Vets, facilities, and
+      // sighting-only reports don't get the automated "your yard" pitch.
+      if (isUtahZip(zip) && getsReporterOutreach(report)) {
         try {
           await queueDelayedEmail(id)
         } catch (err) {

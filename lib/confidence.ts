@@ -11,18 +11,30 @@ const SOURCE_SCORES: Record<Source, number> = {
   'other':            0,
 }
 
+const REPORTER_SCORES: Record<'individual' | 'vet' | 'facility', number> = {
+  vet:        20, // clinical report — highest trust
+  facility:   10, // boarding/commercial staff
+  individual:  0,
+}
+
 export function calculateConfidence({
   source,
+  reporterType,
+  sighting,
   hasEmail,
   hasNotes,
 }: {
   source?: Source
+  reporterType?: 'individual' | 'vet' | 'facility'
+  sighting?: boolean
   hasEmail?: boolean
   hasNotes?: boolean
 }): number {
   let score = 50 // base score
 
   if (source) score += SOURCE_SCORES[source] ?? 0
+  if (reporterType) score += REPORTER_SCORES[reporterType] ?? 0
+  if (sighting) score -= 10 // a secondhand sighting is weaker evidence
   if (hasEmail) score += 10
   if (hasNotes) score += 5
 

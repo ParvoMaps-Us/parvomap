@@ -14,6 +14,7 @@ import {
   sendInternalAlert,
 } from '@/lib/notifications'
 import { isUtahZip } from '@/lib/utah-zips'
+import { getLeadType } from '@/lib/lead'
 
 const SITE = 'https://www.parvomaps.us'
 
@@ -82,7 +83,9 @@ export async function GET(req: NextRequest) {
         )
       )
 
-      if (isUtahZip(report.zip)) {
+      // Notify Scoopie only for qualifying Utah leads (residential or
+      // commercial). Vets and sighting-only reports generate no lead.
+      if (isUtahZip(report.zip) && getLeadType(report)) {
         emailJobs.push(
           sendInternalAlert(report).catch(e =>
             console.error('Internal alert email failed:', e)
