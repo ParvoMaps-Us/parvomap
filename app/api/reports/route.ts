@@ -4,18 +4,22 @@ export async function GET() {
   try {
     const reports = await getReports({ limit: 200 })
 
-    // Strip private fields — never expose email, breed, source, notes publicly
-    const public_reports = reports.map(({ id, disease, zip, state, city, lat, lng, timestamp, verified }) => ({
-      id,
-      disease,
-      zip,
-      state,
-      city,
-      lat,
-      lng,
-      timestamp,
-      verified,
-    }))
+    // Strip private fields — never expose email, breed, source, notes publicly.
+    // locationDetail is public (a hazard/exposure spot shown on the map).
+    const public_reports = reports.map(
+      ({ id, disease, zip, state, city, lat, lng, timestamp, verified, locationDetail }) => ({
+        id,
+        disease,
+        zip,
+        state,
+        city,
+        lat,
+        lng,
+        timestamp,
+        verified,
+        locationDetail,
+      })
+    )
 
     return Response.json({ reports: public_reports })
   } catch (e) {
