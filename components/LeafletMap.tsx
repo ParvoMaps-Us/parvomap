@@ -148,18 +148,31 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       const rc = recencyClass(report.timestamp)
       const glowColor = rc === 'red' ? '#ef4444' : rc === 'amber' ? '#f59e0b' : '#00ff88'
 
-      const icon = L.divIcon({
-        className: '',
-        html: `<div style="
-          width:12px;height:12px;border-radius:50%;
-          background:${color};
-          border:2px solid ${glowColor};
-          box-shadow:0 0 6px ${glowColor}88;
-          cursor:pointer;
-        "></div>`,
-        iconSize: [12, 12],
-        iconAnchor: [6, 6],
-      })
+      // News/media reports get a 📰 marker so a sourced report is recognizable at a glance.
+      const icon = report.reporterType === 'news'
+        ? L.divIcon({
+            className: '',
+            html: `<div style="
+              width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+              font-size:15px;line-height:1;
+              filter:drop-shadow(0 0 4px ${glowColor});
+              cursor:pointer;
+            ">📰</div>`,
+            iconSize: [22, 22],
+            iconAnchor: [11, 11],
+          })
+        : L.divIcon({
+            className: '',
+            html: `<div style="
+              width:12px;height:12px;border-radius:50%;
+              background:${color};
+              border:2px solid ${glowColor};
+              box-shadow:0 0 6px ${glowColor}88;
+              cursor:pointer;
+            "></div>`,
+            iconSize: [12, 12],
+            iconAnchor: [6, 6],
+          })
 
       const age = Date.now() - report.timestamp
       const ageLabel = age < 60 * 60 * 1000

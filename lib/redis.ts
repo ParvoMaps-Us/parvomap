@@ -53,6 +53,8 @@ export interface Report {
   locationDetail?: string
   // Source article link for news/media reports. Public, non-PII.
   sourceUrl?: string
+  // Source category (drives map icon + credibility). Public, non-PII.
+  reporterType?: 'individual' | 'vet' | 'facility' | 'news'
 }
 
 /** Full shape stored in the pending hash (includes PII) */
@@ -111,6 +113,7 @@ export async function publishVerifiedReport(report: PendingReport): Promise<void
     confidence: report.confidence,
     locationDetail: report.locationDetail ?? undefined,
     sourceUrl: report.sourceUrl ?? undefined,
+    reporterType: report.reporterType ?? undefined,
   }
 
   await client.zadd('reports:verified', {
