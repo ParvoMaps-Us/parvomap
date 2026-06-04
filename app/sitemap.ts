@@ -1,0 +1,33 @@
+import type { MetadataRoute } from 'next'
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const base = 'https://www.parvomaps.us'
+  const now = new Date()
+
+  return [
+    {
+      url: base,
+      lastModified: now,
+      changeFrequency: 'hourly', // map pins change constantly
+      priority: 1.0,
+    },
+    {
+      url: `${base}/alerts`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+    {
+      url: `${base}/outbreaks`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+    {
+      url: `${base}/diseases`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+  ]
+}

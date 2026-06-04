@@ -5,10 +5,13 @@ export const metadata: Metadata = {
   title: 'ParvoMap — US Canine Disease & Tick Outbreak Tracker | Parvo, Lyme, RMSF, Kennel Cough & More',
   description: 'The only real-time, crowdsourced map tracking canine disease outbreaks across the United States. Report parvo, distemper, Lyme disease, Rocky Mountain spotted fever, kennel cough, leptospirosis, dog flu, giardia, tick sightings, and blue-green algae dangers near you.',
   keywords: 'parvo map, canine parvovirus tracker, dog disease outbreak map, parvo outbreak near me, kennel cough map, distemper outbreak, leptospirosis dogs, blue green algae dog warning, dog flu tracker, canine disease surveillance, parvotrack alternative',
-  metadataBase: new URL('https://parvomaps.us'),
+  metadataBase: new URL('https://www.parvomaps.us'),
+  alternates: {
+    canonical: 'https://www.parvomaps.us',
+  },
   openGraph: {
     type: 'website',
-    url: 'https://parvomaps.us/',
+    url: 'https://www.parvomaps.us/',
     title: 'ParvoMap — Real-Time US Canine Disease Outbreak Tracker',
     description: 'Community-powered map tracking parvo, distemper, kennel cough, leptospirosis, blue-green algae, and more. See what infectious diseases are reported near you. Protect your dog.',
     siteName: 'ParvoMap',
@@ -22,6 +25,29 @@ export const metadata: Metadata = {
   },
 }
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'ParvoMap',
+  url: 'https://www.parvomaps.us',
+  description: 'Real-time crowdsourced map tracking canine disease outbreaks across the United States including parvo, distemper, Lyme disease, kennel cough, and more.',
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'Any',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  audience: {
+    '@type': 'Audience',
+    audienceType: 'Dog owners, veterinarians, animal facilities',
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'United States',
+  },
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -30,6 +56,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap"
           rel="stylesheet"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body>{children}</body>
