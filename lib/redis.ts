@@ -2,7 +2,9 @@ import { Redis } from '@upstash/redis'
 
 let redis: Redis | null = null
 
-function getRedisClient(): Redis | null {
+/** Shared Upstash client (auto-deserialization off — see below). Returns null
+ *  if Redis isn't configured. The single source of truth for all Redis access. */
+export function getRedisClient(): Redis | null {
   if (redis) return redis
 
   // Support both UPSTASH_REDIS_REST_* (manual) and KV_REST_API_* (Vercel/Upstash integration).

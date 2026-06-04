@@ -1,5 +1,4 @@
-import { Redis } from '@upstash/redis'
-import { getPendingReport } from '@/lib/redis'
+import { getPendingReport, getRedisClient } from '@/lib/redis'
 import { sendDelayedUtahOutreach } from '@/lib/notifications'
 
 /**
@@ -20,11 +19,10 @@ export async function GET(req: Request) {
     }
   }
 
-  const isReal = (v?: string) => !!v && !v.includes('placeholder')
-  const client = new Redis({
-    url:   (isReal(process.env.UPSTASH_REDIS_REST_URL)   ? process.env.UPSTASH_REDIS_REST_URL   : process.env.KV_REST_API_URL)!,
-    token: (isReal(process.env.UPSTASH_REDIS_REST_TOKEN) ? process.env.UPSTASH_REDIS_REST_TOKEN : process.env.KV_REST_API_TOKEN)!,
-  })
+  const client = getRedisClient()
+  if (!client) {
+    return Response.json({ error: 'Redis not configured' }, { status: 503 })
+  }
 
   const now = Date.now()
 

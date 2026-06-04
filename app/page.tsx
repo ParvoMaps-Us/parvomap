@@ -5,9 +5,16 @@ import FilterBar from '@/components/FilterBar'
 import Map from '@/components/Map'
 import ReportForm from '@/components/ReportForm'
 import Footer from '@/components/Footer'
+import VerifiedBanner from '@/components/VerifiedBanner'
 import { getReports, getStats } from '@/lib/redis'
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ verified?: string }>
+}) {
+  const { verified } = await searchParams
+
   let stats = { last30: 0, last7: 0, last48: 0, states: 0, topDisease: '', topStates: '' }
   let reports: Awaited<ReturnType<typeof getReports>> = []
 
@@ -20,6 +27,7 @@ export default async function HomePage() {
   return (
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
+      {verified && <VerifiedBanner status={verified} />}
       {reports.length > 0 && <Ticker reports={reports} />}
       <Header />
       <StatsBar {...stats} />
