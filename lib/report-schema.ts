@@ -29,6 +29,9 @@ export const ReportSchema = z.object({
   notes: z.string().max(280).optional(),
   // Specific spot for place-based hazards (lake/canyon/trail name or coordinates).
   locationDetail: z.string().max(120).optional(),
+  // Exact coordinates captured when the reporter picks a place from autocomplete.
+  locationLat: z.number().min(-90).max(90).optional(),
+  locationLng: z.number().min(-180).max(180).optional(),
 })
 
 export type ReportInput = z.infer<typeof ReportSchema>

@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: parsed.error.flatten() }, { status: 400, headers: cors })
     }
 
-    const { disease, zip, reporterType, sighting, email, source, breed, notes, locationDetail } = parsed.data
+    const { disease, zip, reporterType, sighting, email, source, breed, notes, locationDetail, locationLat, locationLng } = parsed.data
 
     const confidence = calculateConfidence({
       source: source as typeof SOURCE_VALUES[number] | undefined,
@@ -68,10 +68,14 @@ export async function POST(req: NextRequest) {
     // Geocode ZIP → lat/lng/city/state
     const geo = await geocodeZip(zip)
 
-    // If the reporter typed coordinates into the location field, drop the pin
-    // exactly there instead of the ZIP centroid (more accurate for a specific
-    // lake/trail). Plain place names fall back to the ZIP centroid.
-    const coords = parseCoordinates(locationDetail)
+    // Pin precision, in priority order:
+    //   1. Coordinates from a picked autocomplete place (locationLat/Lng)
+    //   2. Coordinates typed into the location field ("…, 40.34, -111.73")
+    //   3. ZIP centroid
+    const coords =
+      (locationLat != null && locationLng != null)
+        ? { lat: locationLat, lng: locationLng }
+        : parseCoordinates(locationDetail)
 
     const id = crypto.randomUUID()
     const report: PendingReport = {

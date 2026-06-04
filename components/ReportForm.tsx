@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { LOCATION_DETAIL_DISEASES } from '@/lib/report-schema'
+import LocationAutocomplete from './LocationAutocomplete'
 
 const DISEASES = [
   { key: 'parvo', label: 'Parvovirus', color: 'var(--d-parvo)' },
@@ -26,6 +27,8 @@ export default function ReportForm() {
   const [reporterType, setReporterType] = useState<ReporterType | ''>('')
   // For an individual: 'affected' (own dog) or 'sighting' (saw it elsewhere).
   const [individualKind, setIndividualKind] = useState<'affected' | 'sighting' | ''>('')
+  const [locationDetail, setLocationDetail] = useState('')
+  const [locationCoords, setLocationCoords] = useState<{ lat: number; lng: number } | null>(null)
   const [notes, setNotes] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -55,8 +58,9 @@ export default function ReportForm() {
       source: (form.elements.namedItem('source') as HTMLSelectElement)?.value || undefined,
       breed:  (form.elements.namedItem('breed')  as HTMLInputElement).value.trim() || undefined,
       notes:  notes.trim() || undefined,
-      locationDetail:
-        (form.elements.namedItem('locationDetail') as HTMLInputElement)?.value.trim() || undefined,
+      locationDetail: locationDetail.trim() || undefined,
+      locationLat: locationCoords?.lat,
+      locationLng: locationCoords?.lng,
     }
 
     // On the bare apex, post directly to the canonical www host. A relative
@@ -99,7 +103,18 @@ export default function ReportForm() {
           <div className="success-body">
             Your report has been submitted. <strong>Check your email</strong> to verify and publish it to the map.
           </div>
-          <button className="btn-another" onClick={() => setSubmitted(false)}>
+          <button
+            className="btn-another"
+            onClick={() => {
+              setSubmitted(false)
+              setDisease('')
+              setReporterType('')
+              setIndividualKind('')
+              setLocationDetail('')
+              setLocationCoords(null)
+              setNotes('')
+            }}
+          >
             + Submit another report
           </button>
         </div>
@@ -149,16 +164,27 @@ export default function ReportForm() {
                   {isPlaceHazard ? '(helps others avoid the exact spot)' : '(optional — e.g. a dog park)'}
                 </span>
               </label>
-              <input
-                type="text"
-                name="locationDetail"
+              <LocationAutocomplete
+                value={locationDetail}
                 placeholder={
                   isPlaceHazard
-                    ? 'e.g. Utah Lake — Lindon Harbor, or 40.34, -111.73'
-                    : 'e.g. Provo Dog Park, Riverside Doggy Daycare, or 40.34, -111.73'
+                    ? 'Start typing a lake, canyon, or trail…'
+                    : 'Start typing a dog park, daycare, or place…'
                 }
-                maxLength={120}
+                onChange={text => {
+                  setLocationDetail(text)
+                  setLocationCoords(null) // typing invalidates any picked place
+                }}
+                onSelect={place => {
+                  setLocationDetail(place.label)
+                  setLocationCoords({ lat: place.lat, lng: place.lng })
+                }}
               />
+              {locationCoords && (
+                <div style={{ marginTop: 4, fontSize: 10, color: '#00ff88', fontFamily: 'var(--mono)' }}>
+                  ✓ Exact spot pinned
+                </div>
+              )}
             </div>
           )}
 
