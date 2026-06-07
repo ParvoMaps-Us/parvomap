@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 // Public, non-PII columns. Email/breed/notes are never stored on verified
 // reports, so there's nothing sensitive to leak here.
 const COLUMNS: (keyof Report)[] = [
-  'id', 'kind', 'disease', 'lostKind', 'state', 'city', 'zip', 'lat', 'lng',
+  'id', 'kind', 'disease', 'lostKind', 'state', 'county', 'city', 'zip', 'lat', 'lng',
   'reporterType', 'verifiedClinic', 'confidence', 'timestamp',
 ]
 
@@ -55,6 +55,7 @@ export async function GET(req: NextRequest) {
 
   const filter: ReportFilter = {
     state: p.get('state') ?? undefined,
+    county: p.get('county') ?? undefined,
     city: p.get('city') ?? undefined,
     diseases,
   }

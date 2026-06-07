@@ -42,7 +42,7 @@ export async function geocodeZip(zip: string): Promise<GeoResult | null> {
 export async function reverseGeocode(
   lat: number,
   lng: number,
-): Promise<{ city?: string; state?: string } | null> {
+): Promise<{ city?: string; state?: string; county?: string } | null> {
   try {
     const res = await fetch(
       `https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&lang=en`,
@@ -56,8 +56,9 @@ export async function reverseGeocode(
 
     // US state names come back full ("Utah"); abbreviate to match ZIP geocoding.
     return {
-      city:  p.city || p.town || p.village || p.county || undefined,
-      state: US_STATE_ABBR[p.state] ?? p.state ?? undefined,
+      city:   p.city || p.town || p.village || p.county || undefined,
+      state:  US_STATE_ABBR[p.state] ?? p.state ?? undefined,
+      county: p.county || undefined,
     }
   } catch {
     return null

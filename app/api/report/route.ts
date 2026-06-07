@@ -86,10 +86,13 @@ export async function POST(req: NextRequest) {
         ? { lat: locationLat, lng: locationLng }
         : parseCoordinates(locationDetail)
 
-    // No ZIP but we have an exact pin → reverse-geocode it for a city/state label
-    // so the report still shows a readable area on the map and in emails.
+    // Reverse-geocode whenever we have a location: it fills city/state for an
+    // exact pin that skipped the ZIP, and — unlike ZIP geocoding — returns the
+    // county, which powers the Pro Clinic county filter. County name is non-PII.
+    const pinLat = coords?.lat ?? geo?.lat
+    const pinLng = coords?.lng ?? geo?.lng
     const rev =
-      !geo && coords ? await reverseGeocode(coords.lat, coords.lng) : null
+      pinLat != null && pinLng != null ? await reverseGeocode(pinLat, pinLng) : null
 
     const id = crypto.randomUUID()
     const report: PendingReport = {
@@ -98,7 +101,7 @@ export async function POST(req: NextRequest) {
       zip:       zip || '',
       state:     geo?.state  ?? rev?.state ?? '',
       city:      geo?.city   ?? rev?.city  ?? undefined,
-      county:    geo?.county ?? undefined,
+      county:    rev?.county ?? geo?.county ?? undefined,
       lat:       coords?.lat ?? geo?.lat ?? undefined,
       lng:       coords?.lng ?? geo?.lng ?? undefined,
       email:     email || null,

@@ -45,8 +45,9 @@ hash. These phases build the value subscribers are paying for.
 The Pro Clinic paid surface, gated to active `pro-clinic` accounts:
 - [x] **Clinic dashboard** — `/clinic` requests a magic link; `/clinic/dashboard`
       verifies it + re-checks `isProClinic`, then renders the aggregated view.
-- [x] **State / city filtering** — region dropdowns on the dashboard (true county
-      filtering deferred — `lib/counties.ts` is an empty stub, no ZIP→county data).
+- [x] **State / county / city filtering** — region dropdowns + by-county chart on the
+      dashboard. County is derived via Photon reverse-geocode at submission and stored
+      on the public report (non-PII); filter + CSV column included.
 - [x] **Exportable case data (CSV / API)** — Export CSV button + `/api/clinic/export`
       (CSV/JSON), authed by magic token OR `CLINIC_API_KEY` for programmatic pulls.
 - [x] **Verified-clinic badge** — reports from active Pro Clinic emails are tagged
@@ -55,8 +56,8 @@ The Pro Clinic paid surface, gated to active `pro-clinic` accounts:
 
 Follow-ups:
 - [ ] Set `CLINIC_API_KEY` in Vercel to enable the programmatic export endpoint.
-- [ ] True county filtering — needs a ZIP→county dataset in `lib/counties.ts`.
 - [ ] Surface a link to `/clinic` for Pro Clinic subscribers (e.g. welcome email / `/account`).
+- [ ] Admin view of clinic disease-tracking requests (currently email + Redis only).
 
 ## Backlog (nice-to-have)
 - [x] **Photo resizing** before upload — downscale large phone photos (~1200px) to cut storage + speed up.

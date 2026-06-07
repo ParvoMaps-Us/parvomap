@@ -89,9 +89,9 @@ function RecentTable({ rows, lost }: { rows: Report[]; lost?: boolean }) {
 export default async function ClinicDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ e?: string; exp?: string; t?: string; state?: string; city?: string; disease?: string | string[] }>
+  searchParams: Promise<{ e?: string; exp?: string; t?: string; state?: string; county?: string; city?: string; disease?: string | string[] }>
 }) {
-  const { e, exp, t, state, city, disease } = await searchParams
+  const { e, exp, t, state, county, city, disease } = await searchParams
   const email = (e ?? '').trim().toLowerCase()
   const expNum = Number(exp)
   // `disease` arrives as a string (one checkbox) or array (several). Empty = all.
@@ -110,7 +110,7 @@ export default async function ClinicDashboardPage({
   if (!verifyMagicToken(email, expNum, t ?? '')) return denied
   if (!(await isProClinic(email))) return denied
 
-  const filter = { state: state || undefined, city: city || undefined, diseases }
+  const filter = { state: state || undefined, county: county || undefined, city: city || undefined, diseases }
   const [data, options] = await Promise.all([
     getDashboardData(filter),
     getFilterOptions(state),
@@ -119,6 +119,7 @@ export default async function ClinicDashboardPage({
   const auth = `e=${encodeURIComponent(email)}&exp=${expNum}&t=${encodeURIComponent(t ?? '')}`
   const filterQs = [
     state && `state=${encodeURIComponent(state)}`,
+    county && `county=${encodeURIComponent(county)}`,
     city && `city=${encodeURIComponent(city)}`,
     ...diseases.map(d => `disease=${encodeURIComponent(d)}`),
   ].filter(Boolean).join('&')
@@ -126,7 +127,7 @@ export default async function ClinicDashboardPage({
 
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 } as const
   const grid2 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 } as const
-  const regionLabel = [city, state].filter(Boolean).join(', ') || 'all regions'
+  const regionLabel = [city, county, state].filter(Boolean).join(', ') || 'all regions'
 
   return (
     <main style={wrap}>
@@ -151,6 +152,13 @@ export default async function ClinicDashboardPage({
             <select name="state" defaultValue={state ?? ''} style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 120 }}>
               <option value="">All states</option>
               {options.states.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>County</label>
+            <select name="county" defaultValue={county ?? ''} style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 150 }}>
+              <option value="">All counties{state ? ` in ${state}` : ''}</option>
+              {options.counties.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div>
@@ -190,6 +198,7 @@ export default async function ClinicDashboardPage({
       <div style={{ ...grid2, marginBottom: 14 }}>
         <BarList title="By disease" buckets={data.disease.byDisease} accent="var(--d-parvo, var(--green))" />
         <BarList title="By state" buckets={data.disease.byState} accent="var(--amber)" />
+        <BarList title="By county" buckets={data.disease.byCounty} accent="#a78bfa" />
         <BarList title="By reporter type" buckets={data.disease.byReporter} accent="var(--green)" />
       </div>
       <div style={{ marginBottom: 36 }}>

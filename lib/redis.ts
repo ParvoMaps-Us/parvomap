@@ -42,6 +42,9 @@ export interface Report {
   zip: string
   state: string
   city?: string
+  // County name (e.g. "Salt Lake County"). Public, non-PII — powers the Pro
+  // Clinic county filter. Derived via reverse geocoding at submission.
+  county?: string
   lat?: number
   lng?: number
   timestamp: number
@@ -124,6 +127,7 @@ export async function publishVerifiedReport(report: PendingReport): Promise<void
     zip:        report.zip,
     state:      report.state,
     city:       report.city,
+    county:     report.county ?? undefined,
     lat:        report.lat,
     lng:        report.lng,
     timestamp:  report.timestamp,

@@ -14,6 +14,7 @@ export interface DashboardData {
     last30: number
     byDisease: Bucket[]
     byState: Bucket[]
+    byCounty: Bucket[]
     byReporter: Bucket[]
     recent: Report[]
   }
@@ -54,6 +55,7 @@ const REPORTER_LABELS: Record<string, string> = {
 /** Region/topic filter for clinic-scoped views. All fields case-insensitive. */
 export interface ReportFilter {
   state?: string
+  county?: string
   city?: string
   /** Disease keys to include. Empty/undefined = all diseases. Only narrows
    *  disease reports; lost-dog reports are unaffected. */
@@ -64,11 +66,13 @@ export interface ReportFilter {
 export function filterReports(rows: Report[], filter?: ReportFilter): Report[] {
   if (!filter) return rows
   const state = filter.state?.trim().toLowerCase()
+  const county = filter.county?.trim().toLowerCase()
   const city = filter.city?.trim().toLowerCase()
   const diseases = filter.diseases?.map(d => d.trim().toLowerCase()).filter(Boolean)
-  if (!state && !city && (!diseases || diseases.length === 0)) return rows
+  if (!state && !county && !city && (!diseases || diseases.length === 0)) return rows
   return rows.filter(r => {
     if (state && (r.state || '').toLowerCase() !== state) return false
+    if (county && (r.county || '').toLowerCase() !== county) return false
     if (city && (r.city || '').toLowerCase() !== city) return false
     // Disease filter only applies to disease reports; lost dogs pass through.
     if (diseases && diseases.length > 0 && r.kind !== 'lost' && !diseases.includes((r.disease || '').toLowerCase())) return false
@@ -78,19 +82,14 @@ export function filterReports(rows: Report[], filter?: ReportFilter): Report[] {
 
 /** Distinct states (and cities within an optional state) present in the data —
  *  powers the clinic filter dropdowns. */
-export async function getFilterOptions(state?: string): Promise<{ states: string[]; cities: string[] }> {
+export async function getFilterOptions(state?: string): Promise<{ states: string[]; counties: string[]; cities: string[] }> {
   const all = (await getVerifiedRaw(5000)).map(v => v.report)
   const states = [...new Set(all.map(r => r.state).filter(Boolean) as string[])].sort()
   const target = state?.trim().toLowerCase()
-  const cities = [
-    ...new Set(
-      all
-        .filter(r => !target || (r.state || '').toLowerCase() === target)
-        .map(r => r.city)
-        .filter(Boolean) as string[],
-    ),
-  ].sort()
-  return { states, cities }
+  const inState = all.filter(r => !target || (r.state || '').toLowerCase() === target)
+  const counties = [...new Set(inState.map(r => r.county).filter(Boolean) as string[])].sort()
+  const cities = [...new Set(inState.map(r => r.city).filter(Boolean) as string[])].sort()
+  return { states, counties, cities }
 }
 
 /** Aggregate verified reports into disease + lost-dog dashboard views,
@@ -112,6 +111,7 @@ export async function getDashboardData(filter?: ReportFilter): Promise<Dashboard
       last30: disease.filter(r => within(r, 30)).length,
       byDisease:  tally(disease, r => r.disease, getDiseaseName),
       byState:    tally(disease, r => r.state || undefined),
+      byCounty:   tally(disease, r => r.county || undefined),
       byReporter: tally(disease, r => r.reporterType, k => REPORTER_LABELS[k] ?? k),
       recent: disease.slice(0, 15),
     },
