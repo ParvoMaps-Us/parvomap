@@ -68,7 +68,8 @@ export async function POST(req: NextRequest) {
       billing_address_collection: 'required',
       // Let businesses enter a VAT/EIN; harmless for consumers.
       tax_id_collection: { enabled: true },
-      customer_creation: 'always',
+      // Note: subscription mode always creates a Customer, so `customer_creation`
+      // must NOT be set here — Stripe rejects it outside `payment` mode.
       allow_promotion_codes: true,
       metadata: { plan },
       subscription_data: { metadata: { plan } },
