@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { verifyMagicToken } from '@/lib/magic-link'
 import { isProClinic } from '@/lib/alerts'
 import { getDashboardData, getFilterOptions, type Bucket } from '@/lib/dashboard'
-import { getDiseaseName } from '@/lib/diseases'
+import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
 import type { Report } from '@/lib/redis'
 
 export const dynamic = 'force-dynamic'
@@ -87,11 +87,14 @@ function RecentTable({ rows, lost }: { rows: Report[]; lost?: boolean }) {
 export default async function ClinicDashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ e?: string; exp?: string; t?: string; state?: string; city?: string }>
+  searchParams: Promise<{ e?: string; exp?: string; t?: string; state?: string; city?: string; disease?: string | string[] }>
 }) {
-  const { e, exp, t, state, city } = await searchParams
+  const { e, exp, t, state, city, disease } = await searchParams
   const email = (e ?? '').trim().toLowerCase()
   const expNum = Number(exp)
+  // `disease` arrives as a string (one checkbox) or array (several). Empty = all.
+  const diseases = (Array.isArray(disease) ? disease : disease ? [disease] : []).filter(Boolean)
+  const diseaseSet = new Set(diseases)
 
   const denied = (
     <main style={{ maxWidth: 620, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
@@ -106,15 +109,19 @@ export default async function ClinicDashboardPage({
   if (!verifyMagicToken(email, expNum, t ?? '')) return denied
   if (!(await isProClinic(email))) return denied
 
-  const filter = { state: state || undefined, city: city || undefined }
+  const filter = { state: state || undefined, city: city || undefined, diseases }
   const [data, options] = await Promise.all([
     getDashboardData(filter),
     getFilterOptions(state),
   ])
 
   const auth = `e=${encodeURIComponent(email)}&exp=${expNum}&t=${encodeURIComponent(t ?? '')}`
-  const regionQs = [state && `state=${encodeURIComponent(state)}`, city && `city=${encodeURIComponent(city)}`].filter(Boolean).join('&')
-  const csvHref = `/api/clinic/export?${auth}${regionQs ? `&${regionQs}` : ''}`
+  const filterQs = [
+    state && `state=${encodeURIComponent(state)}`,
+    city && `city=${encodeURIComponent(city)}`,
+    ...diseases.map(d => `disease=${encodeURIComponent(d)}`),
+  ].filter(Boolean).join('&')
+  const csvHref = `/api/clinic/export?${auth}${filterQs ? `&${filterQs}` : ''}`
 
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 } as const
   const grid2 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 } as const
@@ -131,31 +138,51 @@ export default async function ClinicDashboardPage({
         {email} · {regionLabel} · generated {fmt(data.generatedAt)}
       </p>
 
-      {/* ─── Region filter ─── */}
-      <form method="GET" style={{ ...card, marginBottom: 24, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+      {/* ─── Region + disease filter ─── */}
+      <form method="GET" style={{ ...card, marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <input type="hidden" name="e" value={email} />
         <input type="hidden" name="exp" value={expNum} />
         <input type="hidden" name="t" value={t ?? ''} />
-        <div>
-          <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>State</label>
-          <select name="state" defaultValue={state ?? ''} style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 120 }}>
-            <option value="">All states</option>
-            {options.states.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>State</label>
+            <select name="state" defaultValue={state ?? ''} style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 120 }}>
+              <option value="">All states</option>
+              {options.states.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>City</label>
+            <select name="city" defaultValue={city ?? ''} style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 140 }}>
+              <option value="">All cities{state ? ` in ${state}` : ''}</option>
+              {options.cities.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <button type="submit" style={{ padding: '9px 18px', borderRadius: 6, border: 'none', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700, background: 'var(--green)', color: '#04130b' }}>
+            Apply
+          </button>
+          <a href={csvHref} style={{ padding: '9px 18px', borderRadius: 6, border: '1px solid var(--green)', textDecoration: 'none', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700, color: 'var(--green)', marginLeft: 'auto' }}>
+            ⬇ Export CSV
+          </a>
         </div>
+
         <div>
-          <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>City</label>
-          <select name="city" defaultValue={city ?? ''} style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 140 }}>
-            <option value="">All cities{state ? ` in ${state}` : ''}</option>
-            {options.cities.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+          <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 8 }}>
+            Diseases <span style={{ color: 'var(--text-muted)' }}>· none selected = all diseases</span>
+          </label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {Object.entries(DISEASE_MAP).map(([key, info]) => {
+              const on = diseaseSet.has(key)
+              return (
+                <label key={key} style={{ cursor: 'pointer', userSelect: 'none', fontSize: 12, padding: '6px 12px', borderRadius: 999, border: `1px solid ${on ? 'var(--green)' : 'var(--border)'}`, background: on ? 'var(--green-dim)' : 'var(--bg-surface)', color: on ? 'var(--green)' : 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <input type="checkbox" name="disease" value={key} defaultChecked={on} style={{ accentColor: 'var(--green)' }} />
+                  {info.name}
+                </label>
+              )
+            })}
+          </div>
         </div>
-        <button type="submit" style={{ padding: '9px 18px', borderRadius: 6, border: 'none', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700, background: 'var(--green)', color: '#04130b' }}>
-          Apply
-        </button>
-        <a href={csvHref} style={{ padding: '9px 18px', borderRadius: 6, border: '1px solid var(--green)', textDecoration: 'none', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700, color: 'var(--green)', marginLeft: 'auto' }}>
-          ⬇ Export CSV
-        </a>
       </form>
 
       {/* ─── Diseases ─── */}

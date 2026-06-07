@@ -51,21 +51,27 @@ const REPORTER_LABELS: Record<string, string> = {
   news: 'News / media',
 }
 
-/** Region filter for clinic-scoped views. Both fields are case-insensitive. */
+/** Region/topic filter for clinic-scoped views. All fields case-insensitive. */
 export interface ReportFilter {
   state?: string
   city?: string
+  /** Disease keys to include. Empty/undefined = all diseases. Only narrows
+   *  disease reports; lost-dog reports are unaffected. */
+  diseases?: string[]
 }
 
-/** Apply a region filter to a list of reports. Empty filter passes everything. */
+/** Apply a filter to a list of reports. Empty filter passes everything. */
 export function filterReports(rows: Report[], filter?: ReportFilter): Report[] {
   if (!filter) return rows
   const state = filter.state?.trim().toLowerCase()
   const city = filter.city?.trim().toLowerCase()
-  if (!state && !city) return rows
+  const diseases = filter.diseases?.map(d => d.trim().toLowerCase()).filter(Boolean)
+  if (!state && !city && (!diseases || diseases.length === 0)) return rows
   return rows.filter(r => {
     if (state && (r.state || '').toLowerCase() !== state) return false
     if (city && (r.city || '').toLowerCase() !== city) return false
+    // Disease filter only applies to disease reports; lost dogs pass through.
+    if (diseases && diseases.length > 0 && r.kind !== 'lost' && !diseases.includes((r.disease || '').toLowerCase())) return false
     return true
   })
 }

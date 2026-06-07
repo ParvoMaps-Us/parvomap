@@ -49,14 +49,17 @@ export async function GET(req: NextRequest) {
     return Response.json({ error: 'Unauthorized — needs a valid Pro Clinic link or API key.' }, { status: 401 })
   }
 
+  // `disease` may be repeated (?disease=parvo&disease=lyme) or comma-separated
+  // (?disease=parvo,lyme). Empty = all diseases.
+  const diseases = p.getAll('disease').flatMap(d => d.split(',')).map(d => d.trim()).filter(Boolean)
+
   const filter: ReportFilter = {
     state: p.get('state') ?? undefined,
     city: p.get('city') ?? undefined,
+    diseases,
   }
-  const disease = p.get('disease')?.trim().toLowerCase()
 
-  let rows = filterReports((await getVerifiedRaw(5000)).map(v => v.report), filter)
-  if (disease) rows = rows.filter(r => (r.disease || '').toLowerCase() === disease)
+  const rows = filterReports((await getVerifiedRaw(5000)).map(v => v.report), filter)
   rows.sort((a, b) => b.timestamp - a.timestamp)
 
   const format = (p.get('format') ?? 'csv').toLowerCase()
