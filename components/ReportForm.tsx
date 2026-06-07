@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { LOCATION_DETAIL_DISEASES } from '@/lib/report-schema'
+import { downscaleImage } from '@/lib/resize-image'
 import LocationAutocomplete from './LocationAutocomplete'
 
 const DISEASES = [
@@ -142,8 +143,10 @@ export default function ReportForm() {
     setPhotoPreview(URL.createObjectURL(file))
     setPhotoUploading(true)
     try {
+      // Downscale big phone photos before upload to keep Blob storage small.
+      const toUpload = await downscaleImage(file)
       const fd = new FormData()
-      fd.append('file', file)
+      fd.append('file', toUpload)
       const res = await fetch(`${apiBase()}/api/upload`, { method: 'POST', body: fd })
       const json = await res.json()
       if (!res.ok) {
