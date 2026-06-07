@@ -1,8 +1,16 @@
 import type { MetadataRoute } from 'next'
+import { DISEASE_MAP } from '@/lib/diseases'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://www.parvomaps.us'
   const now = new Date()
+
+  const diseasePages: MetadataRoute.Sitemap = Object.keys(DISEASE_MAP).map(slug => ({
+    url: `${base}/diseases/${slug}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.6,
+  }))
 
   return [
     {
@@ -29,5 +37,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.7,
     },
+    ...diseasePages,
   ]
 }

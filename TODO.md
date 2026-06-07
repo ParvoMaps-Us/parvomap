@@ -37,9 +37,11 @@ hash. These phases build the value subscribers are paying for.
       (manage payment / cancel). Needs the portal enabled once in Stripe settings.
 - [ ] Push notifications (web/mobile) — left as a future phase; email-only for now.
 
-### Phase 3 — Disease page
-- [ ] Flesh out the per-disease page (`/diseases/[slug]`) with richer data.
-- [ ] Regional breakdowns, case history, and links into the dashboard.
+### Phase 3 — Disease pages ✅ shipped
+- [x] `/diseases` index — all diseases grouped by category with live report counts.
+- [x] `/diseases/[slug]` — blurb, symptoms, transmission, prevention, severity, plus
+      live stats (all-time / 7d / 30d, top states, recent reports) from verified reports.
+- [x] SEO metadata per disease + sitemap entries; "not veterinary advice" disclaimer.
 
 ### Phase 4 — Pro Clinic data access (the $49/mo perk) — ✅ shipped
 The Pro Clinic paid surface, gated to active `pro-clinic` accounts:

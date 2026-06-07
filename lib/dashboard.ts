@@ -92,6 +92,40 @@ export async function getFilterOptions(state?: string): Promise<{ states: string
   return { states, counties, cities }
 }
 
+export interface DiseaseStats {
+  total: number
+  last7: number
+  last30: number
+  byState: Bucket[]
+  recent: Report[]
+}
+
+/** Live stats for a single disease key, pulled from verified reports. */
+export async function getDiseaseStats(diseaseKey: string): Promise<DiseaseStats> {
+  const all = (await getVerifiedRaw(5000)).map(v => v.report)
+  const rows = all.filter(r => r.kind !== 'lost' && r.disease === diseaseKey)
+  const now = Date.now()
+  const within = (r: Report, days: number) => now - r.timestamp < days * DAY
+  return {
+    total: rows.length,
+    last7: rows.filter(r => within(r, 7)).length,
+    last30: rows.filter(r => within(r, 30)).length,
+    byState: tally(rows, r => r.state || undefined),
+    recent: rows.slice(0, 10),
+  }
+}
+
+/** Total verified case count per disease key — powers the index page badges. */
+export async function getDiseaseCounts(): Promise<Record<string, number>> {
+  const all = (await getVerifiedRaw(5000)).map(v => v.report)
+  const counts: Record<string, number> = {}
+  for (const r of all) {
+    if (r.kind === 'lost') continue
+    counts[r.disease] = (counts[r.disease] ?? 0) + 1
+  }
+  return counts
+}
+
 /** Aggregate verified reports into disease + lost-dog dashboard views,
  *  optionally narrowed to a state/city region. */
 export async function getDashboardData(filter?: ReportFilter): Promise<DashboardData> {
