@@ -100,6 +100,23 @@ export async function saveDiseaseRequest(req: DiseaseRequest): Promise<void> {
   await client.lpush('clinic_disease_requests', JSON.stringify(req))
 }
 
+/** All clinic disease-tracking requests, newest first. */
+export async function getDiseaseRequests(limit = 200): Promise<DiseaseRequest[]> {
+  const client = getRedisClient()
+  if (!client) return []
+  const raw = await client.lrange<string>('clinic_disease_requests', 0, limit - 1)
+  if (!raw) return []
+  const out: DiseaseRequest[] = []
+  for (const item of raw) {
+    try {
+      out.push((typeof item === 'string' ? JSON.parse(item) : item) as DiseaseRequest)
+    } catch {
+      // skip malformed
+    }
+  }
+  return out
+}
+
 // ─── Alert preferences ────────────────────────────────────────────────────────
 
 export interface AlertPrefs {

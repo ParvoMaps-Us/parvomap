@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getDashboardData, type Bucket, type DashboardData } from '@/lib/dashboard'
 import { getDiseaseName } from '@/lib/diseases'
 import { listFlags, getVerifiedRaw, type Report, type FlagRecord } from '@/lib/redis'
+import { getDiseaseRequests, type DiseaseRequest } from '@/lib/alerts'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
@@ -103,10 +104,11 @@ export default async function DashboardPage({
     )
   }
 
-  const [data, flags, verified]: [DashboardData, FlagRecord[], { report: Report }[]] = await Promise.all([
+  const [data, flags, verified, diseaseRequests]: [DashboardData, FlagRecord[], { report: Report }[], DiseaseRequest[]] = await Promise.all([
     getDashboardData(),
     listFlags(),
     getVerifiedRaw(),
+    getDiseaseRequests(),
   ])
   const reportById = new Map<string, Report>(verified.map(v => [v.report.id, v.report]))
   const qs = `key=${encodeURIComponent(key)}&from=dashboard`
@@ -215,6 +217,32 @@ export default async function DashboardPage({
           )
         })}
       </div>
+
+      {/* ─── Pro Clinic disease-tracking requests ─── */}
+      <h2 style={{ fontSize: 15, fontWeight: 700, margin: '40px 0 4px' }}>🧪 Clinic disease-tracking requests</h2>
+      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 14 }}>
+        {diseaseRequests.length} request{diseaseRequests.length !== 1 ? 's' : ''} from Pro Clinic accounts · newest first
+      </p>
+
+      {diseaseRequests.length === 0 ? (
+        <p style={{ color: 'var(--text-dim)', fontSize: 13 }}>No requests yet.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {diseaseRequests.map((r, i) => (
+            <div key={i} style={card}>
+              <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{r.disease}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>
+                <a href={`mailto:${r.email}`} style={{ color: '#60a5fa', textDecoration: 'none' }}>{r.email}</a> · {fmt(r.ts)}
+              </div>
+              {r.note && (
+                <div style={{ marginTop: 10, padding: 12, background: 'var(--bg-surface)', borderLeft: '2px solid var(--border)', fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                  {r.note}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </main>
   )
 }
