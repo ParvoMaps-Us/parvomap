@@ -175,7 +175,7 @@ export default async function ClinicDashboardPage({
             {Object.entries(DISEASE_MAP).map(([key, info]) => {
               const on = diseaseSet.has(key)
               return (
-                <label key={key} style={{ cursor: 'pointer', userSelect: 'none', fontSize: 12, padding: '6px 12px', borderRadius: 999, border: `1px solid ${on ? 'var(--green)' : 'var(--border)'}`, background: on ? 'var(--green-dim)' : 'var(--bg-surface)', color: on ? 'var(--green)' : 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <label key={key} style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', fontSize: 12, padding: '6px 12px', borderRadius: 999, border: `1px solid ${on ? 'var(--green)' : 'var(--border)'}`, background: on ? 'var(--green-dim)' : 'var(--bg-surface)', color: on ? 'var(--green)' : 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: 6, flex: '0 0 auto' }}>
                   <input type="checkbox" name="disease" value={key} defaultChecked={on} style={{ accentColor: 'var(--green)' }} />
                   {info.name}
                 </label>
