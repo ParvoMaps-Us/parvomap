@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Report } from '@/lib/redis'
 import 'leaflet/dist/leaflet.css'
 
@@ -61,6 +61,22 @@ function formatLastSeen(v: string): string {
 export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<any>(null)
+  // Click-to-drop-a-pin: ref drives the live map click handler, state drives the
+  // toggle button's appearance.
+  const dropModeRef = useRef(false)
+  const dropMarkerRef = useRef<any>(null)
+  const [dropMode, setDropMode] = useState(false)
+
+  // Toggle "drop a pin" mode: next map click drops a draggable pin and prefills
+  // the report form with its location.
+  function toggleDropMode() {
+    const next = !dropModeRef.current
+    dropModeRef.current = next
+    setDropMode(next)
+    if (containerRef.current) {
+      containerRef.current.style.cursor = next ? 'crosshair' : ''
+    }
+  }
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -328,9 +344,63 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     renderMarkers()
     map.on('zoomend', renderMarkers)
 
+    // ─── Click-to-drop-a-pin ───
+    mapRef.current = map
+
+    const dropIcon = L.divIcon({
+      className: '',
+      html: `<div style="font-size:26px;line-height:1;filter:drop-shadow(0 0 5px #00ff88);">📍</div>`,
+      iconSize: [26, 26],
+      iconAnchor: [13, 26],
+    })
+
+    // Reverse-geocode the dropped point to a readable label, then prefill the
+    // report form (the form already listens for this event and scrolls to itself).
+    const dispatchDrop = async (lat: number, lng: number) => {
+      let label = `Dropped pin (${lat.toFixed(5)}, ${lng.toFixed(5)})`
+      try {
+        const res = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&lang=en`)
+        const data = await res.json()
+        const p = data.features?.[0]?.properties
+        if (p) {
+          const parts = [p.name ?? p.street, p.city ?? p.county, p.state]
+            .filter((x: unknown): x is string => typeof x === 'string' && x.length > 0)
+          const built = Array.from(new Set(parts)).join(', ')
+          if (built) label = built
+        }
+      } catch {
+        /* keep coordinate label */
+      }
+      window.dispatchEvent(new CustomEvent('parvomap:report-area', { detail: { lat, lng, locationDetail: label } }))
+    }
+
+    const exitDropMode = () => {
+      dropModeRef.current = false
+      setDropMode(false)
+      if (containerRef.current) containerRef.current.style.cursor = ''
+    }
+
+    map.on('click', (e: any) => {
+      if (!dropModeRef.current) return
+      const { lat, lng } = e.latlng
+      if (dropMarkerRef.current) {
+        dropMarkerRef.current.setLatLng(e.latlng)
+      } else {
+        dropMarkerRef.current = L.marker(e.latlng, { draggable: true, icon: dropIcon, zIndexOffset: 2000 }).addTo(map)
+        // Dragging the pin updates the prefilled location.
+        dropMarkerRef.current.on('dragend', (ev: any) => {
+          const ll = ev.target.getLatLng()
+          dispatchDrop(ll.lat, ll.lng)
+        })
+      }
+      dispatchDrop(lat, lng)
+      exitDropMode() // drop one pin, then drag to fine-tune
+    })
+
     return () => {
       map.remove()
       mapRef.current = null
+      dropMarkerRef.current = null
     }
   }, [])
 
@@ -351,6 +421,34 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           touchAction: 'none',
         }}
       />
+
+      {/* Drop-a-pin toggle — top-right over the map */}
+      <button
+        type="button"
+        onClick={toggleDropMode}
+        style={{
+          position: 'absolute',
+          top: '16px',
+          right: '16px',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '8px 12px',
+          background: dropMode ? '#00ff88' : 'rgba(10,10,10,0.90)',
+          color: dropMode ? '#04130c' : '#00ff88',
+          border: `1px solid ${dropMode ? '#00ff88' : '#2a2a2a'}`,
+          borderRadius: '4px',
+          backdropFilter: 'blur(8px)',
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: '11px',
+          fontWeight: 700,
+          letterSpacing: '0.04em',
+          cursor: 'pointer',
+        }}
+      >
+        {dropMode ? '✕ Cancel — tap the map' : '📍 Drop a pin to report'}
+      </button>
 
       {/* Empty state overlay — no border, transparent bg */}
       {reports.length === 0 && (
