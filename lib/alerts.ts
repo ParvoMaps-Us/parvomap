@@ -84,6 +84,22 @@ export async function findSubscriberCustomerId(email: string): Promise<string | 
   return null
 }
 
+// ─── Pro Clinic: disease-tracking requests ────────────────────────────────────
+
+export interface DiseaseRequest {
+  email: string
+  disease: string
+  note: string
+  ts: number
+}
+
+/** Persist a clinic's "please track this disease" request (newest first). */
+export async function saveDiseaseRequest(req: DiseaseRequest): Promise<void> {
+  const client = getRedisClient()
+  if (!client) return
+  await client.lpush('clinic_disease_requests', JSON.stringify(req))
+}
+
 // ─── Alert preferences ────────────────────────────────────────────────────────
 
 export interface AlertPrefs {

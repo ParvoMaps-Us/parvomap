@@ -5,6 +5,7 @@ import { isProClinic } from '@/lib/alerts'
 import { getDashboardData, getFilterOptions, type Bucket } from '@/lib/dashboard'
 import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
 import type { Report } from '@/lib/redis'
+import RequestDiseaseForm from './RequestDiseaseForm'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
@@ -214,9 +215,20 @@ export default async function ClinicDashboardPage({
       <div style={{ ...grid2, marginBottom: 14 }}>
         <BarList title="By state" buckets={data.lost.byState} accent="#60a5fa" />
       </div>
-      <div style={{ marginBottom: 12 }}>
+      <div style={{ marginBottom: 36 }}>
         <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: 'var(--text-muted)' }}>Most recent</div>
         <RecentTable rows={data.lost.recent} lost />
+      </div>
+
+      {/* ─── Request a disease to track ─── */}
+      <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 6px' }}>🧪 Track a specific disease</h2>
+      <p style={{ color: 'var(--text-muted)', fontSize: 12, lineHeight: 1.6, marginBottom: 14 }}>
+        Need data on something not on the list above? Tell us what to track — new strains,
+        emerging conditions, or a region-specific concern. We typically begin tracking within
+        <strong style={{ color: 'var(--text)' }}> 24–72 hours</strong> and email you when it’s live.
+      </p>
+      <div style={{ ...card, marginBottom: 12 }}>
+        <RequestDiseaseForm email={email} exp={expNum} token={t ?? ''} />
       </div>
     </main>
   )

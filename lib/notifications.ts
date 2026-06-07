@@ -342,6 +342,30 @@ export async function sendClinicMagicLink(email: string, dashboardUrl: string): 
   })
 }
 
+// ─── PRO CLINIC: DISEASE-TRACKING REQUEST ─────────────────────────────────────
+
+/** Notify the team that a Pro Clinic asked us to start tracking a new disease. */
+export async function sendDiseaseTrackRequest(email: string, disease: string, note: string): Promise<void> {
+  const to = process.env.ADMIN_ALERT_EMAIL || process.env.SCOOPIE_ALERT_EMAIL || 'parvomaps.us@gmail.com'
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to,
+    replyTo: email,
+    subject: `Pro Clinic disease-tracking request: ${disease}`,
+    html: `
+<div style="font-family:monospace;background:#0a0a0a;color:#f0f0f0;padding:24px;max-width:480px;">
+  <div style="color:#00ff88;font-size:16px;font-weight:bold;margin-bottom:16px;letter-spacing:0.1em;">NEW DISEASE-TRACKING REQUEST</div>
+  <table style="width:100%;border-collapse:collapse;font-size:12px;">
+    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;width:35%;">DISEASE</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${disease}</td></tr>
+    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;">REQUESTED BY</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${email}</td></tr>
+    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;">WHEN</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${new Date().toLocaleString()}</td></tr>
+  </table>
+  ${note ? `<div style="margin-top:16px;padding:12px;background:#111;border-left:2px solid #333;color:#888;font-size:12px;line-height:1.6;"><div style="color:#555;margin-bottom:4px;font-size:10px;letter-spacing:0.1em;">NOTE</div>${note}</div>` : ''}
+  <div style="margin-top:24px;color:#f59e0b;font-size:11px;letter-spacing:0.06em;">→ Target: begin tracking within 24–72 hours</div>
+</div>`,
+  })
+}
+
 // ─── ALERTS: NEW-REPORT NOTIFICATION ──────────────────────────────────────────
 
 /** Notify a subscriber that a new verified report matched their alert area. */
