@@ -35,7 +35,7 @@ export const ReportSchema = z.object({
   // For individuals only: true = "just reporting a sighting" (not their own dog).
   // Absent/false for an affected owner, vet, or facility.
   sighting: z.boolean().optional(),
-  email: z.string().email('Invalid email').optional().or(z.literal('')),
+  email: z.string().email('A valid email is required'),
   source: z.enum(SOURCE_VALUES).optional(),
   breed: z.string().max(50).optional(),
   notes: z.string().max(280).optional(),

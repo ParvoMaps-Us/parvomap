@@ -532,8 +532,8 @@ export default function ReportForm() {
           )}
 
           <div className="form-group">
-            <label>Your Email <span className="opt">(to verify & notify)</span></label>
-            <input type="email" name="email" placeholder="your@email.com" />
+            <label>Your Email <span className="req">*</span> <span className="opt">(to verify & notify)</span></label>
+            <input type="email" name="email" placeholder="your@email.com" required />
           </div>
 
           <div className="form-group">
