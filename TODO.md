@@ -63,6 +63,8 @@ Follow-ups:
 ### Phase 5 — Terms of Service & Privacy Policy
 Legal pages are now required: we store PII (emails, report contents, lost-dog
 photos), take payments via Stripe, and set an authentication cookie.
+Decisions: governing law = **State of Utah, USA**; legal/privacy/deletion
+contact = **parvomaps.us@gmail.com**.
 - [ ] **Privacy Policy** (`/privacy`) — what we collect (emails, reports, photos,
       approximate location, IP), why, retention, and the cookie we set
       (`clinic_session` — strictly-necessary auth, no tracking). Disclose
