@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 import { ReportSchema } from '@/lib/report-schema'
 import { calculateConfidence } from '@/lib/confidence'
 import type { SOURCE_VALUES } from '@/lib/report-schema'
-import { geocodeZip } from '@/lib/geocode'
+import { geocodeZip, reverseGeocode } from '@/lib/geocode'
 import { isUtahZip } from '@/lib/utah-zips'
 import { getsReporterOutreach } from '@/lib/lead'
 import { parseCoordinates } from '@/lib/coords'
@@ -56,18 +56,26 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: parsed.error.flatten() }, { status: 400, headers: cors })
     }
 
-    const { disease, zip, reporterType, sighting, email, source, breed, notes, locationDetail, locationLat, locationLng, sourceUrl } = parsed.data
+    const { kind, disease, zip, reporterType, sighting, email, source, breed, notes, locationDetail, locationLat, locationLng, sourceUrl,
+            lostKind, dogName, dogBreed, dogDescription, address, lastSeen, contact, photoUrl } = parsed.data
 
-    const confidence = calculateConfidence({
-      source: source as typeof SOURCE_VALUES[number] | undefined,
-      reporterType,
-      sighting,
-      hasEmail: !!email,
-      hasNotes: !!notes,
-    })
+    const isLost = kind === 'lost'
 
-    // Geocode ZIP → lat/lng/city/state
-    const geo = await geocodeZip(zip)
+    // Lost-dog reports aren't graded on diagnostic confidence; they publish on
+    // email verification like any report. Disease/hazard reports keep scoring.
+    const confidence = isLost
+      ? 1
+      : calculateConfidence({
+          source: source as typeof SOURCE_VALUES[number] | undefined,
+          reporterType,
+          sighting,
+          hasEmail: !!email,
+          hasNotes: !!notes,
+        })
+
+    // Geocode ZIP → lat/lng/city/state (only when a ZIP was supplied; remote-area
+    // reports may omit it in favour of an exact pinned location).
+    const geo = zip ? await geocodeZip(zip) : null
 
     // Pin precision, in priority order:
     //   1. Coordinates from a picked autocomplete place (locationLat/Lng)
@@ -78,13 +86,18 @@ export async function POST(req: NextRequest) {
         ? { lat: locationLat, lng: locationLng }
         : parseCoordinates(locationDetail)
 
+    // No ZIP but we have an exact pin → reverse-geocode it for a city/state label
+    // so the report still shows a readable area on the map and in emails.
+    const rev =
+      !geo && coords ? await reverseGeocode(coords.lat, coords.lng) : null
+
     const id = crypto.randomUUID()
     const report: PendingReport = {
       id,
       disease,
-      zip,
-      state:     geo?.state  ?? '',
-      city:      geo?.city   ?? undefined,
+      zip:       zip || '',
+      state:     geo?.state  ?? rev?.state ?? '',
+      city:      geo?.city   ?? rev?.city  ?? undefined,
       county:    geo?.county ?? undefined,
       lat:       coords?.lat ?? geo?.lat ?? undefined,
       lng:       coords?.lng ?? geo?.lng ?? undefined,
@@ -99,6 +112,16 @@ export async function POST(req: NextRequest) {
       confidence,
       verified:  false,
       timestamp: Date.now(),
+      // Lost-dog specifics (undefined for disease/hazard reports)
+      kind,
+      lostKind:       isLost ? lostKind : undefined,
+      dogName:        isLost ? (dogName || undefined) : undefined,
+      dogBreed:       isLost ? (dogBreed || undefined) : undefined,
+      dogDescription: isLost ? (dogDescription || undefined) : undefined,
+      address:        isLost ? (address || undefined) : undefined,
+      lastSeen:       isLost ? (lastSeen || undefined) : undefined,
+      contact:        isLost ? (contact || undefined) : undefined,
+      photoUrl:       isLost ? (photoUrl || undefined) : undefined,
     }
 
     // Persist pending report to Redis (25 h TTL)
@@ -124,7 +147,7 @@ export async function POST(req: NextRequest) {
       // (an individual whose own dog is affected), and only while the Scoopie
       // BioRest integration is live. Vets, facilities, and sighting-only
       // reports don't get the automated "your yard" pitch.
-      if (BIOREST_ENABLED && isUtahZip(zip) && getsReporterOutreach(report)) {
+      if (!isLost && BIOREST_ENABLED && isUtahZip(zip || '') && getsReporterOutreach(report)) {
         try {
           await queueDelayedEmail(id)
         } catch (err) {

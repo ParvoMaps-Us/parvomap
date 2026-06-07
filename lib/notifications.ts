@@ -2,12 +2,20 @@ import { Resend } from 'resend'
 import { getDiseaseName } from './diseases'
 import { getLeadType } from './lead'
 import { BIOREST_ENABLED } from './flags'
+import { signLostToken } from './lost-token'
 import type { PendingReport } from './redis'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 const FROM_HELLO  = 'hello@parvomaps.us'
 const FROM_ALERTS = 'alerts@parvomaps.us'
+
+// Human-readable location for a report. ZIP-based reports read "ZIP 84101";
+// remote-area reports that pinned an exact spot fall back to city/state/place.
+function areaLabel(report: PendingReport): string {
+  if (report.zip) return `ZIP ${report.zip}`
+  return report.city || report.locationDetail || report.state || 'your area'
+}
 
 // Resend's SDK returns API errors as a value ({ data, error }) instead of
 // throwing — so a rejected send (bad key, unverified domain, wrong account)
@@ -29,12 +37,16 @@ export async function sendVerificationEmail(
   token: string
 ): Promise<void> {
   const verifyUrl  = `https://parvomaps.us/api/verify?token=${token}`
-  const diseaseName = getDiseaseName(report.disease)
+  // Lost-dog reports get their own wording; disease/hazard reports use the
+  // disease name. Both share the same verify flow below.
+  const subjectThing = report.kind === 'lost'
+    ? (report.dogName ? `lost dog (${report.dogName})` : 'lost dog')
+    : getDiseaseName(report.disease)
 
   await sendEmail({
     from:    FROM_HELLO,
     to:      report.email!,
-    subject: `Verify your ParvoMap report — ${diseaseName} near ZIP ${report.zip}`,
+    subject: `Verify your ParvoMaps report — ${subjectThing} near ${areaLabel(report)}`,
     html: `<!DOCTYPE html>
 <html>
 <head>
@@ -51,7 +63,7 @@ export async function sendVerificationEmail(
     <h1 style="font-size:28px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#f0f0f0;margin:0 0 8px;">Verify Your Report</h1>
 
     <p style="color:#888;font-size:14px;margin:0 0 24px;line-height:1.6;">
-      Your ${diseaseName} report near ZIP <strong style="color:#f0f0f0">${report.zip}</strong> has been received.
+      Your ${subjectThing} report near <strong style="color:#f0f0f0">${areaLabel(report)}</strong> has been received.
       Your pin is currently showing as unverified on the map.
     </p>
 
@@ -87,13 +99,15 @@ export async function sendVerificationConfirmation(
   report: PendingReport,
   nearbyCount: number
 ): Promise<void> {
-  const diseaseName = getDiseaseName(report.disease)
+  const subjectThing = report.kind === 'lost'
+    ? (report.dogName ? `lost dog (${report.dogName})` : 'lost dog')
+    : getDiseaseName(report.disease)
   const mapUrl = `https://parvomaps.us/?verified=success`
 
   await sendEmail({
     from:    FROM_HELLO,
     to:      report.email!,
-    subject: `Your report is live — ${diseaseName} near ZIP ${report.zip}`,
+    subject: `Your report is live — ${subjectThing} near ${areaLabel(report)}`,
     html: `<!DOCTYPE html>
 <html>
 <body style="margin:0;padding:0;background:#0a0a0a;font-family:Arial,sans-serif;color:#f0f0f0;">
@@ -110,17 +124,33 @@ export async function sendVerificationConfirmation(
     <h1 style="font-size:28px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#f0f0f0;margin:0 0 16px;">Your Pin Is Live</h1>
 
     <p style="color:#888;font-size:14px;margin:0 0 16px;line-height:1.6;">
-      Your ${diseaseName} report near ZIP <strong style="color:#f0f0f0">${report.zip}</strong> is now verified and showing on the map in full color.
+      Your ${subjectThing} report near <strong style="color:#f0f0f0">${areaLabel(report)}</strong> is now verified and showing on the map in full color.
     </p>
 
+    ${report.kind === 'lost' ? `
+    <p style="color:#888;font-size:14px;margin:0 0 32px;line-height:1.6;">
+      Neighbors browsing the map can now see your post and help look. We hope you are reunited soon.
+    </p>` : `
     <p style="color:#888;font-size:14px;margin:0 0 32px;line-height:1.6;">
       <strong style="color:#f0f0f0">${nearbyCount} dog owner${nearbyCount !== 1 ? 's' : ''}</strong>
       within 25 miles have been notified about activity in their area.
-    </p>
+    </p>`}
 
     <a href="${mapUrl}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin-bottom:32px;">
       View on Map →
     </a>
+
+    ${report.kind === 'lost' ? `
+    <div style="border-top:1px solid #222;margin:24px 0;"></div>
+    <p style="color:#888;font-size:13px;line-height:1.6;margin:0 0 8px;">
+      <strong style="color:#f0f0f0">Found your dog?</strong> Take your post and photo down right away:
+    </p>
+    <a href="https://parvomaps.us/api/lost/remove?id=${report.id}&t=${signLostToken(report.id)}" style="color:#00ff88;font-size:13px;text-decoration:underline;">
+      ✓ Mark as found &amp; remove my post
+    </a>
+    <p style="color:#555;font-size:11px;line-height:1.6;margin:12px 0 0;">
+      Otherwise your post automatically expires and is deleted after 30 days.
+    </p>` : ''}
 
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
 

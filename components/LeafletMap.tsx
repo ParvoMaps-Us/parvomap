@@ -26,6 +26,38 @@ function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;')
 }
 
+/** Popup markup for a lost-dog pin: photo, name, details, exact address, contact. */
+function lostPopupHtml(report: Report, ageLabel: string): string {
+  const isSighting = report.lostKind === 'sighting'
+  const heading = isSighting ? '👀 Dog spotted' : '🐶 Lost dog'
+  const headColor = isSighting ? '#f59e0b' : '#ef4444'
+  const name = report.dogName ? escapeHtml(report.dogName) : (isSighting ? 'Unknown dog' : 'Lost dog')
+  const descParts = [report.dogBreed, report.dogDescription].filter(Boolean).map(s => escapeHtml(s as string))
+  const lastSeen = report.lastSeen ? escapeHtml(formatLastSeen(report.lastSeen)) : ''
+  const place = report.address || report.locationDetail || report.city || ''
+
+  return `
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #2a2a2a;border-radius:4px;min-width:180px;max-width:240px;">
+      <div style="color:${headColor};font-weight:700;margin-bottom:6px;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;">${heading}</div>
+      ${report.photoUrl && /^https?:\/\//i.test(report.photoUrl) ? `<img src="${escapeHtml(report.photoUrl)}" alt="${name}" style="width:100%;height:130px;object-fit:cover;border-radius:3px;margin-bottom:6px;border:1px solid #2a2a2a;" />` : ''}
+      <div style="color:#fff;font-weight:700;font-size:13px;margin-bottom:2px;">${name}</div>
+      ${descParts.length ? `<div style="color:#bbb;margin-bottom:4px;line-height:1.4;">${descParts.join(' · ')}</div>` : ''}
+      ${place ? `<div style="color:#00ff88;margin:4px 0;font-size:11px;line-height:1.4;">📍 ${escapeHtml(place)}</div>` : ''}
+      ${lastSeen ? `<div style="display:flex;justify-content:space-between;gap:16px;"><span style="color:#aaa;">Last seen</span><span style="color:#e0e0e0;">${lastSeen}</span></div>` : ''}
+      <div style="display:flex;justify-content:space-between;gap:16px;"><span style="color:#aaa;">Reported</span><span style="color:#e0e0e0;">${ageLabel}</span></div>
+      ${report.contact ? `<div style="margin-top:8px;padding-top:6px;border-top:1px solid #222;color:#60a5fa;font-size:11px;word-break:break-word;">📞 ${escapeHtml(report.contact)}</div>` : ''}
+      <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Community lost-dog report</div>
+    </div>
+  `
+}
+
+/** Render an ISO/datetime-local string as a short human date; fall back to raw. */
+function formatLastSeen(v: string): string {
+  const d = new Date(v)
+  if (Number.isNaN(d.getTime())) return v
+  return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+}
+
 export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<any>(null)
@@ -155,8 +187,11 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       const rc = recencyClass(report.timestamp)
       const glowColor = rc === 'red' ? '#ef4444' : rc === 'amber' ? '#f59e0b' : '#00ff88'
 
-      // Vet/facility/news get a distinct emoji marker; individuals stay as dots.
-      const emoji = report.reporterType ? REPORTER_EMOJI[report.reporterType] : undefined
+      // Lost dogs get a paw marker; vet/facility/news get their own emoji;
+      // individual disease reporters stay as dots.
+      const emoji = report.kind === 'lost'
+        ? '🐶'
+        : report.reporterType ? REPORTER_EMOJI[report.reporterType] : undefined
       const icon = emoji
         ? L.divIcon({
             className: '',
@@ -189,10 +224,13 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         ? `${Math.round(age / 3600000)}h ago`
         : `${Math.round(age / 86400000)}d ago`
 
-      const popup = L.popup({ className: 'parvo-popup', closeButton: true, offset: [0, -6] }).setContent(`
+      const popup = L.popup({ className: 'parvo-popup', closeButton: true, offset: [0, -6] }).setContent(
+        report.kind === 'lost'
+          ? lostPopupHtml(report, ageLabel)
+          : `
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #2a2a2a;border-radius:4px;min-width:160px;">
-          <div style="color:#fff;font-weight:700;margin-bottom:6px;font-size:12px;">ZIP ${report.zip}</div>
-          <div style="color:#888;margin-bottom:2px;">${report.city ?? ''}</div>
+          <div style="color:#fff;font-weight:700;margin-bottom:6px;font-size:12px;">${report.zip ? `ZIP ${report.zip}` : escapeHtml(report.city || report.locationDetail || report.state || 'Pinned location')}</div>
+          <div style="color:#888;margin-bottom:2px;">${report.zip ? (report.city ?? '') : (report.state ?? '')}</div>
           ${report.locationDetail ? `<div style="color:#00ff88;margin:4px 0 2px;font-size:11px;line-height:1.4;">📍 ${escapeHtml(report.locationDetail)}</div>` : ''}
           ${report.sourceUrl && /^https?:\/\//i.test(report.sourceUrl) ? `<a href="${escapeHtml(report.sourceUrl)}" target="_blank" rel="noopener noreferrer" style="display:block;color:#60a5fa;margin:4px 0 2px;font-size:11px;text-decoration:underline;">📰 Source article ↗</a>` : ''}
           <div style="margin-top:6px;display:flex;justify-content:space-between;gap:16px;">
@@ -273,6 +311,9 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       const cells = new Map<string, Report[]>()
       reports.forEach(r => {
         if (r.lat == null || r.lng == null) return
+        // Lost-dog pins are always shown individually — they never merge into a
+        // disease "outbreak hotspot" cluster.
+        if (r.kind === 'lost') { addReportMarker(r); return }
         const key = `${Math.round(r.lat / cell)}_${Math.round(r.lng / cell)}`
         const arr = cells.get(key)
         if (arr) arr.push(r)

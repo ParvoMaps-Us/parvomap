@@ -21,8 +21,33 @@ const DISEASES = [
 ]
 
 type ReporterType = 'individual' | 'vet' | 'facility' | 'news'
+type ReportMode = 'health' | 'lost'
+type LostKind = 'owner' | 'sighting'
+
+// POST to the canonical www host when loaded on the bare apex (a relative POST
+// would 308 cross-origin and get silently blocked); otherwise stay relative.
+function apiBase(): string {
+  return typeof window !== 'undefined' && window.location.hostname === 'parvomaps.us'
+    ? 'https://www.parvomaps.us'
+    : ''
+}
 
 export default function ReportForm() {
+  // Top-level mode: a disease/hazard report or a lost-dog report.
+  const [mode, setMode] = useState<ReportMode>('health')
+
+  // Lost-dog fields
+  const [lostKind, setLostKind] = useState<LostKind | ''>('')
+  const [dogName, setDogName] = useState('')
+  const [dogBreed, setDogBreed] = useState('')
+  const [dogDescription, setDogDescription] = useState('')
+  const [lastSeen, setLastSeen] = useState('')
+  const [contact, setContact] = useState('')
+  const [photoUrl, setPhotoUrl] = useState('')
+  const [photoPreview, setPhotoPreview] = useState('')
+  const [photoUploading, setPhotoUploading] = useState(false)
+  const [photoError, setPhotoError] = useState('')
+
   const [disease, setDisease] = useState('')
   const [reporterType, setReporterType] = useState<ReporterType | ''>('')
   // For an individual: 'affected' (own dog) or 'sighting' (saw it elsewhere).
@@ -95,38 +120,95 @@ export default function ReportForm() {
     (reporterType !== 'individual' || individualKind !== '') &&
     (reporterType !== 'news' || sourceUrl.trim() !== '')
 
+  // Location is satisfied by EITHER a 5-digit ZIP or an exact pinned place —
+  // remote areas where ZIPs are huge/imprecise can skip the ZIP entirely.
+  const hasPreciseLocation = locationCoords !== null
+  const locationOk = /^\d{5}$/.test(zip) || hasPreciseLocation
+
+  // Lost-dog submit needs the branch answered, an exact pinned location, the
+  // photo finished uploading, and a name when the owner is reporting.
+  const lostOk =
+    lostKind !== '' &&
+    hasPreciseLocation &&
+    !photoUploading &&
+    (lostKind !== 'owner' || dogName.trim() !== '')
+
+  // Upload a chosen photo straight away to Vercel Blob; store the public URL.
+  async function handlePhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setPhotoError('')
+    setPhotoUrl('')
+    setPhotoPreview(URL.createObjectURL(file))
+    setPhotoUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch(`${apiBase()}/api/upload`, { method: 'POST', body: fd })
+      const json = await res.json()
+      if (!res.ok) {
+        setPhotoError(json?.error ?? 'Upload failed — try a different image.')
+      } else {
+        setPhotoUrl(json.url)
+      }
+    } catch {
+      setPhotoError('Upload failed — check your connection and try again.')
+    }
+    setPhotoUploading(false)
+  }
+
+  function clearPhoto() {
+    setPhotoUrl('')
+    setPhotoPreview('')
+    setPhotoError('')
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError('')
 
     const form = e.currentTarget
-    const data = {
-      disease,
-      reporterType,
-      sighting: isSighting,
-      zip:    zip.trim(),
-      email:  (form.elements.namedItem('email')  as HTMLInputElement).value.trim(),
-      source: (form.elements.namedItem('source') as HTMLSelectElement)?.value || undefined,
-      breed:  (form.elements.namedItem('breed')  as HTMLInputElement).value.trim() || undefined,
-      notes:  notes.trim() || undefined,
-      locationDetail: locationDetail.trim() || undefined,
-      locationLat: locationCoords?.lat,
-      locationLng: locationCoords?.lng,
-      sourceUrl: sourceUrl.trim() || undefined,
-    }
+    const email = (form.elements.namedItem('email') as HTMLInputElement)?.value.trim() || ''
 
-    // On the bare apex, post directly to the canonical www host. A relative
-    // POST from the apex would 308-redirect cross-origin, which the browser
-    // silently blocks (it won't follow a cross-origin redirect for a JSON
-    // POST). A direct cross-origin request is preflighted and allowed instead.
-    const endpoint =
-      typeof window !== 'undefined' && window.location.hostname === 'parvomaps.us'
-        ? 'https://www.parvomaps.us/api/report'
-        : '/api/report'
+    const data = mode === 'lost'
+      ? {
+          kind: 'lost' as const,
+          // Sentinel so the shared schema's required `disease` passes; the map
+          // keys lost pins off `kind`, not this value.
+          disease: 'lost',
+          reporterType: 'individual' as const,
+          lostKind,
+          dogName: dogName.trim() || undefined,
+          dogBreed: dogBreed.trim() || undefined,
+          dogDescription: dogDescription.trim() || undefined,
+          address: locationDetail.trim() || undefined,
+          lastSeen: lastSeen || undefined,
+          contact: contact.trim() || undefined,
+          photoUrl: photoUrl || undefined,
+          email,
+          notes: notes.trim() || undefined,
+          locationDetail: locationDetail.trim() || undefined,
+          locationLat: locationCoords?.lat,
+          locationLng: locationCoords?.lng,
+        }
+      : {
+          disease,
+          reporterType,
+          sighting: isSighting,
+          zip:    zip.trim(),
+          email,
+          source: (form.elements.namedItem('source') as HTMLSelectElement)?.value || undefined,
+          breed:  (form.elements.namedItem('breed')  as HTMLInputElement).value.trim() || undefined,
+          notes:  notes.trim() || undefined,
+          locationDetail: locationDetail.trim() || undefined,
+          locationLat: locationCoords?.lat,
+          locationLng: locationCoords?.lng,
+          sourceUrl: sourceUrl.trim() || undefined,
+        }
 
     try {
-      const res = await fetch(endpoint, {
+      const res = await fetch(`${apiBase()}/api/report`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(data),
@@ -168,6 +250,13 @@ export default function ReportForm() {
               setLocationDetail('')
               setLocationCoords(null)
               setNotes('')
+              setLostKind('')
+              setDogName('')
+              setDogBreed('')
+              setDogDescription('')
+              setLastSeen('')
+              setContact('')
+              clearPhoto()
             }}
           >
             + Submit another report
@@ -181,16 +270,47 @@ export default function ReportForm() {
     <section id="report">
       <div className="section-header" style={{ marginTop: 0 }}>
         <div className="section-num">02</div>
-        <div className="section-title">Report a Case</div>
+        <div className="section-title">{mode === 'lost' ? 'Report a Lost Dog' : 'Report a Case'}</div>
       </div>
 
       <p className="section-desc">
-        Spotted a sick dog in your neighborhood? <strong>Your report protects others.</strong> Reports are anonymous
-        and appear on the map after email verification. ZIP code is required — exact address is never collected.
+        {mode === 'lost' ? (
+          <>
+            Lost your dog, or spotted one running loose? <strong>Get more eyes on it.</strong> Lost-dog reports show an
+            <em> exact location</em> on the map (no privacy masking) and publish after a quick email verification.
+          </>
+        ) : (
+          <>
+            Spotted a sick dog in your neighborhood? <strong>Your report protects others.</strong> Reports are anonymous
+            and appear on the map after email verification. Enter a ZIP code <em>or</em> pin an exact location —
+            exact address is never collected.
+          </>
+        )}
       </p>
 
       <form onSubmit={handleSubmit}>
         <div className="form-grid">
+          {/* Report type: disease/hazard vs lost dog */}
+          <div className="form-group full">
+            <label>What are you reporting? <span className="req">*</span></label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 6 }}>
+              {([
+                ['health', '🦠 Illness / hazard'],
+                ['lost',   '🐶 Lost dog'],
+              ] as const).map(([val, label]) => (
+                <button
+                  key={val}
+                  type="button"
+                  className={`disease-opt ${mode === val ? 'active' : ''}`}
+                  onClick={() => { setMode(val); setError('') }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {mode === 'health' && (<>
           {/* Disease picker */}
           <div className="form-group full">
             <label>Disease / Hazard <span className="req">*</span></label>
@@ -303,22 +423,26 @@ export default function ReportForm() {
           )}
 
           <div className="form-group">
-            <label>ZIP Code <span className="req">*</span></label>
+            <label>
+              ZIP Code{' '}
+              {hasPreciseLocation
+                ? <span className="opt">(optional — exact spot pinned)</span>
+                : <span className="req">*</span>}
+            </label>
             <input
               type="text"
               name="zip"
               placeholder="e.g. 84101"
               maxLength={5}
               pattern="\d{5}"
-              required
               value={zip}
               onChange={e => setZip(e.target.value.replace(/\D/g, ''))}
             />
-            {isNews && (
-              <div style={{ marginTop: 4, fontSize: 10, color: '#888', fontFamily: 'var(--mono)' }}>
-                ZIP of the area the article is about — not your station.
-              </div>
-            )}
+            <div style={{ marginTop: 4, fontSize: 10, color: '#888', fontFamily: 'var(--mono)' }}>
+              {isNews
+                ? 'ZIP of the area the article is about — not your station.'
+                : 'No ZIP, or remote area? Pin the exact spot above instead.'}
+            </div>
           </div>
 
           {/* "How confirmed" only applies when it's an actual case, not a sighting */}
@@ -365,6 +489,149 @@ export default function ReportForm() {
             🔒 Reports are anonymous. Email is used only to verify your report and send nearby alerts.
             We never share or sell your information. ZIP code only — no street address collected.
           </div>
+          </>)}
+
+          {mode === 'lost' && (<>
+          {/* Lost dog: owner vs. someone who spotted a dog */}
+          <div className="form-group full">
+            <label>Are you the owner, or did you spot a dog? <span className="req">*</span></label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 6 }}>
+              {([
+                ['owner',    '🏠 My dog is lost'],
+                ['sighting', '👀 I spotted a loose dog'],
+              ] as const).map(([val, label]) => (
+                <button
+                  key={val}
+                  type="button"
+                  className={`disease-opt ${lostKind === val ? 'active' : ''}`}
+                  onClick={() => setLostKind(val)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Photo upload */}
+          <div className="form-group full">
+            <label>
+              Photo of the dog{' '}
+              <span className="opt">{lostKind === 'sighting' ? '(if you got one)' : '(helps people recognize them)'}</span>
+            </label>
+            {photoPreview ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photoPreview}
+                  alt="Dog preview"
+                  style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)' }}
+                />
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 11 }}>
+                  {photoUploading
+                    ? <span style={{ color: '#888' }}>Uploading…</span>
+                    : photoUrl
+                      ? <span style={{ color: 'var(--green)' }}>✓ Photo attached</span>
+                      : <span style={{ color: 'var(--red)' }}>{photoError || 'Upload failed'}</span>}
+                  <button
+                    type="button"
+                    onClick={clearPhoto}
+                    style={{ display: 'block', marginTop: 6, background: 'transparent', border: 'none', color: '#888', fontSize: 10, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                  >
+                    remove
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhoto} />
+            )}
+            {photoError && !photoPreview && (
+              <div style={{ marginTop: 4, fontSize: 10, color: 'var(--red)', fontFamily: 'var(--mono)' }}>{photoError}</div>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>
+              Dog&apos;s name{' '}
+              {lostKind === 'sighting' ? <span className="opt">(if known)</span> : <span className="req">*</span>}
+            </label>
+            <input
+              type="text"
+              placeholder={lostKind === 'sighting' ? 'e.g. tag said “Buddy”' : 'e.g. Buddy'}
+              maxLength={60}
+              value={dogName}
+              onChange={e => setDogName(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Breed <span className="opt">(optional)</span></label>
+            <input
+              type="text"
+              placeholder="e.g. Golden Retriever, mixed…"
+              maxLength={60}
+              value={dogBreed}
+              onChange={e => setDogBreed(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group full">
+            <label>Description <span className="opt">(color, size, collar, markings…)</span></label>
+            <textarea
+              placeholder="e.g. Medium, tan with white chest, blue collar, very friendly…"
+              maxLength={280}
+              value={dogDescription}
+              onChange={e => setDogDescription(e.target.value)}
+            />
+          </div>
+
+          {/* Exact address / last-seen location — precise, not masked */}
+          <div className="form-group full">
+            <label>
+              {lostKind === 'sighting' ? 'Where did you see the dog?' : 'Where was your dog lost?'}{' '}
+              <span className="req">*</span> <span className="opt">(exact address or spot)</span>
+            </label>
+            <LocationAutocomplete
+              value={locationDetail}
+              bias={zipCenter}
+              placeholder="Start typing a street address, park, or intersection…"
+              onChange={text => { setLocationDetail(text); setLocationCoords(null) }}
+              onSelect={place => { setLocationDetail(place.label); setLocationCoords({ lat: place.lat, lng: place.lng }) }}
+            />
+            {hasPreciseLocation
+              ? <div style={{ marginTop: 4, fontSize: 10, color: '#00ff88', fontFamily: 'var(--mono)' }}>✓ Exact spot pinned</div>
+              : <div style={{ marginTop: 4, fontSize: 10, color: '#888', fontFamily: 'var(--mono)' }}>Pick a result to pin the exact spot on the map.</div>}
+          </div>
+
+          <div className="form-group">
+            <label>Last seen <span className="opt">(optional)</span></label>
+            <input
+              type="datetime-local"
+              value={lastSeen}
+              onChange={e => setLastSeen(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Public contact <span className="opt">(phone/email shown on the map)</span></label>
+            <input
+              type="text"
+              placeholder="e.g. 801-555-0143 or name@email.com"
+              maxLength={120}
+              value={contact}
+              onChange={e => setContact(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group full">
+            <label>Your Email <span className="req">*</span> <span className="opt">(to verify — not shown publicly)</span></label>
+            <input type="email" name="email" placeholder="your@email.com" required />
+          </div>
+
+          <div className="privacy-note">
+            📣 Lost-dog reports are <strong>public</strong>: the exact location, photo, and any contact you add show on
+            the map so finders can help. Only your verification email stays private.
+          </div>
+          </>)}
 
           {error && (
             <div className="form-group full" style={{
@@ -381,8 +648,12 @@ export default function ReportForm() {
           )}
 
           <div className="form-group full">
-            <button type="submit" className="btn-submit" disabled={!disease || !reporterAnswered || loading}>
-              {loading ? <span className="spinner" /> : '→ Submit Report'}
+            <button
+              type="submit"
+              className="btn-submit"
+              disabled={loading || (mode === 'lost' ? !lostOk : (!disease || !reporterAnswered || !locationOk))}
+            >
+              {loading ? <span className="spinner" /> : (mode === 'lost' ? '→ Submit Lost Dog Report' : '→ Submit Report')}
             </button>
           </div>
         </div>

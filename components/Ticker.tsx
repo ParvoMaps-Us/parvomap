@@ -29,11 +29,22 @@ export default function Ticker({ reports }: TickerProps) {
     <div className="ticker-wrap">
       <div className="ticker-label">Live Reports</div>
       <div className="ticker-track">
-        {allItems.map((r, i) => (
-          <span key={i}>
-            ZIP <b>{r.zip}</b> · {r.city ?? r.state} · {DISEASE_LABELS[r.disease] ?? r.disease} · <em>{ageLabel(r.timestamp)}</em>
-          </span>
-        ))}
+        {allItems.map((r, i) =>
+          r.kind === 'lost' ? (
+            <span key={i}>
+              {r.lostKind === 'sighting' ? '👀 Dog spotted' : '🐶 Lost dog'}
+              {r.dogName ? <> · <b>{r.dogName}</b></> : ''}
+              {' · '}{r.address ?? r.city ?? r.state} · <em>{ageLabel(r.timestamp)}</em>
+            </span>
+          ) : (
+            <span key={i}>
+              {r.zip
+                ? <>ZIP <b>{r.zip}</b> · {r.city ?? r.state}</>
+                : <b>{r.city ?? r.locationDetail ?? r.state}</b>}
+              {' · '}{DISEASE_LABELS[r.disease] ?? r.disease} · <em>{ageLabel(r.timestamp)}</em>
+            </span>
+          )
+        )}
       </div>
     </div>
   )
