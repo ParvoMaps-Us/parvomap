@@ -415,10 +415,33 @@ export async function sendAlertNotification(email: string, report: Report): Prom
 /** Sent right after a successful subscription — tells the new member how to turn
  *  on their alerts (the perk they just paid for). */
 export async function sendSubscriptionWelcome(email: string, plan?: string | null): Promise<void> {
-  const planLabel = plan?.startsWith('pro') ? 'Pro Clinic' : 'Guardian'
+  const isClinic = plan?.startsWith('pro') ?? false
+  const planLabel = isClinic ? 'Pro Clinic' : 'Guardian'
   const alertsUrl = 'https://www.parvomaps.us/alerts'
+  const clinicUrl = 'https://www.parvomaps.us/clinic'
   const accountUrl = 'https://www.parvomaps.us/account'
   const cancelUrl = 'https://billing.stripe.com/p/login/4gMcMY9OscDGdAlbVY33W00'
+
+  // Pro Clinic accounts get an extra block: how to reach + use their dashboard.
+  const clinicBlock = isClinic ? `
+    <div style="border-top:1px solid #222;margin:32px 0;"></div>
+    <h2 style="font-size:18px;font-weight:700;color:#f0f0f0;margin:0 0 12px;">Your Pro Clinic dashboard 🏥</h2>
+    <p style="color:#888;font-size:14px;margin:0 0 16px;line-height:1.7;">
+      As a Pro Clinic, you also get a private regional data dashboard — case trends,
+      breakdowns by disease/state/county, and CSV export for your area.
+    </p>
+    <a href="${clinicUrl}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin-bottom:24px;">
+      Open My Dashboard →
+    </a>
+    <p style="color:#aaa;font-size:13px;font-weight:700;margin:0 0 8px;">How to use it</p>
+    <ol style="color:#888;font-size:13px;line-height:1.8;margin:0 0 8px;padding-left:20px;">
+      <li>Go to <a href="${clinicUrl}" style="color:#00ff88;text-decoration:underline;">parvomaps.us/clinic</a> and enter this email — we send a private 24-hour link to your dashboard.</li>
+      <li><strong style="color:#aaa;">Filter by region:</strong> pick a State, County, or City (leave them on "All" to see everything).</li>
+      <li><strong style="color:#aaa;">Filter by disease:</strong> tap the disease chips to focus — none selected means all diseases.</li>
+      <li><strong style="color:#aaa;">Export:</strong> hit <em>Export CSV</em> to download the filtered case data. Labs/pharma can also pull it via our API key — just ask.</li>
+      <li><strong style="color:#aaa;">Need something not listed?</strong> Use "Track a specific disease" at the bottom — we begin tracking within 24–72 hours.</li>
+    </ol>
+` : ''
 
   await sendEmail({
     from:    FROM_ALERTS,
@@ -447,6 +470,7 @@ export async function sendSubscriptionWelcome(email: string, plan?: string | nul
     <p style="color:#888;font-size:13px;line-height:1.7;margin:0 0 8px;">
       After that, you'll get an email the moment a new verified case or lost dog is reported in your area.
     </p>
+    ${clinicBlock}
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
     <p style="color:#888;font-size:12px;line-height:1.7;margin:0 0 12px;">
       <strong style="color:#aaa;">Cancel anytime.</strong> Click the 👤 person icon on

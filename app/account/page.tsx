@@ -28,6 +28,10 @@ export default function AccountPage() {
         Looking to change what you get alerted about? Head to{' '}
         <Link href="/alerts" style={{ color: 'var(--green)' }}>your alerts →</Link>
       </p>
+      <p style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 8, lineHeight: 1.6 }}>
+        Pro Clinic subscriber? Open your{' '}
+        <Link href="/clinic" style={{ color: 'var(--green)' }}>clinic dashboard →</Link>
+      </p>
     </main>
   )
 }

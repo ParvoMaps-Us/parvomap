@@ -136,9 +136,26 @@ export default async function ClinicDashboardPage({
       </div>
 
       <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>🏥 Pro Clinic dashboard</h1>
-      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 20 }}>
+      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 16 }}>
         {email} · {regionLabel} · generated {fmt(data.generatedAt)}
       </p>
+
+      {/* ─── How-to (collapsible) ─── */}
+      <details style={{ ...card, marginBottom: 20, fontSize: 13, lineHeight: 1.7 }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 700, color: 'var(--green)' }}>
+          ℹ️ How to use this dashboard
+        </summary>
+        <ol style={{ margin: '12px 0 0', paddingLeft: 20, color: 'var(--text-muted)', listStyleType: 'decimal' }}>
+          <li><strong style={{ color: 'var(--text)' }}>Filter by region</strong> — pick a State, County, or City, then <em>Apply</em>. Leave them on “All” to see every region.</li>
+          <li><strong style={{ color: 'var(--text)' }}>Filter by disease</strong> — tap the disease chips to focus on specific ones. None selected = all diseases.</li>
+          <li><strong style={{ color: 'var(--text)' }}>Read the data</strong> — the tiles show counts over time; the bar charts break cases down by disease, state, county, and reporter type.</li>
+          <li><strong style={{ color: 'var(--text)' }}>Export</strong> — <em>Export CSV</em> downloads the filtered case data. Labs/pharma can pull it programmatically via an API key — just ask.</li>
+          <li><strong style={{ color: 'var(--text)' }}>Track something new</strong> — use “Track a specific disease” at the bottom; we begin tracking within 24–72 hours.</li>
+        </ol>
+        <p style={{ margin: '12px 0 0', color: 'var(--text-dim)', fontSize: 12 }}>
+          Your access link lasts 24 hours — request a fresh one anytime from <Link href="/clinic" style={{ color: 'var(--green)' }}>parvomaps.us/clinic</Link>.
+        </p>
+      </details>
 
       {/* ─── Region + disease filter ─── */}
       <form method="GET" style={{ ...card, marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
