@@ -11,9 +11,13 @@ Central place for every link you need to run the site.
 - **Diseases:** https://www.parvomaps.us/diseases
 
 ## Admin
-- **Moderation dashboard:** https://www.parvomaps.us/admin?key=YOUR_ADMIN_KEY
-  - Replace `YOUR_ADMIN_KEY` with the `ADMIN_KEY` value from Vercel env (kept secret — do not commit it here).
-  - Lists flagged pins; Remove takes them off the map + deletes the photo, Dismiss clears the flag.
+- **Tracking dashboard:** https://www.parvomaps.us/dashboard?key=YOUR_ADMIN_KEY
+  - Disease + lost-dog counts/trends, breakdowns by disease/state/reporter, recent activity,
+    **and** the flagged-reports moderation queue (Remove / Dismiss) — one place for everything.
+- **Moderation only (legacy):** https://www.parvomaps.us/admin?key=YOUR_ADMIN_KEY
+  - Same flag queue without the analytics; kept as a fallback.
+  - For both: replace `YOUR_ADMIN_KEY` with the `ADMIN_KEY` value from Vercel env (kept secret — do not commit it here).
+  - Remove takes a pin off the map + deletes the photo; Dismiss clears the flag.
 
 ## Code
 - **GitHub repo:** https://github.com/ParvoMaps-Us/parvomap
