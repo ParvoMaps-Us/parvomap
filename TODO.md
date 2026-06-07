@@ -16,11 +16,14 @@ A running list of ideas and work to build out. Newest ideas can go under "Backlo
 The `/pro` checkout is live and subscribers are recorded in the Redis `subscribers`
 hash. These phases build the value subscribers are paying for.
 
-### Phase 1 — Backend tracking dashboard
-- [ ] Internal dashboard UI to track **diseases** and **lost dogs** across the dataset.
-- [ ] Surface counts, trends, and recent activity for both report types.
-- [ ] Filter by state / county / disease; spot clusters at a glance.
-- [ ] Tie visibility to subscriber status (Guardian vs Pro Clinic scopes).
+### Phase 1 — Backend tracking dashboard ✅
+- [x] Internal dashboard UI to track **diseases** and **lost dogs** across the dataset
+      (`/dashboard?key=<ADMIN_KEY>`, same gate as `/admin`).
+- [x] Surface counts (all-time / 48 h / 7 d / 30 d), breakdowns by disease, state,
+      and reporter type, plus a recent-activity table for each report type.
+- [ ] Filter by state / county / disease in the UI (currently shows aggregate bars).
+- [ ] Tie visibility to subscriber status (Guardian vs Pro Clinic scopes) — for now
+      it's ADMIN_KEY-gated internal only.
 
 ### Phase 2 — Alerts page
 - [ ] Build out `/alerts` so subscribers get real-time outbreak + lost-dog alerts.
