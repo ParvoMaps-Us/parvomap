@@ -41,6 +41,19 @@ hash. These phases build the value subscribers are paying for.
 - [ ] Flesh out the per-disease page (`/diseases/[slug]`) with richer data.
 - [ ] Regional breakdowns, case history, and links into the dashboard.
 
+### Phase 4 — Pro Clinic data access (the $49/mo perk)
+The Pro Clinic tier is sold on these features but none exist yet — clinics
+currently pay and receive nothing beyond a Guardian. Build the paid surface:
+- [ ] **Clinic dashboard** — a subscriber-facing version of `/dashboard`, gated by
+      the magic-link/subscriber flow (reuse Phase 2 auth), scoped to Pro Clinic plans.
+- [ ] **County / state filtering** — let a clinic narrow to their region(s).
+- [ ] **Exportable case data (CSV / API)** — download button + a key-scoped read API
+      so labs/pharma can pull data programmatically.
+- [ ] **Verified-reporter badge** — mark reports submitted by a Pro Clinic account so
+      they carry extra credibility on the map.
+- [ ] **Plan-aware gating** — distinguish `guardian-*` vs `pro-clinic` in the
+      `subscribers` record so only clinics see clinic features.
+
 ## Backlog (nice-to-have)
 - [x] **Photo resizing** before upload — downscale large phone photos (~1200px) to cut storage + speed up.
 - [x] **"Use my current location"** GPS button on the report form for a one-tap exact pin (great on mobile).
