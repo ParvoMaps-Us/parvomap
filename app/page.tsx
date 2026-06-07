@@ -12,9 +12,9 @@ import { getReports, getStats } from '@/lib/redis'
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ verified?: string }>
+  searchParams: Promise<{ verified?: string; removed?: string }>
 }) {
-  const { verified } = await searchParams
+  const { verified, removed } = await searchParams
 
   let stats = { last30: 0, last7: 0, last48: 0, states: 0, topDisease: '', topStates: '' }
   let reports: Awaited<ReturnType<typeof getReports>> = []
@@ -30,6 +30,7 @@ export default async function HomePage({
       <a href="#main-content" className="skip-link">Skip to main content</a>
       <WelcomePopup />
       {verified && <VerifiedBanner status={verified} />}
+      {removed && <VerifiedBanner status={removed} param="removed" />}
       {reports.length > 0 && <Ticker reports={reports} />}
       <Header />
       <StatsBar {...stats} />

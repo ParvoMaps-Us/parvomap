@@ -409,16 +409,24 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           { label: 'Last 7 days',  color: '#f59e0b' },
           { label: 'Last 30 days', color: '#00ff88' },
           { label: 'Historical',   color: '#3a3a3a' },
-        ].map(({ label, color }) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: color,
-              flexShrink: 0,
-              border: color === '#3a3a3a' ? '1px solid #666' : 'none',
-            }} />
+          { label: 'Lost dog',     emoji: '🐶', divider: true },
+        ].map(({ label, color, emoji, divider }) => (
+          <div key={label} style={{
+            display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px',
+            ...(divider ? { marginTop: '6px', paddingTop: '6px', borderTop: '1px solid #2a2a2a' } : {}),
+          }}>
+            {emoji ? (
+              <span style={{ width: '8px', fontSize: '9px', flexShrink: 0, textAlign: 'center' }}>{emoji}</span>
+            ) : (
+              <div style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: color,
+                flexShrink: 0,
+                border: color === '#3a3a3a' ? '1px solid #666' : 'none',
+              }} />
+            )}
             <span style={{
               fontFamily: "'IBM Plex Mono', monospace",
               fontSize: '9px',
@@ -438,8 +446,12 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         { color: '#f59e0b', label: 'Last 7 days' },
         { color: '#00ff88', label: 'Last 30 days' },
         { color: '#2a2a2a', label: 'Historical', border: '1px solid #666' },
+        { emoji: '🐶', label: 'Lost dog' },
       ].map(item => (
         <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
+          {item.emoji ? (
+            <span style={{ fontSize: '9px', flexShrink: 0 }}>{item.emoji}</span>
+          ) : (
           <div style={{
             width: '7px',
             height: '7px',
@@ -448,6 +460,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             flexShrink: 0,
             border: item.border ?? 'none',
           }} />
+          )}
           <span style={{
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: '9px',

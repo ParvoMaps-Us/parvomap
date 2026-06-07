@@ -1,17 +1,27 @@
 'use client'
 import { useState } from 'react'
 
-const MESSAGES: Record<string, { text: string; tone: 'success' | 'error' }> = {
-  success: { text: '✓ Report verified — your pin is now live on the map.', tone: 'success' },
-  expired: { text: 'This verification link has expired or was already used.', tone: 'error' },
-  missing: { text: 'No verification token was provided.', tone: 'error' },
-  error:   { text: 'Something went wrong verifying your report. Please try again.', tone: 'error' },
+type Msg = { text: string; tone: 'success' | 'error' }
+
+// Messages are keyed by the query param that triggered the banner, then status.
+const MESSAGES: Record<string, Record<string, Msg>> = {
+  verified: {
+    success: { text: '✓ Report verified — your pin is now live on the map.', tone: 'success' },
+    expired: { text: 'This verification link has expired or was already used.', tone: 'error' },
+    missing: { text: 'No verification token was provided.', tone: 'error' },
+    error:   { text: 'Something went wrong verifying your report. Please try again.', tone: 'error' },
+  },
+  removed: {
+    success: { text: '✓ Your lost-dog post was removed. So glad they’re home!', tone: 'success' },
+    invalid: { text: 'That removal link is invalid or has already been used.', tone: 'error' },
+    error:   { text: 'Something went wrong removing your post. Please try again.', tone: 'error' },
+  },
 }
 
-/** Top-of-page banner shown after the /api/verify redirect (?verified=<status>). */
-export default function VerifiedBanner({ status }: { status: string }) {
+/** Top-of-page banner shown after a redirect like ?verified=<status> or ?removed=<status>. */
+export default function VerifiedBanner({ status, param = 'verified' }: { status: string; param?: string }) {
   const [visible, setVisible] = useState(true)
-  const msg = MESSAGES[status]
+  const msg = MESSAGES[param]?.[status]
   if (!msg || !visible) return null
 
   const success = msg.tone === 'success'
@@ -20,7 +30,7 @@ export default function VerifiedBanner({ status }: { status: string }) {
     setVisible(false)
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href)
-      url.searchParams.delete('verified')
+      url.searchParams.delete(param)
       window.history.replaceState({}, '', url.toString())
     }
   }

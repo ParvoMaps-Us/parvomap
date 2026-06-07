@@ -57,7 +57,7 @@ export async function sendVerificationEmail(
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
 
     <div style="margin-bottom:32px;">
-      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAP</span>
+      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
     </div>
 
     <h1 style="font-size:28px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#f0f0f0;margin:0 0 8px;">Verify Your Report</h1>
@@ -82,7 +82,7 @@ export async function sendVerificationEmail(
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
 
     <p style="color:#444;font-size:11px;line-height:1.6;">
-      ParvoMap · US Canine Disease Tracker<br>
+      ParvoMaps · US Canine Disease Tracker<br>
       parvomaps.us · Reports are anonymous${BIOREST_ENABLED ? `<br><br>
       Yard decontamination in Utah?
       <a href="https://scoopie.us" style="color:#555;text-decoration:underline;">Scoopie BioRest™</a>` : ''}
@@ -114,7 +114,7 @@ export async function sendVerificationConfirmation(
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
 
     <div style="margin-bottom:32px;">
-      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAP</span>
+      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
     </div>
 
     <div style="display:inline-block;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:#00ff88;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 12px;margin-bottom:16px;">
@@ -155,7 +155,7 @@ export async function sendVerificationConfirmation(
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
 
     <p style="color:#444;font-size:11px;line-height:1.6;">
-      ParvoMap · parvomaps.us${BIOREST_ENABLED ? `<br>
+      ParvoMaps · parvomaps.us${BIOREST_ENABLED ? `<br>
       Yard decontamination in Utah?
       <a href="https://scoopie.us" style="color:#555;text-decoration:underline;">Scoopie BioRest™</a>` : ''}
     </p>
@@ -189,7 +189,7 @@ export async function sendInternalAlert(report: PendingReport): Promise<void> {
   await sendEmail({
     from:    FROM_ALERTS,
     to:      alertEmail,
-    subject: `ParvoMap Utah Lead [${leadLabel}] — ${diseaseName} — ZIP ${report.zip}`,
+    subject: `ParvoMaps Utah Lead [${leadLabel}] — ${diseaseName} — ZIP ${report.zip}`,
     html: `
 <div style="font-family:monospace;background:#0a0a0a;color:#f0f0f0;padding:24px;max-width:480px;">
   <div style="color:#00ff88;font-size:16px;font-weight:bold;margin-bottom:16px;letter-spacing:0.1em;">
@@ -231,7 +231,7 @@ export async function sendDelayedUtahOutreach(report: PendingReport): Promise<vo
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
 
     <div style="margin-bottom:32px;">
-      <span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAP</span>
+      <span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
     </div>
 
     <p style="color:#aaa;font-size:15px;line-height:1.8;margin:0 0 16px;">Hi ${firstName},</p>
@@ -265,8 +265,8 @@ export async function sendDelayedUtahOutreach(report: PendingReport): Promise<vo
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
 
     <p style="color:#444;font-size:11px;line-height:1.6;">
-      You received this because you submitted a report on ParvoMap. This is a one-time follow-up.<br>
-      ParvoMap · parvomaps.us · Scoopie LLC · scoopie.us · 385-412-7152
+      You received this because you submitted a report on ParvoMaps. This is a one-time follow-up.<br>
+      ParvoMaps · parvomaps.us · Scoopie LLC · scoopie.us · 385-412-7152
     </p>
   </div>
 </body>
