@@ -11,6 +11,10 @@ interface SubscriberRecord {
   status: 'active' | 'cancelled'
 }
 
+interface SubscriberRecordFull extends SubscriberRecord {
+  customerId?: string | null
+}
+
 /** True if this email belongs to an active subscriber. Case-insensitive. */
 export async function isActiveSubscriber(email: string): Promise<boolean> {
   const client = getRedisClient()
@@ -30,6 +34,28 @@ export async function isActiveSubscriber(email: string): Promise<boolean> {
     }
   }
   return false
+}
+
+/** Find the Stripe customer id for an email (any status) — used to open the
+ *  billing portal. Returns null if no matching subscriber record exists. */
+export async function findSubscriberCustomerId(email: string): Promise<string | null> {
+  const client = getRedisClient()
+  if (!client) return null
+  const target = email.trim().toLowerCase()
+  if (!target) return null
+
+  const all = await client.hgetall<Record<string, string>>('subscribers')
+  if (!all) return null
+
+  for (const [customerId, raw] of Object.entries(all)) {
+    try {
+      const rec = (typeof raw === 'string' ? JSON.parse(raw) : raw) as SubscriberRecordFull
+      if (rec.email?.toLowerCase() === target) return rec.customerId ?? customerId
+    } catch {
+      // skip
+    }
+  }
+  return null
 }
 
 // ─── Alert preferences ────────────────────────────────────────────────────────
@@ -59,6 +85,12 @@ export async function saveAlertPrefs(prefs: AlertPrefs): Promise<void> {
   if (!client) throw new Error('Redis not configured')
   const normalized: AlertPrefs = { ...prefs, email: keyFor(prefs.email) }
   await client.hset(PREFS_HASH, { [normalized.email]: JSON.stringify(normalized) })
+}
+
+export async function deleteAlertPrefs(email: string): Promise<void> {
+  const client = getRedisClient()
+  if (!client) return
+  await client.hdel(PREFS_HASH, keyFor(email))
 }
 
 export async function getAlertPrefs(email: string): Promise<AlertPrefs | null> {

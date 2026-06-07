@@ -31,3 +31,23 @@ export function verifyMagicToken(email: string, exp: number, token: string): boo
     return false
   }
 }
+
+// ─── Unsubscribe token ────────────────────────────────────────────────────────
+// Non-expiring HMAC over just the email — unsubscribe links in emails must keep
+// working indefinitely. Different derivation ('unsub.') so it can't be swapped
+// for a magic-login token.
+
+export function signUnsubToken(email: string): string {
+  return createHmac('sha256', secret()).update(`unsub.${email.toLowerCase()}`).digest('hex')
+}
+
+export function verifyUnsubToken(email: string, token: string): boolean {
+  if (!email || !token) return false
+  const expected = signUnsubToken(email)
+  if (token.length !== expected.length) return false
+  try {
+    return timingSafeEqual(Buffer.from(token), Buffer.from(expected))
+  } catch {
+    return false
+  }
+}

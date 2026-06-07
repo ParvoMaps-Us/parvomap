@@ -3,6 +3,7 @@ import { getDiseaseName } from './diseases'
 import { getLeadType } from './lead'
 import { BIOREST_ENABLED } from './flags'
 import { signLostToken } from './lost-token'
+import { signUnsubToken } from './magic-link'
 import type { PendingReport, Report } from './redis'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -318,6 +319,7 @@ export async function sendAlertNotification(email: string, report: Report): Prom
     ? (report.dogName ? `Lost dog (${report.dogName})` : 'Lost dog')
     : getDiseaseName(report.disease)
   const verb = isLost ? 'reported near' : 'case reported near'
+  const unsubUrl = `https://www.parvomaps.us/alerts/unsubscribe?e=${encodeURIComponent(email)}&t=${signUnsubToken(email)}`
 
   await sendEmail({
     from:    FROM_ALERTS,
@@ -341,7 +343,58 @@ export async function sendAlertNotification(email: string, report: Report): Prom
     </a>
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
     <p style="color:#444;font-size:11px;line-height:1.6;">
-      You receive these because you're a ParvoMaps subscriber. Manage your alerts at parvomaps.us/alerts.
+      You receive these because you're a ParvoMaps subscriber.
+      <a href="https://www.parvomaps.us/alerts" style="color:#555;text-decoration:underline;">Manage alerts</a>
+      ·
+      <a href="${unsubUrl}" style="color:#555;text-decoration:underline;">Unsubscribe</a>
+    </p>
+  </div>
+</body>
+</html>`,
+  })
+}
+
+// ─── ALERTS: WELCOME / GETTING STARTED ────────────────────────────────────────
+
+/** Sent right after a successful subscription — tells the new member how to turn
+ *  on their alerts (the perk they just paid for). */
+export async function sendSubscriptionWelcome(email: string, plan?: string | null): Promise<void> {
+  const planLabel = plan?.startsWith('pro') ? 'Pro Clinic' : 'Guardian'
+  const alertsUrl = 'https://www.parvomaps.us/alerts'
+  const accountUrl = 'https://www.parvomaps.us/account'
+
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject: `Welcome to ParvoMaps ${planLabel} — turn on your alerts`,
+    html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    <div style="margin-bottom:32px;">
+      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
+    </div>
+    <h1 style="font-size:24px;font-weight:700;color:#f0f0f0;margin:0 0 16px;">You're in — welcome to ${planLabel} 🎉</h1>
+    <p style="color:#888;font-size:14px;margin:0 0 20px;line-height:1.7;">
+      Thanks for subscribing. One quick step to start getting alerts:
+    </p>
+    <ol style="color:#aaa;font-size:14px;line-height:1.8;margin:0 0 28px;padding-left:20px;">
+      <li>Click the button below.</li>
+      <li>Enter <strong style="color:#f0f0f0">this same email</strong> (${email}).</li>
+      <li>We'll email you a private link to choose your ZIP, alert radius, which diseases to watch, and whether to include lost dogs.</li>
+    </ol>
+    <a href="${alertsUrl}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin-bottom:28px;">
+      Set Up My Alerts →
+    </a>
+    <p style="color:#888;font-size:13px;line-height:1.7;margin:0 0 8px;">
+      After that, you'll get an email the moment a new verified case or lost dog is reported in your area.
+    </p>
+    <div style="border-top:1px solid #222;margin:32px 0;"></div>
+    <p style="color:#444;font-size:11px;line-height:1.6;">
+      Manage your billing anytime at
+      <a href="${accountUrl}" style="color:#555;text-decoration:underline;">parvomaps.us/account</a>.<br>
+      ParvoMaps · US Canine Disease Tracker · parvomaps.us
     </p>
   </div>
 </body>

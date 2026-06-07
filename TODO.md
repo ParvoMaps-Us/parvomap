@@ -31,8 +31,11 @@ hash. These phases build the value subscribers are paying for.
 - [x] Per-ZIP / per-radius preferences stored in Redis `alert_prefs`.
 - [x] Email delivery wired into the verify route: when a report publishes, matching
       active subscribers get a `sendAlertNotification` email (excludes the reporter).
+- [x] Welcome email on subscribe (Stripe webhook) with directions to set up alerts.
+- [x] Unsubscribe link in alert emails → `/alerts/unsubscribe` (HMAC, confirm button).
+- [x] Account page `/account` + person icon in header → Stripe Customer Portal
+      (manage payment / cancel). Needs the portal enabled once in Stripe settings.
 - [ ] Push notifications (web/mobile) — left as a future phase; email-only for now.
-- [ ] Unsubscribe / manage link in alert emails (currently points to /alerts).
 
 ### Phase 3 — Disease page
 - [ ] Flesh out the per-disease page (`/diseases/[slug]`) with richer data.

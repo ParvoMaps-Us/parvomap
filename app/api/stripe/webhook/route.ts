@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
 import { getRedisClient } from '@/lib/redis'
+import { sendSubscriptionWelcome } from '@/lib/notifications'
 
 // Stripe signs the *raw* request body. Next.js route handlers give us the
 // untouched bytes via req.text(); never parse to JSON before verifying.
@@ -40,6 +41,16 @@ export async function POST(req: NextRequest) {
           ts:           Date.now(),
         })
         console.log('New subscriber:', s.customer_details?.email, s.metadata?.plan)
+
+        // Welcome email with directions to set up alerts (the perk they paid for).
+        const newEmail = s.customer_details?.email
+        if (newEmail) {
+          try {
+            await sendSubscriptionWelcome(newEmail, (s.metadata?.plan as string | undefined) ?? null)
+          } catch (e) {
+            console.error('Welcome email failed:', e)
+          }
+        }
         break
       }
       case 'customer.subscription.deleted': {

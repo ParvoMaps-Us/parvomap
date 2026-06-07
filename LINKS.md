@@ -9,6 +9,8 @@ Central place for every link you need to run the site.
 - **Alerts page:** https://www.parvomaps.us/alerts
 - **Pro page:** https://www.parvomaps.us/pro
 - **Diseases:** https://www.parvomaps.us/diseases
+- **Account / billing (Stripe portal):** https://www.parvomaps.us/account
+- **Manage alerts:** https://www.parvomaps.us/alerts
 
 ## Admin
 - **Tracking dashboard:** https://www.parvomaps.us/dashboard?key=YOUR_ADMIN_KEY
