@@ -37,6 +37,8 @@ Central place for every link you need to run the site.
 - **Upstash Redis** (all report/flag data): https://console.upstash.com
 - **Resend** (verification + alert emails): https://resend.com/emails
 - **Stripe** (Pro/Guardian billing): https://dashboard.stripe.com
+- **OpenAI** (image moderation for photo uploads): https://platform.openai.com/api-keys
+  - Free omni-moderation endpoint screens lost-dog photos for NSFW/gore. Key → Vercel env `OPENAI_API_KEY`.
 
 ## SEO / meta
 - **Sitemap:** https://www.parvomaps.us/sitemap.xml
