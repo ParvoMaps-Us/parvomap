@@ -19,9 +19,9 @@ Central place for every link you need to run the site.
 - **GitHub repo:** https://github.com/ParvoMaps-Us/parvomap
 
 ## Hosting — Vercel
-- **Team dashboard:** https://vercel.com/scoopiellcs-projects
-- **Project:** _not found under the `scoopiellcs-projects` team as of this writing._
-  Once you locate/deploy it, the URL is `https://vercel.com/<team>/<project>`. Update this line with the real link.
+> ParvoMaps is its own project — keep it under the **ParvoMaps** Vercel account, not under any Scoopie team.
+- **Dashboard:** https://vercel.com/dashboard
+- **Project:** `https://vercel.com/<parvomaps-team>/<project>` — fill in once the ParvoMaps Vercel project is set up.
 - Where to set env vars: Vercel → Project → **Settings → Environment Variables**
   - `ADMIN_KEY` — gates the moderation dashboard
   - `CRON_SECRET` — auth for the daily cleanup cron
