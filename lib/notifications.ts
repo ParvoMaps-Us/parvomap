@@ -346,10 +346,9 @@ export async function sendClinicMagicLink(email: string, dashboardUrl: string): 
 
 /** Notify the team that a Pro Clinic asked us to start tracking a new disease. */
 export async function sendDiseaseTrackRequest(email: string, disease: string, note: string): Promise<void> {
-  const to = process.env.ADMIN_ALERT_EMAIL || process.env.SCOOPIE_ALERT_EMAIL || 'parvomaps.us@gmail.com'
   await sendEmail({
     from:    FROM_ALERTS,
-    to,
+    to:      'parvomaps.us@gmail.com',
     replyTo: email,
     subject: `Pro Clinic disease-tracking request: ${disease}`,
     html: `
