@@ -55,9 +55,29 @@ The Pro Clinic paid surface, gated to active `pro-clinic` accounts:
 - [x] **Plan-aware gating** — `getActiveSubscriberPlan` / `isProClinic` in `lib/alerts.ts`.
 
 Follow-ups:
-- [ ] Set `CLINIC_API_KEY` in Vercel to enable the programmatic export endpoint.
-- [ ] Surface a link to `/clinic` for Pro Clinic subscribers (e.g. welcome email / `/account`).
-- [ ] Admin view of clinic disease-tracking requests (currently email + Redis only).
+- [x] Set `CLINIC_API_KEY` in Vercel to enable the programmatic export endpoint.
+- [x] Surface a link to `/clinic` for Pro Clinic subscribers (welcome email + `/account`).
+- [x] Admin view of clinic disease-tracking requests (`/dashboard` section).
+- [x] Persistent 30-day session cookie for the clinic dashboard (magic link → `/api/clinic/login`).
+
+### Phase 5 — Terms of Service & Privacy Policy
+Legal pages are now required: we store PII (emails, report contents, lost-dog
+photos), take payments via Stripe, and set an authentication cookie.
+- [ ] **Privacy Policy** (`/privacy`) — what we collect (emails, reports, photos,
+      approximate location, IP), why, retention, and the cookie we set
+      (`clinic_session` — strictly-necessary auth, no tracking). Disclose
+      sub-processors: Stripe (payments), Resend (email), OpenAI (image moderation),
+      Upstash Redis (storage), Vercel Blob (photos), Vercel (hosting), Photon/
+      zippopotam (geocoding). Cover user rights + deletion-request contact.
+- [ ] **Terms of Service** (`/terms`) — acceptable use, that reports are
+      community-submitted and not veterinary advice, no warranty, subscription
+      billing/cancellation terms, liability limits.
+- [ ] **Footer links** to `/privacy` and `/terms` site-wide.
+- [ ] **Checkout consent** — note agreement to Terms/Privacy on the `/pro` flow.
+- [ ] Decide if a cookie banner is needed (likely not — the only cookie is
+      strictly-necessary auth, no analytics/ad cookies — but confirm).
+- [ ] ⚠️ Have a lawyer review before relying on these — drafts are a starting point,
+      not legal advice.
 
 ## Backlog (nice-to-have)
 - [x] **Photo resizing** before upload — downscale large phone photos (~1200px) to cut storage + speed up.
