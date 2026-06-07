@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import PricingCards from './PricingCards'
 
 export const metadata: Metadata = {
@@ -15,6 +16,12 @@ export default async function ProPage({
 
   return (
     <main style={{ maxWidth: 940, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
+      <div style={{ marginBottom: 24 }}>
+        <Link href="/" style={{ fontSize: 13, color: 'var(--text-dim)', textDecoration: 'none' }}>
+          ← Back to the map
+        </Link>
+      </div>
+
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
         <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 10 }}>Stay ahead of the next outbreak</h1>
         <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.6, maxWidth: 560, margin: '0 auto' }}>
