@@ -17,7 +17,8 @@ export async function GET(req: NextRequest) {
 
   try {
     await clearFlag(id)
-    return Response.redirect(`${req.nextUrl.origin}/admin?key=${encodeURIComponent(key)}`)
+    const dest = req.nextUrl.searchParams.get('from') === 'dashboard' ? '/dashboard' : '/admin'
+    return Response.redirect(`${req.nextUrl.origin}${dest}?key=${encodeURIComponent(key)}`)
   } catch (e) {
     console.error('Admin dismiss error:', e)
     return new Response('Server error', { status: 500 })

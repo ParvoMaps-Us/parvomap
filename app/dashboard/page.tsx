@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { getDashboardData, type Bucket, type DashboardData } from '@/lib/dashboard'
 import { getDiseaseName } from '@/lib/diseases'
-import type { Report } from '@/lib/redis'
+import { listFlags, getVerifiedRaw, type Report, type FlagRecord } from '@/lib/redis'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
@@ -103,7 +103,13 @@ export default async function DashboardPage({
     )
   }
 
-  const data: DashboardData = await getDashboardData()
+  const [data, flags, verified]: [DashboardData, FlagRecord[], { report: Report }[]] = await Promise.all([
+    getDashboardData(),
+    listFlags(),
+    getVerifiedRaw(),
+  ])
+  const reportById = new Map<string, Report>(verified.map(v => [v.report.id, v.report]))
+  const qs = `key=${encodeURIComponent(key)}&from=dashboard`
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 } as const
   const grid2 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 } as const
 
@@ -143,9 +149,71 @@ export default async function DashboardPage({
       <div style={{ ...grid2, marginBottom: 14 }}>
         <BarList title="By state" buckets={data.lost.byState} accent="#60a5fa" />
       </div>
-      <div>
+      <div style={{ marginBottom: 36 }}>
         <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: 'var(--text-muted)' }}>Most recent</div>
         <RecentTable rows={data.lost.recent} lost />
+      </div>
+
+      {/* ─── Moderation (flagged reports) ─── */}
+      <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 4px' }}>🚩 Flagged reports</h2>
+      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 14 }}>
+        {flags.length} flagged report{flags.length !== 1 ? 's' : ''} · most recently flagged first
+      </p>
+
+      {flags.length === 0 && (
+        <p style={{ color: 'var(--green)', fontSize: 13 }}>✓ Nothing flagged. All clear.</p>
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {flags.map(f => {
+          const r = reportById.get(f.id)
+          const gone = !r
+          return (
+            <div key={f.id} style={card}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{f.summary}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>
+                    {f.count} flag{f.count !== 1 ? 's' : ''} · first {fmt(f.firstAt)} · last {fmt(f.lastAt)}
+                  </div>
+                  {r?.contact && (
+                    <div style={{ fontSize: 11, color: '#60a5fa', marginTop: 4 }}>contact: {r.contact}</div>
+                  )}
+                  {gone && (
+                    <div style={{ fontSize: 11, color: 'var(--amber)', marginTop: 4 }}>
+                      ⚠ Report no longer on the map (expired or already removed).
+                    </div>
+                  )}
+                </div>
+                {r?.kind === 'lost' && r.photoUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={r.photoUrl} alt="flagged" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)', flex: 'none' }} />
+                )}
+              </div>
+
+              {f.reasons.length > 0 && (
+                <ul style={{ margin: '10px 0 0', padding: '0 0 0 16px', fontSize: 12, color: 'var(--text-muted)' }}>
+                  {f.reasons.map((reason, i) => <li key={i}>{reason}</li>)}
+                </ul>
+              )}
+
+              <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+                <a
+                  href={`/api/admin/remove?id=${encodeURIComponent(f.id)}&${qs}`}
+                  style={{ background: 'var(--red)', color: '#fff', textDecoration: 'none', fontSize: 11, fontWeight: 700, padding: '7px 14px', borderRadius: 4 }}
+                >
+                  🗑 Remove from map
+                </a>
+                <a
+                  href={`/api/admin/dismiss?id=${encodeURIComponent(f.id)}&${qs}`}
+                  style={{ border: '1px solid var(--border)', color: 'var(--text-muted)', textDecoration: 'none', fontSize: 11, padding: '7px 14px', borderRadius: 4 }}
+                >
+                  Dismiss flag
+                </a>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </main>
   )
