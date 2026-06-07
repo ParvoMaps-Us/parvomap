@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     if (await isProClinic(email)) {
       const { exp, token } = makeMagicToken(email)
       const origin = req.headers.get('origin') ?? 'https://www.parvomaps.us'
-      const url = `${origin}/clinic/dashboard?e=${encodeURIComponent(email)}&exp=${exp}&t=${token}`
+      const url = `${origin}/api/clinic/login?e=${encodeURIComponent(email)}&exp=${exp}&t=${token}`
       try {
         await sendClinicMagicLink(email, url)
       } catch (e) {

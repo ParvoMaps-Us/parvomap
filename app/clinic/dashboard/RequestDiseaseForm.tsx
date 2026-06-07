@@ -2,15 +2,7 @@
 
 import { useState } from 'react'
 
-export default function RequestDiseaseForm({
-  email,
-  exp,
-  token,
-}: {
-  email: string
-  exp: number
-  token: string
-}) {
+export default function RequestDiseaseForm() {
   const [disease, setDisease] = useState('')
   const [note, setNote] = useState('')
   const [state, setState] = useState<'idle' | 'sending' | 'sent'>('idle')
@@ -24,7 +16,7 @@ export default function RequestDiseaseForm({
       const res = await fetch('/api/clinic/request-disease', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, exp, token, disease, note }),
+        body: JSON.stringify({ disease, note }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

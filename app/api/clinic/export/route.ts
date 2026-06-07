@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
-import { verifyMagicToken } from '@/lib/magic-link'
+import { cookies } from 'next/headers'
+import { verifyMagicToken, readClinicSession, CLINIC_SESSION_COOKIE } from '@/lib/magic-link'
 import { isProClinic } from '@/lib/alerts'
 import { getVerifiedRaw } from '@/lib/redis'
 import { filterReports, type ReportFilter } from '@/lib/dashboard'
@@ -28,11 +29,15 @@ function toCsv(rows: Report[]): string {
   return [header, ...lines].join('\n')
 }
 
-/** Authorize either via a shared CLINIC_API_KEY (programmatic) or a valid
- *  Pro Clinic magic-link token (in-dashboard download). */
+/** Authorize via (in priority order): a shared CLINIC_API_KEY (programmatic),
+ *  the clinic session cookie (in-dashboard download), or a magic-link token. */
 async function authorize(p: URLSearchParams): Promise<boolean> {
   const key = process.env.CLINIC_API_KEY
   if (key && p.get('key') === key) return true
+
+  const cookieStore = await cookies()
+  const sessionEmail = readClinicSession(cookieStore.get(CLINIC_SESSION_COOKIE)?.value)
+  if (sessionEmail && (await isProClinic(sessionEmail))) return true
 
   const email = (p.get('e') ?? '').trim().toLowerCase()
   const exp = Number(p.get('exp'))

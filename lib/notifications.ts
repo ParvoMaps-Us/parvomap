@@ -435,7 +435,7 @@ export async function sendSubscriptionWelcome(email: string, plan?: string | nul
     </a>
     <p style="color:#aaa;font-size:13px;font-weight:700;margin:0 0 8px;">How to use it</p>
     <ol style="color:#888;font-size:13px;line-height:1.8;margin:0 0 8px;padding-left:20px;">
-      <li>Go to <a href="${clinicUrl}" style="color:#00ff88;text-decoration:underline;">parvomaps.us/clinic</a> and enter this email — we send a private 24-hour link to your dashboard.</li>
+      <li>Go to <a href="${clinicUrl}" style="color:#00ff88;text-decoration:underline;">parvomaps.us/clinic</a> and enter this email — we send a private sign-in link. Opening it keeps you signed in for 30 days.</li>
       <li><strong style="color:#aaa;">Filter by region:</strong> pick a State, County, or City (leave them on "All" to see everything).</li>
       <li><strong style="color:#aaa;">Filter by disease:</strong> tap the disease chips to focus — none selected means all diseases.</li>
       <li><strong style="color:#aaa;">Export:</strong> hit <em>Export CSV</em> to download the filtered case data. Labs/pharma can also pull it via our API key — just ask.</li>

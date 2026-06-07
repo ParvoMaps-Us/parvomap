@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { verifyMagicToken } from '@/lib/magic-link'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { verifyMagicToken, readClinicSession, CLINIC_SESSION_COOKIE } from '@/lib/magic-link'
 import { isProClinic } from '@/lib/alerts'
 import { getDashboardData, getFilterOptions, type Bucket } from '@/lib/dashboard'
 import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
@@ -92,22 +94,33 @@ export default async function ClinicDashboardPage({
   searchParams: Promise<{ e?: string; exp?: string; t?: string; state?: string; county?: string; city?: string; disease?: string | string[] }>
 }) {
   const { e, exp, t, state, county, city, disease } = await searchParams
-  const email = (e ?? '').trim().toLowerCase()
-  const expNum = Number(exp)
   // `disease` arrives as a string (one checkbox) or array (several). Empty = all.
   const diseases = (Array.isArray(disease) ? disease : disease ? [disease] : []).filter(Boolean)
 
   const denied = (
     <main style={{ maxWidth: 620, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
-      <h1 style={{ fontSize: 20, marginBottom: 12 }}>🔒 Link expired or not a Pro Clinic</h1>
+      <h1 style={{ fontSize: 20, marginBottom: 12 }}>🔒 Session expired or not a Pro Clinic</h1>
       <p style={{ color: 'var(--text-dim)', fontSize: 13, lineHeight: 1.6, marginBottom: 16 }}>
-        This dashboard link is invalid, expired (they last 24 hours), or not tied to an active Pro Clinic plan.
+        Your dashboard session has expired or this email isn’t tied to an active Pro Clinic plan.
       </p>
       <Link href="/clinic" style={{ color: 'var(--green)', fontSize: 13 }}>← Request a fresh link</Link>
     </main>
   )
 
-  if (!verifyMagicToken(email, expNum, t ?? '')) return denied
+  // Auth: prefer the session cookie. A legacy magic-link token (e/exp/t) is
+  // upgraded by bouncing through the login route, which sets the cookie.
+  const cookieStore = await cookies()
+  const sessionEmail = readClinicSession(cookieStore.get(CLINIC_SESSION_COOKIE)?.value)
+
+  if (!sessionEmail) {
+    if (verifyMagicToken((e ?? '').trim().toLowerCase(), Number(exp), t ?? '')) {
+      redirect(`/api/clinic/login?e=${encodeURIComponent((e ?? '').trim().toLowerCase())}&exp=${Number(exp)}&t=${encodeURIComponent(t ?? '')}`)
+    }
+    return denied
+  }
+
+  const email = sessionEmail
+  // Re-check live status so a cancelled clinic loses access even mid-session.
   if (!(await isProClinic(email))) return denied
 
   const filter = { state: state || undefined, county: county || undefined, city: city || undefined, diseases }
@@ -116,14 +129,13 @@ export default async function ClinicDashboardPage({
     getFilterOptions(state),
   ])
 
-  const auth = `e=${encodeURIComponent(email)}&exp=${expNum}&t=${encodeURIComponent(t ?? '')}`
   const filterQs = [
     state && `state=${encodeURIComponent(state)}`,
     county && `county=${encodeURIComponent(county)}`,
     city && `city=${encodeURIComponent(city)}`,
     ...diseases.map(d => `disease=${encodeURIComponent(d)}`),
   ].filter(Boolean).join('&')
-  const csvHref = `/api/clinic/export?${auth}${filterQs ? `&${filterQs}` : ''}`
+  const csvHref = `/api/clinic/export${filterQs ? `?${filterQs}` : ''}`
 
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 } as const
   const grid2 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 } as const
@@ -153,15 +165,12 @@ export default async function ClinicDashboardPage({
           <li><strong style={{ color: 'var(--text)' }}>Track something new</strong> — use “Track a specific disease” at the bottom; we begin tracking within 24–72 hours.</li>
         </ol>
         <p style={{ margin: '12px 0 0', color: 'var(--text-dim)', fontSize: 12 }}>
-          Your access link lasts 24 hours — request a fresh one anytime from <Link href="/clinic" style={{ color: 'var(--green)' }}>parvomaps.us/clinic</Link>.
+          You stay signed in on this device for 30 days — request a fresh link anytime from <Link href="/clinic" style={{ color: 'var(--green)' }}>parvomaps.us/clinic</Link>.
         </p>
       </details>
 
       {/* ─── Region + disease filter ─── */}
       <form method="GET" style={{ ...card, marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <input type="hidden" name="e" value={email} />
-        <input type="hidden" name="exp" value={expNum} />
-        <input type="hidden" name="t" value={t ?? ''} />
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div>
@@ -247,7 +256,7 @@ export default async function ClinicDashboardPage({
         <strong style={{ color: 'var(--text)' }}> 24–72 hours</strong> and email you when it’s live.
       </p>
       <div style={{ ...card, marginBottom: 12 }}>
-        <RequestDiseaseForm email={email} exp={expNum} token={t ?? ''} />
+        <RequestDiseaseForm />
       </div>
     </main>
   )

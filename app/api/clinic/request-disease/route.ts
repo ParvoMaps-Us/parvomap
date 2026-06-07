@@ -1,23 +1,28 @@
 import { NextRequest } from 'next/server'
-import { verifyMagicToken } from '@/lib/magic-link'
+import { cookies } from 'next/headers'
+import { verifyMagicToken, readClinicSession, CLINIC_SESSION_COOKIE } from '@/lib/magic-link'
 import { isProClinic, saveDiseaseRequest } from '@/lib/alerts'
 import { sendDiseaseTrackRequest } from '@/lib/notifications'
 
 export async function POST(req: NextRequest) {
-  let email = '', exp = 0, token = '', disease = '', note = ''
+  let disease = '', note = '', bodyEmail = '', exp = 0, token = ''
   try {
     const body = await req.json()
-    email   = String(body?.email ?? '').trim().toLowerCase()
-    exp     = Number(body?.exp)
-    token   = String(body?.token ?? '')
-    disease = String(body?.disease ?? '').trim().slice(0, 120)
-    note    = String(body?.note ?? '').trim().slice(0, 1000)
+    disease   = String(body?.disease ?? '').trim().slice(0, 120)
+    note      = String(body?.note ?? '').trim().slice(0, 1000)
+    bodyEmail = String(body?.email ?? '').trim().toLowerCase()
+    exp       = Number(body?.exp)
+    token     = String(body?.token ?? '')
   } catch {
     return Response.json({ error: 'Invalid request.' }, { status: 400 })
   }
 
-  // Gate on the same Pro Clinic magic link that opened the dashboard.
-  if (!verifyMagicToken(email, exp, token) || !(await isProClinic(email))) {
+  // Auth: prefer the session cookie; fall back to a magic-link token in the body.
+  const cookieStore = await cookies()
+  const email = readClinicSession(cookieStore.get(CLINIC_SESSION_COOKIE)?.value)
+    || (verifyMagicToken(bodyEmail, exp, token) ? bodyEmail : '')
+
+  if (!email || !(await isProClinic(email))) {
     return Response.json({ error: 'Not authorized.' }, { status: 401 })
   }
 
