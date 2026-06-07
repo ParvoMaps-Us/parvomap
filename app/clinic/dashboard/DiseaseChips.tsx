@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 
-/** Multi-select disease chips. Renders real checkboxes named "disease" inside
- *  the surrounding GET form (so submit picks up every checked one), but tracks
- *  state client-side so each pill turns green the moment it's toggled. */
+/** Multi-select disease chips. The whole pill toggles on click and highlights
+ *  when selected; hidden inputs named "disease" carry the selection into the
+ *  surrounding GET form so every chosen disease submits. */
 export default function DiseaseChips({
   options,
   initialSelected,
@@ -25,30 +25,28 @@ export default function DiseaseChips({
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      {[...selected].map(key => (
+        <input key={`h-${key}`} type="hidden" name="disease" value={key} />
+      ))}
       {options.map(({ key, name }) => {
         const on = selected.has(key)
         return (
-          <label
+          <button
             key={key}
+            type="button"
+            onClick={() => toggle(key)}
+            aria-pressed={on}
             style={{
-              cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', fontSize: 12,
-              padding: '6px 12px', borderRadius: 999, flex: '0 0 auto',
+              cursor: 'pointer', whiteSpace: 'nowrap', fontSize: 12,
+              padding: '6px 14px', borderRadius: 999, flex: '0 0 auto',
+              fontFamily: 'var(--mono)', fontWeight: on ? 700 : 400,
               border: `1px solid ${on ? 'var(--green)' : 'var(--border)'}`,
               background: on ? 'var(--green-dim)' : 'var(--bg-surface)',
               color: on ? 'var(--green)' : 'var(--text-muted)',
-              display: 'inline-flex', alignItems: 'center', gap: 6,
             }}
           >
-            <input
-              type="checkbox"
-              name="disease"
-              value={key}
-              checked={on}
-              onChange={() => toggle(key)}
-              style={{ accentColor: 'var(--green)' }}
-            />
             {name}
-          </label>
+          </button>
         )
       })}
     </div>
