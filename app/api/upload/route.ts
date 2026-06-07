@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { put } from '@vercel/blob'
+import { moderateImage } from '@/lib/moderation'
 
 // Photo upload for lost-dog reports. Accepts a single image via multipart form
 // data and stores it in Vercel Blob, returning the public URL. Photos are the
@@ -53,8 +54,20 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: 'Image must be under 5 MB.' }, { status: 400, headers: cors })
     }
 
+    // Screen for NSFW / gore BEFORE writing to Blob. Rejected images never get
+    // a public URL. (Fails open if moderation is unconfigured or the API errors.)
+    const bytes = await file.arrayBuffer()
+    const verdict = await moderateImage(bytes, file.type)
+    if (!verdict.ok) {
+      console.warn('Upload rejected by moderation:', verdict.flagged)
+      return Response.json(
+        { error: 'This image can’t be uploaded. Please choose a photo of the dog.' },
+        { status: 422, headers: cors },
+      )
+    }
+
     const ext = file.type.split('/')[1]?.replace('jpeg', 'jpg') ?? 'jpg'
-    const blob = await put(`lost-dogs/${crypto.randomUUID()}.${ext}`, file, {
+    const blob = await put(`lost-dogs/${crypto.randomUUID()}.${ext}`, bytes, {
       access:      'public',
       contentType: file.type,
     })
