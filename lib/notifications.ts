@@ -3,7 +3,7 @@ import { getDiseaseName } from './diseases'
 import { getLeadType } from './lead'
 import { BIOREST_ENABLED } from './flags'
 import { signLostToken } from './lost-token'
-import type { PendingReport } from './redis'
+import type { PendingReport, Report } from './redis'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -267,6 +267,81 @@ export async function sendDelayedUtahOutreach(report: PendingReport): Promise<vo
     <p style="color:#444;font-size:11px;line-height:1.6;">
       You received this because you submitted a report on ParvoMaps. This is a one-time follow-up.<br>
       ParvoMaps · parvomaps.us · Scoopie LLC · scoopie.us · 385-412-7152
+    </p>
+  </div>
+</body>
+</html>`,
+  })
+}
+
+// ─── ALERTS: MAGIC LINK ───────────────────────────────────────────────────────
+
+/** Email a paying subscriber a private link to manage their alert preferences. */
+export async function sendAlertMagicLink(email: string, manageUrl: string): Promise<void> {
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject: 'Manage your ParvoMaps alerts',
+    html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    <div style="margin-bottom:32px;">
+      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
+    </div>
+    <h1 style="font-size:24px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#f0f0f0;margin:0 0 16px;">Your Alert Settings</h1>
+    <p style="color:#888;font-size:14px;margin:0 0 28px;line-height:1.6;">
+      Click below to choose which outbreaks and lost-dog reports you get notified about, and how far around you to watch.
+    </p>
+    <a href="${manageUrl}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin-bottom:24px;">
+      Manage My Alerts →
+    </a>
+    <p style="color:#555;font-size:12px;margin:24px 0 0;line-height:1.6;">
+      This link expires in 24 hours. If you did not request it, you can ignore this email.
+    </p>
+    <div style="border-top:1px solid #222;margin:32px 0;"></div>
+    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease Tracker · parvomaps.us</p>
+  </div>
+</body>
+</html>`,
+  })
+}
+
+// ─── ALERTS: NEW-REPORT NOTIFICATION ──────────────────────────────────────────
+
+/** Notify a subscriber that a new verified report matched their alert area. */
+export async function sendAlertNotification(email: string, report: Report): Promise<void> {
+  const isLost = report.kind === 'lost'
+  const area = report.zip ? `ZIP ${report.zip}` : (report.city || report.state || 'your area')
+  const thing = isLost
+    ? (report.dogName ? `Lost dog (${report.dogName})` : 'Lost dog')
+    : getDiseaseName(report.disease)
+  const verb = isLost ? 'reported near' : 'case reported near'
+
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject: `🚨 ${thing} ${verb} ${area}`,
+    html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    <div style="margin-bottom:32px;">
+      <span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
+    </div>
+    <h1 style="font-size:22px;font-weight:700;color:#f0f0f0;margin:0 0 12px;">${thing} near ${area}</h1>
+    <p style="color:#888;font-size:14px;margin:0 0 8px;line-height:1.6;">
+      A new ${isLost ? 'lost-dog report' : 'verified case'} just appeared inside your alert area${report.city ? ` (${report.city}${report.state ? ', ' + report.state : ''})` : ''}.
+    </p>
+    ${report.notes ? `<p style="color:#aaa;font-size:14px;margin:0 0 8px;line-height:1.6;">"${report.notes}"</p>` : ''}
+    <a href="https://www.parvomaps.us/" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin:16px 0 24px;">
+      View The Map →
+    </a>
+    <div style="border-top:1px solid #222;margin:32px 0;"></div>
+    <p style="color:#444;font-size:11px;line-height:1.6;">
+      You receive these because you're a ParvoMaps subscriber. Manage your alerts at parvomaps.us/alerts.
     </p>
   </div>
 </body>

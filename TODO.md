@@ -25,10 +25,14 @@ hash. These phases build the value subscribers are paying for.
 - [ ] Tie visibility to subscriber status (Guardian vs Pro Clinic scopes) — for now
       it's ADMIN_KEY-gated internal only.
 
-### Phase 2 — Alerts page
-- [ ] Build out `/alerts` so subscribers get real-time outbreak + lost-dog alerts.
-- [ ] Per-ZIP / per-region subscription preferences.
-- [ ] Email + push delivery wired to the `subscribers` records.
+### Phase 2 — Alerts page ✅
+- [x] `/alerts` — subscriber-gated via magic link (email → link only if active in the
+      Stripe `subscribers` hash). `/alerts/manage` sets ZIP, radius, diseases, lost dogs.
+- [x] Per-ZIP / per-radius preferences stored in Redis `alert_prefs`.
+- [x] Email delivery wired into the verify route: when a report publishes, matching
+      active subscribers get a `sendAlertNotification` email (excludes the reporter).
+- [ ] Push notifications (web/mobile) — left as a future phase; email-only for now.
+- [ ] Unsubscribe / manage link in alert emails (currently points to /alerts).
 
 ### Phase 3 — Disease page
 - [ ] Flesh out the per-disease page (`/diseases/[slug]`) with richer data.

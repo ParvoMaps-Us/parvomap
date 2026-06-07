@@ -12,7 +12,9 @@ import {
 import {
   sendVerificationConfirmation,
   sendInternalAlert,
+  sendAlertNotification,
 } from '@/lib/notifications'
+import { findMatchingAlertEmails } from '@/lib/alerts'
 import { isUtahZip } from '@/lib/utah-zips'
 import { getLeadType } from '@/lib/lead'
 import { BIOREST_ENABLED } from '@/lib/flags'
@@ -93,6 +95,22 @@ export async function GET(req: NextRequest) {
           )
         )
       }
+    }
+
+    // Subscriber alerts: notify paying members whose area + interests match this
+    // newly published report. Excludes the reporter's own email. Best-effort —
+    // a delivery failure must not break verification.
+    try {
+      const matchEmails = await findMatchingAlertEmails(report, report.email ?? undefined)
+      for (const to of matchEmails) {
+        emailJobs.push(
+          sendAlertNotification(to, report).catch(e =>
+            console.error('Alert notification failed:', to, e)
+          )
+        )
+      }
+    } catch (e) {
+      console.error('Alert matching failed:', e)
     }
 
     // Await so the serverless function stays alive until the sends complete —
