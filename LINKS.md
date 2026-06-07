@@ -11,6 +11,8 @@ Central place for every link you need to run the site.
 - **Diseases:** https://www.parvomaps.us/diseases
 - **Account / billing (Stripe portal):** https://www.parvomaps.us/account
 - **Manage alerts:** https://www.parvomaps.us/alerts
+- **Pro Clinic dashboard:** https://www.parvomaps.us/clinic (Pro Clinic subscribers — magic-link gated)
+  - Export API: `GET /api/clinic/export?format=csv|json&state=&city=&disease=` — auth via Pro Clinic magic-link or `?key=CLINIC_API_KEY`
 
 ## Admin
 - **Tracking dashboard:** https://www.parvomaps.us/dashboard?key=YOUR_ADMIN_KEY

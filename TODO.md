@@ -41,18 +41,22 @@ hash. These phases build the value subscribers are paying for.
 - [ ] Flesh out the per-disease page (`/diseases/[slug]`) with richer data.
 - [ ] Regional breakdowns, case history, and links into the dashboard.
 
-### Phase 4 — Pro Clinic data access (the $49/mo perk)
-The Pro Clinic tier is sold on these features but none exist yet — clinics
-currently pay and receive nothing beyond a Guardian. Build the paid surface:
-- [ ] **Clinic dashboard** — a subscriber-facing version of `/dashboard`, gated by
-      the magic-link/subscriber flow (reuse Phase 2 auth), scoped to Pro Clinic plans.
-- [ ] **County / state filtering** — let a clinic narrow to their region(s).
-- [ ] **Exportable case data (CSV / API)** — download button + a key-scoped read API
-      so labs/pharma can pull data programmatically.
-- [ ] **Verified-reporter badge** — mark reports submitted by a Pro Clinic account so
-      they carry extra credibility on the map.
-- [ ] **Plan-aware gating** — distinguish `guardian-*` vs `pro-clinic` in the
-      `subscribers` record so only clinics see clinic features.
+### Phase 4 — Pro Clinic data access (the $49/mo perk) — ✅ shipped
+The Pro Clinic paid surface, gated to active `pro-clinic` accounts:
+- [x] **Clinic dashboard** — `/clinic` requests a magic link; `/clinic/dashboard`
+      verifies it + re-checks `isProClinic`, then renders the aggregated view.
+- [x] **State / city filtering** — region dropdowns on the dashboard (true county
+      filtering deferred — `lib/counties.ts` is an empty stub, no ZIP→county data).
+- [x] **Exportable case data (CSV / API)** — Export CSV button + `/api/clinic/export`
+      (CSV/JSON), authed by magic token OR `CLINIC_API_KEY` for programmatic pulls.
+- [x] **Verified-clinic badge** — reports from active Pro Clinic emails are tagged
+      `verifiedClinic` at verify time (no PII stored); badge shows on map + dashboard.
+- [x] **Plan-aware gating** — `getActiveSubscriberPlan` / `isProClinic` in `lib/alerts.ts`.
+
+Follow-ups:
+- [ ] Set `CLINIC_API_KEY` in Vercel to enable the programmatic export endpoint.
+- [ ] True county filtering — needs a ZIP→county dataset in `lib/counties.ts`.
+- [ ] Surface a link to `/clinic` for Pro Clinic subscribers (e.g. welcome email / `/account`).
 
 ## Backlog (nice-to-have)
 - [x] **Photo resizing** before upload — downscale large phone photos (~1200px) to cut storage + speed up.

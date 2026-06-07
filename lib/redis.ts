@@ -55,6 +55,9 @@ export interface Report {
   sourceUrl?: string
   // Source category (drives map icon + credibility). Public, non-PII.
   reporterType?: 'individual' | 'vet' | 'facility' | 'news'
+  // True when the reporter's email belongs to an active Pro Clinic account.
+  // Computed at verify time (PII never stored). Drives the "✓ clinic" badge.
+  verifiedClinic?: boolean
 
   // ─── Lost-dog reports ───
   // Distinguishes a lost-dog report from a disease/hazard one.
@@ -131,6 +134,7 @@ export async function publishVerifiedReport(report: PendingReport): Promise<void
     locationDetail: report.locationDetail ?? undefined,
     sourceUrl: report.sourceUrl ?? undefined,
     reporterType: report.reporterType ?? undefined,
+    verifiedClinic: report.verifiedClinic ?? undefined,
     kind: report.kind ?? undefined,
     lostKind: report.lostKind ?? undefined,
     dogName: report.dogName ?? undefined,

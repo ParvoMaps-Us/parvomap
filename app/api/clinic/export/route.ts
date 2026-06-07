@@ -1,0 +1,74 @@
+import { NextRequest } from 'next/server'
+import { verifyMagicToken } from '@/lib/magic-link'
+import { isProClinic } from '@/lib/alerts'
+import { getVerifiedRaw } from '@/lib/redis'
+import { filterReports, type ReportFilter } from '@/lib/dashboard'
+import type { Report } from '@/lib/redis'
+
+export const dynamic = 'force-dynamic'
+
+// Public, non-PII columns. Email/breed/notes are never stored on verified
+// reports, so there's nothing sensitive to leak here.
+const COLUMNS: (keyof Report)[] = [
+  'id', 'kind', 'disease', 'lostKind', 'state', 'city', 'zip', 'lat', 'lng',
+  'reporterType', 'verifiedClinic', 'confidence', 'timestamp',
+]
+
+function csvCell(v: unknown): string {
+  if (v == null) return ''
+  const s = String(v)
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+}
+
+function toCsv(rows: Report[]): string {
+  const header = COLUMNS.join(',')
+  const lines = rows.map(r =>
+    COLUMNS.map(c => csvCell(c === 'timestamp' ? new Date(r.timestamp).toISOString() : r[c])).join(','),
+  )
+  return [header, ...lines].join('\n')
+}
+
+/** Authorize either via a shared CLINIC_API_KEY (programmatic) or a valid
+ *  Pro Clinic magic-link token (in-dashboard download). */
+async function authorize(p: URLSearchParams): Promise<boolean> {
+  const key = process.env.CLINIC_API_KEY
+  if (key && p.get('key') === key) return true
+
+  const email = (p.get('e') ?? '').trim().toLowerCase()
+  const exp = Number(p.get('exp'))
+  const token = p.get('t') ?? ''
+  if (verifyMagicToken(email, exp, token) && (await isProClinic(email))) return true
+
+  return false
+}
+
+export async function GET(req: NextRequest) {
+  const p = req.nextUrl.searchParams
+
+  if (!(await authorize(p))) {
+    return Response.json({ error: 'Unauthorized — needs a valid Pro Clinic link or API key.' }, { status: 401 })
+  }
+
+  const filter: ReportFilter = {
+    state: p.get('state') ?? undefined,
+    city: p.get('city') ?? undefined,
+  }
+  const disease = p.get('disease')?.trim().toLowerCase()
+
+  let rows = filterReports((await getVerifiedRaw(5000)).map(v => v.report), filter)
+  if (disease) rows = rows.filter(r => (r.disease || '').toLowerCase() === disease)
+  rows.sort((a, b) => b.timestamp - a.timestamp)
+
+  const format = (p.get('format') ?? 'csv').toLowerCase()
+  if (format === 'json') {
+    return Response.json({ count: rows.length, reports: rows.map(r => Object.fromEntries(COLUMNS.map(c => [c, r[c]]))) })
+  }
+
+  const stamp = new Date().toISOString().slice(0, 10)
+  return new Response(toCsv(rows), {
+    headers: {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="parvomaps-cases-${stamp}.csv"`,
+    },
+  })
+}

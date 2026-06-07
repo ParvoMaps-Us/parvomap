@@ -292,7 +292,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             <span style="color:#aaa;">Reported</span>
             <span style="color:#e0e0e0;">${ageLabel}</span>
           </div>
-          <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Anonymous community report</div>
+          ${report.verifiedClinic ? `<div style="margin-top:8px;color:#00ff88;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Anonymous community report</div>`}
           ${report.locationDetail ? reportBtnHtml : ''}
           ${flagButtonHtml(report.id)}
         </div>

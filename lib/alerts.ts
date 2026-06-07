@@ -36,6 +36,32 @@ export async function isActiveSubscriber(email: string): Promise<boolean> {
   return false
 }
 
+/** The plan key of an *active* subscription for this email, or null. Case-insensitive. */
+export async function getActiveSubscriberPlan(email: string): Promise<string | null> {
+  const client = getRedisClient()
+  if (!client) return null
+  const target = email.trim().toLowerCase()
+  if (!target) return null
+
+  const all = await client.hgetall<Record<string, string>>('subscribers')
+  if (!all) return null
+
+  for (const raw of Object.values(all)) {
+    try {
+      const rec = (typeof raw === 'string' ? JSON.parse(raw) : raw) as SubscriberRecord & { plan?: string | null }
+      if (rec.status === 'active' && rec.email?.toLowerCase() === target) return rec.plan ?? null
+    } catch {
+      // skip malformed record
+    }
+  }
+  return null
+}
+
+/** True if this email belongs to an active Pro Clinic subscriber. */
+export async function isProClinic(email: string): Promise<boolean> {
+  return (await getActiveSubscriberPlan(email)) === 'pro-clinic'
+}
+
 /** Find the Stripe customer id for an email (any status) — used to open the
  *  billing portal. Returns null if no matching subscriber record exists. */
 export async function findSubscriberCustomerId(email: string): Promise<string | null> {

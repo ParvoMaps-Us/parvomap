@@ -14,7 +14,7 @@ import {
   sendInternalAlert,
   sendAlertNotification,
 } from '@/lib/notifications'
-import { findMatchingAlertEmails } from '@/lib/alerts'
+import { findMatchingAlertEmails, isProClinic } from '@/lib/alerts'
 import { isUtahZip } from '@/lib/utah-zips'
 import { getLeadType } from '@/lib/lead'
 import { BIOREST_ENABLED } from '@/lib/flags'
@@ -57,7 +57,12 @@ export async function GET(req: NextRequest) {
       return Response.redirect(`${SITE}/?verified=expired`)
     }
 
-    // 3. Publish to verified sorted set (strips PII)
+    // 3. Tag reports from active Pro Clinic accounts so they carry a verified
+    //    badge on the map/dashboard, then publish (strips PII — only the boolean
+    //    flag survives, never the email used to derive it).
+    if (report.email && (await isProClinic(report.email))) {
+      report.verifiedClinic = true
+    }
     await publishVerifiedReport(report)
 
     // 4. Clean up pending record + token

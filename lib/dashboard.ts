@@ -51,9 +51,46 @@ const REPORTER_LABELS: Record<string, string> = {
   news: 'News / media',
 }
 
-/** Aggregate every verified report into disease + lost-dog dashboard views. */
-export async function getDashboardData(): Promise<DashboardData> {
+/** Region filter for clinic-scoped views. Both fields are case-insensitive. */
+export interface ReportFilter {
+  state?: string
+  city?: string
+}
+
+/** Apply a region filter to a list of reports. Empty filter passes everything. */
+export function filterReports(rows: Report[], filter?: ReportFilter): Report[] {
+  if (!filter) return rows
+  const state = filter.state?.trim().toLowerCase()
+  const city = filter.city?.trim().toLowerCase()
+  if (!state && !city) return rows
+  return rows.filter(r => {
+    if (state && (r.state || '').toLowerCase() !== state) return false
+    if (city && (r.city || '').toLowerCase() !== city) return false
+    return true
+  })
+}
+
+/** Distinct states (and cities within an optional state) present in the data —
+ *  powers the clinic filter dropdowns. */
+export async function getFilterOptions(state?: string): Promise<{ states: string[]; cities: string[] }> {
   const all = (await getVerifiedRaw(5000)).map(v => v.report)
+  const states = [...new Set(all.map(r => r.state).filter(Boolean) as string[])].sort()
+  const target = state?.trim().toLowerCase()
+  const cities = [
+    ...new Set(
+      all
+        .filter(r => !target || (r.state || '').toLowerCase() === target)
+        .map(r => r.city)
+        .filter(Boolean) as string[],
+    ),
+  ].sort()
+  return { states, cities }
+}
+
+/** Aggregate verified reports into disease + lost-dog dashboard views,
+ *  optionally narrowed to a state/city region. */
+export async function getDashboardData(filter?: ReportFilter): Promise<DashboardData> {
+  const all = filterReports((await getVerifiedRaw(5000)).map(v => v.report), filter)
   const now = Date.now()
   const within = (r: Report, days: number) => now - r.timestamp < days * DAY
 

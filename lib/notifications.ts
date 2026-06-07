@@ -309,6 +309,39 @@ export async function sendAlertMagicLink(email: string, manageUrl: string): Prom
   })
 }
 
+// ─── PRO CLINIC: DASHBOARD MAGIC LINK ─────────────────────────────────────────
+
+export async function sendClinicMagicLink(email: string, dashboardUrl: string): Promise<void> {
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject: 'Your ParvoMaps Pro Clinic dashboard',
+    html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    <div style="margin-bottom:32px;">
+      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
+    </div>
+    <h1 style="font-size:24px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#f0f0f0;margin:0 0 16px;">Pro Clinic Dashboard</h1>
+    <p style="color:#888;font-size:14px;margin:0 0 28px;line-height:1.6;">
+      Click below to open your clinic dashboard — case trends, regional breakdowns, and CSV export for your area.
+    </p>
+    <a href="${dashboardUrl}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin-bottom:24px;">
+      Open My Dashboard →
+    </a>
+    <p style="color:#555;font-size:12px;margin:24px 0 0;line-height:1.6;">
+      This link expires in 24 hours. If you did not request it, you can ignore this email.
+    </p>
+    <div style="border-top:1px solid #222;margin:32px 0;"></div>
+    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease Tracker · parvomaps.us</p>
+  </div>
+</body>
+</html>`,
+  })
+}
+
 // ─── ALERTS: NEW-REPORT NOTIFICATION ──────────────────────────────────────────
 
 /** Notify a subscriber that a new verified report matched their alert area. */
