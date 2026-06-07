@@ -49,6 +49,10 @@ export default function ReportForm() {
   const [photoUploading, setPhotoUploading] = useState(false)
   const [photoError, setPhotoError] = useState('')
 
+  // Geolocation ("use my current location")
+  const [locating, setLocating] = useState(false)
+  const [geoError, setGeoError] = useState('')
+
   const [disease, setDisease] = useState('')
   const [reporterType, setReporterType] = useState<ReporterType | ''>('')
   // For an individual: 'affected' (own dog) or 'sighting' (saw it elsewhere).
@@ -160,6 +164,48 @@ export default function ReportForm() {
     setPhotoUploading(false)
   }
 
+  // Fill the location from the device GPS: capture exact coords, then reverse-
+  // geocode to a readable label so the field shows a place name, not raw numbers.
+  function useMyLocation() {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setGeoError('Location isn’t available in this browser.')
+      return
+    }
+    setGeoError('')
+    setLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      async pos => {
+        const { latitude: lat, longitude: lng } = pos.coords
+        setLocationCoords({ lat, lng })
+        let label = `My location (${lat.toFixed(5)}, ${lng.toFixed(5)})`
+        try {
+          const res = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&lang=en`)
+          const data = await res.json()
+          const p = data.features?.[0]?.properties
+          if (p) {
+            const parts = [p.name ?? p.street, p.city ?? p.county, p.state]
+              .filter((x: unknown): x is string => typeof x === 'string' && x.length > 0)
+            const built = Array.from(new Set(parts)).join(', ')
+            if (built) label = built
+          }
+        } catch {
+          /* keep the coordinate label */
+        }
+        setLocationDetail(label)
+        setLocating(false)
+      },
+      err => {
+        setGeoError(
+          err.code === err.PERMISSION_DENIED
+            ? 'Location permission denied — type an address instead.'
+            : 'Couldn’t get your location — type an address instead.',
+        )
+        setLocating(false)
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    )
+  }
+
   function clearPhoto() {
     setPhotoUrl('')
     setPhotoPreview('')
@@ -232,6 +278,28 @@ export default function ReportForm() {
 
     setLoading(false)
   }
+
+  // Shared "use my current location" control, placed under each location field.
+  const gpsButton = (
+    <div style={{ marginTop: 6 }}>
+      <button
+        type="button"
+        onClick={useMyLocation}
+        disabled={locating}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          background: 'transparent', border: '1px solid var(--border)', borderRadius: 4,
+          color: locating ? '#888' : 'var(--green)', cursor: locating ? 'default' : 'pointer',
+          fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.04em', padding: '6px 10px',
+        }}
+      >
+        {locating ? '📡 Locating…' : '📍 Use my current location'}
+      </button>
+      {geoError && (
+        <div style={{ marginTop: 4, fontSize: 10, color: 'var(--red)', fontFamily: 'var(--mono)' }}>{geoError}</div>
+      )}
+    </div>
+  )
 
   if (submitted) {
     return (
@@ -357,6 +425,7 @@ export default function ReportForm() {
                   ✓ Exact spot pinned
                 </div>
               )}
+              {gpsButton}
             </div>
           )}
 
@@ -603,6 +672,7 @@ export default function ReportForm() {
             {hasPreciseLocation
               ? <div style={{ marginTop: 4, fontSize: 10, color: '#00ff88', fontFamily: 'var(--mono)' }}>✓ Exact spot pinned</div>
               : <div style={{ marginTop: 4, fontSize: 10, color: '#888', fontFamily: 'var(--mono)' }}>Pick a result to pin the exact spot on the map.</div>}
+            {gpsButton}
           </div>
 
           <div className="form-group">

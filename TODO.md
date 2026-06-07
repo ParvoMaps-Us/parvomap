@@ -13,6 +13,6 @@ A running list of ideas and work to build out. Newest ideas can go under "Backlo
 
 ## Backlog (nice-to-have)
 - [x] **Photo resizing** before upload — downscale large phone photos (~1200px) to cut storage + speed up.
-- [ ] **"Use my current location"** GPS button on the report form for a one-tap exact pin (great on mobile).
+- [x] **"Use my current location"** GPS button on the report form for a one-tap exact pin (great on mobile).
 - [ ] **Abuse / moderation** — photos and public contact info are unmoderated; add a report/flag mechanism.
 - [ ] **Click-to-drop-a-pin** directly on the map as another way to set an exact location.
