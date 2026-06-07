@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'ParvoMap — US Canine Disease & Tick Outbreak Tracker | Parvo, Lyme, RMSF, Kennel Cough & More',
+  title: 'ParvoMaps — US Canine Disease & Tick Outbreak Tracker | Parvo, Lyme, RMSF, Kennel Cough & More',
   description: 'The only real-time, crowdsourced map tracking canine disease outbreaks across the United States. Report parvo, distemper, Lyme disease, Rocky Mountain spotted fever, kennel cough, leptospirosis, dog flu, giardia, tick sightings, and blue-green algae dangers near you.',
   keywords: 'parvo map, canine parvovirus tracker, dog disease outbreak map, parvo outbreak near me, kennel cough map, distemper outbreak, leptospirosis dogs, blue green algae dog warning, dog flu tracker, canine disease surveillance, parvotrack alternative',
   metadataBase: new URL('https://www.parvomaps.us'),
@@ -12,15 +12,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: 'https://www.parvomaps.us/',
-    title: 'ParvoMap — Real-Time US Canine Disease Outbreak Tracker',
+    title: 'ParvoMaps — Real-Time US Canine Disease Outbreak Tracker',
     description: 'Community-powered map tracking parvo, distemper, kennel cough, leptospirosis, blue-green algae, and more. See what infectious diseases are reported near you. Protect your dog.',
-    siteName: 'ParvoMap',
+    siteName: 'ParvoMaps',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
     site: '@parvomap',
-    title: 'ParvoMap — US Canine Disease Outbreak Tracker',
+    title: 'ParvoMaps — US Canine Disease Outbreak Tracker',
     description: 'Real-time crowdsourced map of parvo, distemper, kennel cough & blue-green algae dangers for dogs across the US.',
   },
 }
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'ParvoMap',
+  name: 'ParvoMaps',
   url: 'https://www.parvomaps.us',
   description: 'Real-time crowdsourced map tracking canine disease outbreaks across the United States including parvo, distemper, Lyme disease, kennel cough, and more.',
   applicationCategory: 'HealthApplication',

@@ -5,7 +5,7 @@ export default function Header() {
     <header role="banner">
       <div className="logo-group">
         <div className="logo">
-          Parvo<span style={{ color: '#f0f0f0' }}>Map</span>{' '}
+          Parvo<span style={{ color: '#f0f0f0' }}>Maps</span>{' '}
           <span className="logo-dot" />
         </div>
         <div className="logo-tag header-tagline">US Canine Disease Tracker</div>

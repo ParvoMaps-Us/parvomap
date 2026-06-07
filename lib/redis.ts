@@ -55,6 +55,23 @@ export interface Report {
   sourceUrl?: string
   // Source category (drives map icon + credibility). Public, non-PII.
   reporterType?: 'individual' | 'vet' | 'facility' | 'news'
+
+  // ─── Lost-dog reports ───
+  // Distinguishes a lost-dog report from a disease/hazard one.
+  kind?: 'disease' | 'lost'
+  // 'owner' = my dog is lost; 'sighting' = I spotted a loose/lost dog.
+  lostKind?: 'owner' | 'sighting'
+  dogName?: string
+  dogBreed?: string
+  dogDescription?: string
+  // Exact street address (public for lost dogs — no privacy masking).
+  address?: string
+  // When the dog was last seen (ISO string).
+  lastSeen?: string
+  // Public contact (phone/email) shown on the map popup so finders can reach out.
+  contact?: string
+  // Public photo URL of the dog (Vercel Blob).
+  photoUrl?: string
 }
 
 /** Full shape stored in the pending hash (includes PII) */
@@ -114,6 +131,15 @@ export async function publishVerifiedReport(report: PendingReport): Promise<void
     locationDetail: report.locationDetail ?? undefined,
     sourceUrl: report.sourceUrl ?? undefined,
     reporterType: report.reporterType ?? undefined,
+    kind: report.kind ?? undefined,
+    lostKind: report.lostKind ?? undefined,
+    dogName: report.dogName ?? undefined,
+    dogBreed: report.dogBreed ?? undefined,
+    dogDescription: report.dogDescription ?? undefined,
+    address: report.address ?? undefined,
+    lastSeen: report.lastSeen ?? undefined,
+    contact: report.contact ?? undefined,
+    photoUrl: report.photoUrl ?? undefined,
   }
 
   await client.zadd('reports:verified', {
@@ -148,12 +174,35 @@ export async function getReports({ limit = 500 }: { limit?: number } = {}): Prom
   }
 }
 
+/** Fetch verified reports alongside their exact stored string (needed to zrem
+ *  a specific member). Used by the cleanup cron and the lost-dog remove route. */
+export async function getVerifiedRaw(limit = 5000): Promise<{ raw: string; report: Report }[]> {
+  const client = getRedisClient()
+  if (!client) return []
+  try {
+    const raw = await client.zrange('reports:verified', 0, limit - 1, { rev: true })
+    return (raw as string[]).map(s => ({ raw: s, report: JSON.parse(s) as Report }))
+  } catch (e) {
+    console.error('getVerifiedRaw error:', e)
+    return []
+  }
+}
+
+/** Remove specific members (by their exact stored strings) from the verified set.
+ *  Returns the number removed. */
+export async function removeVerifiedRaw(raws: string[]): Promise<number> {
+  const client = getRedisClient()
+  if (!client || raws.length === 0) return 0
+  return client.zrem('reports:verified', ...raws)
+}
+
 export async function getStats() {
   const client = getRedisClient()
   if (!client) return EMPTY_STATS
 
   try {
-    const reports = await getReports({ limit: 500 })
+    // Stats are disease/hazard surveillance — lost-dog reports don't count.
+    const reports = (await getReports({ limit: 500 })).filter(r => r.kind !== 'lost')
     const now = Date.now()
     const recent48 = reports.filter(r => now - r.timestamp < 48 * 60 * 60 * 1000)
 

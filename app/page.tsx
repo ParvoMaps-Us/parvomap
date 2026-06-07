@@ -6,6 +6,7 @@ import Map from '@/components/Map'
 import ReportForm from '@/components/ReportForm'
 import Footer from '@/components/Footer'
 import VerifiedBanner from '@/components/VerifiedBanner'
+import WelcomePopup from '@/components/WelcomePopup'
 import { getReports, getStats } from '@/lib/redis'
 
 export default async function HomePage({
@@ -27,6 +28,7 @@ export default async function HomePage({
   return (
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
+      <WelcomePopup />
       {verified && <VerifiedBanner status={verified} />}
       {reports.length > 0 && <Ticker reports={reports} />}
       <Header />
