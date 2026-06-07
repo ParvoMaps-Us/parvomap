@@ -17,6 +17,28 @@ interface Props {
   } | null
 }
 
+// Shared chip styling. Selected chips fill green; unselected are outlined.
+function chipStyle(active: boolean): React.CSSProperties {
+  return {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '8px 14px',
+    borderRadius: 999,
+    border: `1px solid ${active ? 'var(--green)' : 'var(--border)'}`,
+    background: active ? 'var(--green)' : 'transparent',
+    color: active ? '#04130b' : 'var(--text-muted)',
+    fontFamily: 'var(--mono)',
+    fontSize: 12.5,
+    fontWeight: active ? 700 : 400,
+    cursor: 'pointer',
+    transition: 'all 0.12s',
+    width: 'auto',
+    whiteSpace: 'nowrap',
+    lineHeight: 1.2,
+  }
+}
+
 export default function PreferencesForm({ email, exp, token, diseaseOptions, initial }: Props) {
   const [zip, setZip] = useState(initial?.zip ?? '')
   const [radius, setRadius] = useState(initial?.radiusMiles ?? 25)
@@ -28,7 +50,13 @@ export default function PreferencesForm({ email, exp, token, diseaseOptions, ini
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [error, setError] = useState<string | null>(null)
 
+  function selectAll() {
+    setAllDiseases(true)
+    setSelected(new Set())
+  }
+
   function toggleDisease(key: string) {
+    setAllDiseases(false)
     setSelected(prev => {
       const next = new Set(prev)
       if (next.has(key)) next.delete(key); else next.add(key)
@@ -60,54 +88,57 @@ export default function PreferencesForm({ email, exp, token, diseaseOptions, ini
     }
   }
 
-  const label = { display: 'block', fontSize: 12, color: 'var(--text-dim)', marginBottom: 6 } as const
-  const input = { padding: '11px 14px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 14 } as const
+  const label = { display: 'block', fontSize: 12, color: 'var(--text-dim)', marginBottom: 8, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }
+  const selectedCount = allDiseases ? diseaseOptions.length : selected.size
 
   return (
     <form onSubmit={save}>
       {error && <p style={{ color: 'var(--red)', fontSize: 13, marginBottom: 14 }}>{error}</p>}
       {status === 'saved' && (
-        <div style={{ border: '1px solid var(--green)', background: 'var(--green-dim)', borderRadius: 6, padding: '12px 16px', marginBottom: 16, fontSize: 13, color: 'var(--green)' }}>
-          ✓ Saved. You’ll get alerts for this area from now on.
+        <div style={{ border: '1px solid var(--green)', background: 'var(--green-dim)', borderRadius: 6, padding: '12px 16px', marginBottom: 18, fontSize: 13, color: 'var(--green)' }}>
+          ✓ Saved. You’ll get alerts for this area from now on. Re-open this page anytime to edit.
         </div>
       )}
 
-      <div style={{ marginBottom: 20 }}>
-        <label style={label}>Your ZIP code</label>
-        <input value={zip} onChange={e => setZip(e.target.value)} inputMode="numeric" maxLength={5} placeholder="84101" required style={{ ...input, width: 140 }} />
+      <div style={{ marginBottom: 22 }}>
+        <span style={label}>Your ZIP code</span>
+        <input value={zip} onChange={e => setZip(e.target.value)} inputMode="numeric" maxLength={5} placeholder="84101" required style={{ width: 140, fontFamily: 'var(--mono)' }} />
       </div>
 
-      <div style={{ marginBottom: 22 }}>
-        <label style={label}>Alert radius: <strong style={{ color: 'var(--text)' }}>{radius} miles</strong></label>
-        <input type="range" min={1} max={100} value={radius} onChange={e => setRadius(Number(e.target.value))} style={{ width: '100%', accentColor: 'var(--green)' }} />
+      <div style={{ marginBottom: 24 }}>
+        <span style={label}>Alert radius — <strong style={{ color: 'var(--text)' }}>{radius} miles</strong></span>
+        <input type="range" min={1} max={100} value={radius} onChange={e => setRadius(Number(e.target.value))} style={{ width: '100%', accentColor: 'var(--green)', height: 6 }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-dim)', marginTop: 2 }}>
+          <span>1 mi</span><span>100 mi</span>
+        </div>
       </div>
 
-      <div style={{ marginBottom: 22 }}>
-        <label style={label}>Diseases to watch</label>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, marginBottom: 10, cursor: 'pointer' }}>
-          <input type="checkbox" checked={allDiseases} onChange={e => setAllDiseases(e.target.checked)} style={{ accentColor: 'var(--green)' }} />
-          All diseases &amp; hazards
-        </label>
-        {!allDiseases && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 6, paddingLeft: 4 }}>
-            {diseaseOptions.map(d => (
-              <label key={d.key} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, cursor: 'pointer' }}>
-                <input type="checkbox" checked={selected.has(d.key)} onChange={() => toggleDisease(d.key)} style={{ accentColor: 'var(--green)' }} />
-                {d.name}
-              </label>
-            ))}
-          </div>
-        )}
+      <div style={{ marginBottom: 24 }}>
+        <span style={label}>Diseases to watch · <span style={{ color: 'var(--green)' }}>{selectedCount} selected</span></span>
+        <p style={{ fontSize: 11, color: 'var(--text-dim)', margin: '0 0 10px' }}>Tap to add or remove. Pick “All” or choose specific ones.</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <button type="button" onClick={selectAll} style={chipStyle(allDiseases)}>
+            {allDiseases ? '✓ ' : ''}All diseases &amp; hazards
+          </button>
+          {diseaseOptions.map(d => {
+            const on = !allDiseases && selected.has(d.key)
+            return (
+              <button key={d.key} type="button" onClick={() => toggleDisease(d.key)} style={chipStyle(on)}>
+                {on ? '✓ ' : ''}{d.name}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       <div style={{ marginBottom: 26 }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer' }}>
-          <input type="checkbox" checked={lostDogs} onChange={e => setLostDogs(e.target.checked)} style={{ accentColor: 'var(--green)' }} />
-          🐶 Also alert me about lost dogs nearby
-        </label>
+        <span style={label}>Lost dogs</span>
+        <button type="button" onClick={() => setLostDogs(v => !v)} style={chipStyle(lostDogs)}>
+          {lostDogs ? '✓ ' : ''}🐶 Alert me about lost dogs nearby
+        </button>
       </div>
 
-      <button type="submit" disabled={status === 'saving'} style={{ width: '100%', padding: '12px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700, background: 'var(--green)', color: '#04130b' }}>
+      <button type="submit" disabled={status === 'saving'} style={{ width: '100%', padding: '13px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700, background: 'var(--green)', color: '#04130b' }}>
         {status === 'saving' ? 'Saving…' : 'Save alert preferences'}
       </button>
     </form>
