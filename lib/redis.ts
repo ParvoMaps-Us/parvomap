@@ -196,6 +196,63 @@ export async function removeVerifiedRaw(raws: string[]): Promise<number> {
   return client.zrem('reports:verified', ...raws)
 }
 
+/** Remove a verified report by id and return it (for photo cleanup). */
+export async function removeVerifiedById(id: string): Promise<Report | null> {
+  const all = await getVerifiedRaw()
+  const match = all.find(({ report }) => report.id === id)
+  if (!match) return null
+  await removeVerifiedRaw([match.raw])
+  return match.report
+}
+
+// ─── Moderation flags ───
+const FLAGS_INDEX = 'moderation:flags'
+
+/** A user-submitted flag aggregated per report. */
+export interface FlagRecord {
+  id: string
+  count: number
+  reasons: string[]
+  summary: string   // short human label for the dashboard
+  firstAt: number
+  lastAt: number
+}
+
+/** Record a flag against a report. Aggregates by report id. Returns new count. */
+export async function addFlag(id: string, reason: string, summary: string): Promise<number> {
+  const client = getRedisClient()
+  if (!client) return 0
+  const now = Date.now()
+  const raw = await client.get<string>(`flag:${id}`)
+  const rec: FlagRecord = raw
+    ? JSON.parse(raw)
+    : { id, count: 0, reasons: [], summary, firstAt: now, lastAt: now }
+  rec.count += 1
+  rec.lastAt = now
+  rec.summary = summary || rec.summary
+  if (reason) rec.reasons = [...rec.reasons, reason].slice(-20) // keep last 20
+  await client.set(`flag:${id}`, JSON.stringify(rec))
+  await client.zadd(FLAGS_INDEX, { score: now, member: id })
+  return rec.count
+}
+
+/** List all flagged reports, most recently flagged first. */
+export async function listFlags(): Promise<FlagRecord[]> {
+  const client = getRedisClient()
+  if (!client) return []
+  const ids = (await client.zrange(FLAGS_INDEX, 0, -1, { rev: true })) as string[]
+  if (ids.length === 0) return []
+  const records = await Promise.all(ids.map(id => client.get<string>(`flag:${id}`)))
+  return records.filter((r): r is string => !!r).map(r => JSON.parse(r) as FlagRecord)
+}
+
+/** Clear a flag (dismiss as a false alarm, or after removing the report). */
+export async function clearFlag(id: string): Promise<void> {
+  const client = getRedisClient()
+  if (!client) return
+  await Promise.all([client.del(`flag:${id}`), client.zrem(FLAGS_INDEX, id)])
+}
+
 export async function getStats() {
   const client = getRedisClient()
   if (!client) return EMPTY_STATS

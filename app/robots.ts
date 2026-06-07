@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/', '/check', '/pro'],
+      disallow: ['/api/', '/check', '/pro', '/admin'],
     },
     sitemap: 'https://www.parvomaps.us/sitemap.xml',
     host: 'https://www.parvomaps.us',

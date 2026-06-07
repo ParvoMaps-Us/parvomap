@@ -26,6 +26,11 @@ function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;')
 }
 
+/** Small "report this pin" control appended to each report popup for moderation. */
+function flagButtonHtml(id: string): string {
+  return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#777;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">🚩 Report this pin</button>`
+}
+
 /** Popup markup for a lost-dog pin: photo, name, details, exact address, contact. */
 function lostPopupHtml(report: Report, ageLabel: string): string {
   const isSighting = report.lostKind === 'sighting'
@@ -47,6 +52,7 @@ function lostPopupHtml(report: Report, ageLabel: string): string {
       <div style="display:flex;justify-content:space-between;gap:16px;"><span style="color:#aaa;">Reported</span><span style="color:#e0e0e0;">${ageLabel}</span></div>
       ${report.contact ? `<div style="margin-top:8px;padding-top:6px;border-top:1px solid #222;color:#60a5fa;font-size:11px;word-break:break-word;">📞 ${escapeHtml(report.contact)}</div>` : ''}
       <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Community lost-dog report</div>
+      ${flagButtonHtml(report.id)}
     </div>
   `
 }
@@ -188,11 +194,40 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     ) => {
       marker.on('dblclick', (ev: any) => { L.DomEvent.stop(ev); flyZoom(lat, lng) })
       marker.on('popupopen', (e: any) => {
-        const btn = e.popup.getElement()?.querySelector('.report-area-btn')
+        const el = e.popup.getElement()
+        const btn = el?.querySelector('.report-area-btn')
         btn?.addEventListener('click', () => {
           map.closePopup()
           window.dispatchEvent(new CustomEvent('parvomap:report-area', { detail }))
         })
+
+        // Moderation: flag this pin as inappropriate/fake. Posts to /api/flag.
+        const flagBtn = el?.querySelector('.flag-pin-btn') as HTMLButtonElement | null
+        if (flagBtn && !flagBtn.dataset.wired) {
+          flagBtn.dataset.wired = '1'
+          flagBtn.addEventListener('click', async () => {
+            const id = flagBtn.getAttribute('data-id')
+            if (!id) return
+            const reason = window.prompt('Report this pin — what’s wrong with it? (optional)')
+            if (reason === null) return // cancelled
+            flagBtn.disabled = true
+            flagBtn.textContent = 'Reporting…'
+            const endpoint = window.location.hostname === 'parvomaps.us'
+              ? 'https://www.parvomaps.us/api/flag'
+              : '/api/flag'
+            try {
+              const res = await fetch(endpoint, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ id, reason: reason.trim() }),
+              })
+              flagBtn.textContent = res.ok ? '✓ Reported — thank you' : 'Failed — try again'
+            } catch {
+              flagBtn.textContent = 'Failed — try again'
+              flagBtn.disabled = false
+            }
+          })
+        }
       })
     }
 
@@ -259,6 +294,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           </div>
           <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Anonymous community report</div>
           ${report.locationDetail ? reportBtnHtml : ''}
+          ${flagButtonHtml(report.id)}
         </div>
       `)
 
