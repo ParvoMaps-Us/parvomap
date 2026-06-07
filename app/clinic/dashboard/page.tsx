@@ -6,6 +6,7 @@ import { getDashboardData, getFilterOptions, type Bucket } from '@/lib/dashboard
 import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
 import type { Report } from '@/lib/redis'
 import RequestDiseaseForm from './RequestDiseaseForm'
+import DiseaseChips from './DiseaseChips'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
@@ -95,7 +96,6 @@ export default async function ClinicDashboardPage({
   const expNum = Number(exp)
   // `disease` arrives as a string (one checkbox) or array (several). Empty = all.
   const diseases = (Array.isArray(disease) ? disease : disease ? [disease] : []).filter(Boolean)
-  const diseaseSet = new Set(diseases)
 
   const denied = (
     <main style={{ maxWidth: 620, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
@@ -172,17 +172,10 @@ export default async function ClinicDashboardPage({
           <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 8 }}>
             Diseases <span style={{ color: 'var(--text-muted)' }}>· none selected = all diseases</span>
           </label>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {Object.entries(DISEASE_MAP).map(([key, info]) => {
-              const on = diseaseSet.has(key)
-              return (
-                <label key={key} style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', fontSize: 12, padding: '6px 12px', borderRadius: 999, border: `1px solid ${on ? 'var(--green)' : 'var(--border)'}`, background: on ? 'var(--green-dim)' : 'var(--bg-surface)', color: on ? 'var(--green)' : 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: 6, flex: '0 0 auto' }}>
-                  <input type="checkbox" name="disease" value={key} defaultChecked={on} style={{ accentColor: 'var(--green)' }} />
-                  {info.name}
-                </label>
-              )
-            })}
-          </div>
+          <DiseaseChips
+            options={Object.entries(DISEASE_MAP).map(([key, info]) => ({ key, name: info.name }))}
+            initialSelected={diseases}
+          />
         </div>
       </form>
 
