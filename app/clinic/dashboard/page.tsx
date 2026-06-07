@@ -9,6 +9,7 @@ import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
 import type { Report } from '@/lib/redis'
 import RequestDiseaseForm from './RequestDiseaseForm'
 import DiseaseChips from './DiseaseChips'
+import ReportBugForm from './ReportBugForm'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
@@ -255,8 +256,16 @@ export default async function ClinicDashboardPage({
         emerging conditions, or a region-specific concern. We typically begin tracking within
         <strong style={{ color: 'var(--text)' }}> 24–72 hours</strong> and email you when it’s live.
       </p>
-      <div style={{ ...card, marginBottom: 12 }}>
+      <div style={{ ...card, marginBottom: 36 }}>
         <RequestDiseaseForm />
+      </div>
+
+      {/* ─── Report a bug ─── */}
+      <div style={{ borderTop: '1px solid var(--border)', paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <p style={{ color: 'var(--text-dim)', fontSize: 12, margin: 0 }}>
+          Something not working right? Let us know and we’ll fix it.
+        </p>
+        <ReportBugForm />
       </div>
     </main>
   )

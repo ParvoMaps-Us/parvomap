@@ -365,6 +365,28 @@ export async function sendDiseaseTrackRequest(email: string, disease: string, no
   })
 }
 
+// ─── PRO CLINIC: BUG REPORT ───────────────────────────────────────────────────
+
+/** Forward a bug report from a Pro Clinic dashboard user to the team. */
+export async function sendBugReport(reporterEmail: string, message: string): Promise<void> {
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      'parvomaps.us@gmail.com',
+    replyTo: reporterEmail,
+    subject: `Bug report from ${reporterEmail}`,
+    html: `
+<div style="font-family:monospace;background:#0a0a0a;color:#f0f0f0;padding:24px;max-width:480px;">
+  <div style="color:#f59e0b;font-size:16px;font-weight:bold;margin-bottom:16px;letter-spacing:0.1em;">🐞 BUG REPORT</div>
+  <table style="width:100%;border-collapse:collapse;font-size:12px;">
+    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;width:35%;">FROM</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${reporterEmail}</td></tr>
+    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;">SOURCE</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">Pro Clinic dashboard</td></tr>
+    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;">WHEN</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${new Date().toLocaleString()}</td></tr>
+  </table>
+  <div style="margin-top:16px;padding:12px;background:#111;border-left:2px solid #333;color:#ccc;font-size:13px;line-height:1.6;white-space:pre-wrap;">${message}</div>
+</div>`,
+  })
+}
+
 // ─── ALERTS: NEW-REPORT NOTIFICATION ──────────────────────────────────────────
 
 /** Notify a subscriber that a new verified report matched their alert area. */
