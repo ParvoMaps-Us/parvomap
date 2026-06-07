@@ -362,6 +362,7 @@ export async function sendSubscriptionWelcome(email: string, plan?: string | nul
   const planLabel = plan?.startsWith('pro') ? 'Pro Clinic' : 'Guardian'
   const alertsUrl = 'https://www.parvomaps.us/alerts'
   const accountUrl = 'https://www.parvomaps.us/account'
+  const cancelUrl = 'https://billing.stripe.com/p/login/4gMcMY9OscDGdAlbVY33W00'
 
   await sendEmail({
     from:    FROM_ALERTS,
@@ -391,9 +392,13 @@ export async function sendSubscriptionWelcome(email: string, plan?: string | nul
       After that, you'll get an email the moment a new verified case or lost dog is reported in your area.
     </p>
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
+    <p style="color:#888;font-size:12px;line-height:1.7;margin:0 0 12px;">
+      <strong style="color:#aaa;">Cancel anytime.</strong> Click the 👤 person icon on
+      <a href="${accountUrl}" style="color:#888;text-decoration:underline;">parvomaps.us</a>,
+      or use this direct link:<br>
+      <a href="${cancelUrl}" style="color:#00ff88;text-decoration:underline;word-break:break-all;">${cancelUrl}</a>
+    </p>
     <p style="color:#444;font-size:11px;line-height:1.6;">
-      Manage your billing anytime at
-      <a href="${accountUrl}" style="color:#555;text-decoration:underline;">parvomaps.us/account</a>.<br>
       ParvoMaps · US Canine Disease Tracker · parvomaps.us
     </p>
   </div>
