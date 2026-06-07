@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { getDashboardData, type Bucket, type DashboardData } from '@/lib/dashboard'
-import { getDiseaseName } from '@/lib/diseases'
+import { getDashboardData, getFilterOptions, type Bucket, type DashboardData } from '@/lib/dashboard'
+import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
 import { listFlags, getVerifiedRaw, type Report, type FlagRecord } from '@/lib/redis'
 import { getDiseaseRequests, type DiseaseRequest } from '@/lib/alerts'
+import DiseaseChips from '@/app/clinic/dashboard/DiseaseChips'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
@@ -86,10 +87,11 @@ function RecentTable({ rows, lost }: { rows: Report[]; lost?: boolean }) {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ key?: string }>
+  searchParams: Promise<{ key?: string; state?: string; county?: string; city?: string; disease?: string | string[] }>
 }) {
-  const { key } = await searchParams
+  const { key, state, county, city, disease } = await searchParams
   const adminKey = process.env.ADMIN_KEY
+  const diseases = (Array.isArray(disease) ? disease : disease ? [disease] : []).filter(Boolean)
 
   if (!adminKey || key !== adminKey) {
     return (
@@ -104,23 +106,70 @@ export default async function DashboardPage({
     )
   }
 
-  const [data, flags, verified, diseaseRequests]: [DashboardData, FlagRecord[], { report: Report }[], DiseaseRequest[]] = await Promise.all([
-    getDashboardData(),
+  const filter = { state: state || undefined, county: county || undefined, city: city || undefined, diseases }
+  const [data, options, flags, verified, diseaseRequests]: [DashboardData, Awaited<ReturnType<typeof getFilterOptions>>, FlagRecord[], { report: Report }[], DiseaseRequest[]] = await Promise.all([
+    getDashboardData(filter),
+    getFilterOptions(state),
     listFlags(),
     getVerifiedRaw(),
     getDiseaseRequests(),
   ])
   const reportById = new Map<string, Report>(verified.map(v => [v.report.id, v.report]))
   const qs = `key=${encodeURIComponent(key)}&from=dashboard`
+  const selectStyle = { padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 120 } as const
+  const regionLabel = [city, county, state].filter(Boolean).join(', ') || 'all regions'
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 } as const
   const grid2 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 } as const
 
   return (
     <main style={{ maxWidth: 1000, margin: '40px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
       <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>📊 Tracking Dashboard</h1>
-      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 28 }}>
-        Generated {fmt(data.generatedAt)} · internal view
+      <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 16 }}>
+        Generated {fmt(data.generatedAt)} · internal view · {regionLabel}
       </p>
+
+      {/* ─── Filters ─── */}
+      <form method="GET" style={{ border: '1px solid var(--border)', borderRadius: 6, padding: 16, background: 'var(--bg-card)', marginBottom: 28, display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <input type="hidden" name="key" value={key} />
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>State</label>
+            <select name="state" defaultValue={state ?? ''} style={selectStyle}>
+              <option value="">All states</option>
+              {options.states.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>County</label>
+            <select name="county" defaultValue={county ?? ''} style={{ ...selectStyle, minWidth: 150 }}>
+              <option value="">All counties{state ? ` in ${state}` : ''}</option>
+              {options.counties.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>City</label>
+            <select name="city" defaultValue={city ?? ''} style={{ ...selectStyle, minWidth: 140 }}>
+              <option value="">All cities{state ? ` in ${state}` : ''}</option>
+              {options.cities.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <button type="submit" style={{ padding: '9px 18px', borderRadius: 6, border: 'none', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700, background: 'var(--green)', color: '#04130b' }}>
+            Apply
+          </button>
+          {(state || county || city || diseases.length > 0) && (
+            <a href={`/dashboard?key=${encodeURIComponent(key)}`} style={{ alignSelf: 'center', fontSize: 12, color: 'var(--text-dim)' }}>Clear</a>
+          )}
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 8 }}>
+            Diseases <span style={{ color: 'var(--text-muted)' }}>· none selected = all</span>
+          </label>
+          <DiseaseChips
+            options={Object.entries(DISEASE_MAP).map(([k, info]) => ({ key: k, name: info.name }))}
+            initialSelected={diseases}
+          />
+        </div>
+      </form>
 
       {/* ─── Diseases ─── */}
       <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 12px' }}>🦠 Disease & hazard reports</h2>
@@ -133,6 +182,7 @@ export default async function DashboardPage({
       <div style={{ ...grid2, marginBottom: 14 }}>
         <BarList title="By disease" buckets={data.disease.byDisease} accent="var(--d-parvo, var(--green))" />
         <BarList title="By state" buckets={data.disease.byState} accent="var(--amber)" />
+        <BarList title="By county" buckets={data.disease.byCounty} accent="#a78bfa" />
         <BarList title="By reporter type" buckets={data.disease.byReporter} accent="var(--green)" />
       </div>
       <div style={{ marginBottom: 36 }}>

@@ -21,7 +21,7 @@ hash. These phases build the value subscribers are paying for.
       (`/dashboard?key=<ADMIN_KEY>`, same gate as `/admin`).
 - [x] Surface counts (all-time / 48 h / 7 d / 30 d), breakdowns by disease, state,
       and reporter type, plus a recent-activity table for each report type.
-- [ ] Filter by state / county / disease in the UI (currently shows aggregate bars).
+- [x] Filter by state / county / city / disease in the UI (dropdowns + disease chips).
 - [ ] Tie visibility to subscriber status (Guardian vs Pro Clinic scopes) — for now
       it's ADMIN_KEY-gated internal only.
 
