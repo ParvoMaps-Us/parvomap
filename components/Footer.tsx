@@ -31,7 +31,10 @@ export default function Footer() {
         </a>
         <div className="footer-copy">
           © {year} ParvoMaps · parvomaps.us<br />
-          Community-powered canine disease surveillance
+          Community-powered canine disease surveillance<br />
+          <a href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>Privacy</a>
+          {' · '}
+          <a href="/terms" style={{ color: 'inherit', textDecoration: 'underline' }}>Terms</a>
         </div>
       </div>
     </footer>

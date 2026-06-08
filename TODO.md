@@ -62,24 +62,18 @@ Follow-ups:
 - [x] Admin view of clinic disease-tracking requests (`/dashboard` section).
 - [x] Persistent 30-day session cookie for the clinic dashboard (magic link → `/api/clinic/login`).
 
-### Phase 5 — Terms of Service & Privacy Policy
-Legal pages are now required: we store PII (emails, report contents, lost-dog
-photos), take payments via Stripe, and set an authentication cookie.
-Decisions: governing law = **State of Utah, USA**; legal/privacy/deletion
-contact = **parvomaps.us@gmail.com**.
-- [ ] **Privacy Policy** (`/privacy`) — what we collect (emails, reports, photos,
-      approximate location, IP), why, retention, and the cookie we set
-      (`clinic_session` — strictly-necessary auth, no tracking). Disclose
-      sub-processors: Stripe (payments), Resend (email), OpenAI (image moderation),
-      Upstash Redis (storage), Vercel Blob (photos), Vercel (hosting), Photon/
-      zippopotam (geocoding). Cover user rights + deletion-request contact.
-- [ ] **Terms of Service** (`/terms`) — acceptable use, that reports are
-      community-submitted and not veterinary advice, no warranty, subscription
-      billing/cancellation terms, liability limits.
-- [ ] **Footer links** to `/privacy` and `/terms` site-wide.
-- [ ] **Checkout consent** — note agreement to Terms/Privacy on the `/pro` flow.
-- [ ] Decide if a cookie banner is needed (likely not — the only cookie is
-      strictly-necessary auth, no analytics/ad cookies — but confirm).
+### Phase 5 — Terms of Service & Privacy Policy ✅ shipped
+Legal pages, now that we store PII, take Stripe payments, and set an auth cookie.
+Governing law = **State of Utah, USA**; contact = **parvomaps.us@gmail.com**.
+- [x] **Privacy Policy** (`/privacy`) — collection, use, the `clinic_session` cookie,
+      sub-processors (Stripe, Resend, OpenAI, Upstash, Vercel/Blob, Photon/zippopotam),
+      retention, user rights + deletion contact.
+- [x] **Terms of Service** (`/terms`) — community reports / not veterinary advice,
+      submission license, acceptable use, billing/cancellation, disclaimers,
+      liability limits, Utah governing law.
+- [x] **Footer links** to `/privacy` and `/terms` site-wide.
+- [x] **Checkout consent** — agreement note under the `/pro` plans.
+- [x] No cookie banner needed — only a strictly-necessary auth cookie, no analytics/ads.
 - [ ] ⚠️ Have a lawyer review before relying on these — drafts are a starting point,
       not legal advice.
 

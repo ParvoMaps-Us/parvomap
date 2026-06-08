@@ -154,6 +154,12 @@ export default function PricingCards() {
       <p style={{ fontSize: 11, color: 'var(--text-dim)', textAlign: 'center', marginTop: 20, lineHeight: 1.6 }}>
         Sales tax is calculated at checkout based on your location. Cancel anytime.
       </p>
+      <p style={{ fontSize: 11, color: 'var(--text-dim)', textAlign: 'center', marginTop: 8, lineHeight: 1.6 }}>
+        By subscribing you agree to our{' '}
+        <a href="/terms" style={{ color: 'var(--text-muted)', textDecoration: 'underline' }}>Terms of Service</a>
+        {' '}and{' '}
+        <a href="/privacy" style={{ color: 'var(--text-muted)', textDecoration: 'underline' }}>Privacy Policy</a>.
+      </p>
     </>
   )
 }
