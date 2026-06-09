@@ -1,15 +1,18 @@
 import { NextRequest } from 'next/server'
 import { del } from '@vercel/blob'
 import { removeVerifiedById, clearFlag } from '@/lib/redis'
+import { getAdminFromCookies } from '@/lib/admin-auth'
 
 // Admin action: remove a flagged report from the map and delete its photo.
-// Guarded by ADMIN_KEY (same key that gates the /admin dashboard).
+// Guarded by the admin session cookie (or the legacy ?key= during transition).
 export async function GET(req: NextRequest) {
   const key = req.nextUrl.searchParams.get('key')
   const id = req.nextUrl.searchParams.get('id')
   const adminKey = process.env.ADMIN_KEY
 
-  if (!adminKey || key !== adminKey) {
+  const session = await getAdminFromCookies()
+  const legacyKey = !!adminKey && key === adminKey
+  if (!session && !legacyKey) {
     return new Response('Unauthorized', { status: 401 })
   }
   if (!id) {
@@ -24,7 +27,10 @@ export async function GET(req: NextRequest) {
     await clearFlag(id)
     // Return to whichever moderation surface invoked the action.
     const dest = req.nextUrl.searchParams.get('from') === 'dashboard' ? '/dashboard' : '/admin'
-    return Response.redirect(`${req.nextUrl.origin}${dest}?key=${encodeURIComponent(key)}`)
+    // Only propagate the key when it was the credential used; cookie sessions
+    // get clean URLs.
+    const back = legacyKey ? `${dest}?key=${encodeURIComponent(key!)}` : dest
+    return Response.redirect(`${req.nextUrl.origin}${back}`)
   } catch (e) {
     console.error('Admin remove error:', e)
     return new Response('Server error', { status: 500 })

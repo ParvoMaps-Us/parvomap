@@ -18,6 +18,7 @@ import { findMatchingAlertEmails, isProClinic } from '@/lib/alerts'
 import { isUtahZip } from '@/lib/utah-zips'
 import { getLeadType } from '@/lib/lead'
 import { BIOREST_ENABLED } from '@/lib/flags'
+import { checkRateLimit } from '@/lib/ratelimit'
 
 const SITE = 'https://www.parvomaps.us'
 
@@ -42,6 +43,15 @@ export async function GET(req: NextRequest) {
 
   if (!token) {
     return Response.redirect(`${SITE}/?verified=missing`)
+  }
+
+  // Per-IP limit to block token brute-forcing. Tokens are 122-bit UUIDs so
+  // guessing is hopeless anyway, but this also caps the email fan-out a
+  // replayed/scripted verify link can trigger. Generous enough for mail-client
+  // link prefetchers plus a real click.
+  const rl = await checkRateLimit(req, 'verify', 10, '1 m')
+  if (!rl.ok) {
+    return Response.redirect(`${SITE}/?verified=error`)
   }
 
   try {

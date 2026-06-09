@@ -17,6 +17,7 @@ import {
   saveVerificationToken,
 } from '@/lib/verification'
 import { sendVerificationEmail } from '@/lib/notifications'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 // Allow the form to POST from either canonical host. Without this, a page
 // loaded on the bare apex (parvomaps.us) that posts to /api/report gets a
@@ -48,12 +49,31 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const cors = corsHeaders(req.headers.get('origin'))
+
+  // Per-IP rate limit: each accepted report triggers a Redis write and (with an
+  // email) a Resend send, so cap abuse before any work happens. 5/hour is ample
+  // for a legitimate reporter; a household NAT submitting more is rare enough
+  // to accept the false positive.
+  const rl = await checkRateLimit(req, 'report', 5, '1 h')
+  if (!rl.ok) {
+    return rateLimitResponse(rl.retryAfterSeconds, cors)
+  }
+
   try {
     const body = await req.json()
     const parsed = ReportSchema.safeParse(body)
 
     if (!parsed.success) {
       return Response.json({ error: parsed.error.flatten() }, { status: 400, headers: cors })
+    }
+
+    // Honeypot tripped: respond as if accepted so the bot can't tell, but do
+    // no work — no Redis write, no email.
+    if (parsed.data.company) {
+      return Response.json(
+        { ok: true, id: crypto.randomUUID(), verified: false, emailSent: false },
+        { headers: cors }
+      )
     }
 
     const { kind, disease, zip, reporterType, sighting, email, source, breed, notes, locationDetail, locationLat, locationLng, sourceUrl,

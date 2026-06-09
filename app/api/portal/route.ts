@@ -1,12 +1,20 @@
 import { NextRequest } from 'next/server'
 import { getStripe } from '@/lib/stripe'
 import { findSubscriberCustomerId } from '@/lib/alerts'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 // Opens the Stripe Customer Portal so a member can update payment, view invoices,
 // or cancel. We look up their Stripe customer id by email, then mint a portal
 // session. (The portal must be enabled once in Stripe → Settings → Billing →
 // Customer portal.)
 export async function POST(req: NextRequest) {
+  // The "no subscription found" error reveals whether an email is a subscriber;
+  // throttle to make enumeration impractical.
+  const rl = await checkRateLimit(req, 'portal', 5, '1 m')
+  if (!rl.ok) {
+    return rateLimitResponse(rl.retryAfterSeconds)
+  }
+
   const stripe = getStripe()
   if (!stripe) {
     return Response.json({ error: 'Billing is not configured yet.' }, { status: 503 })

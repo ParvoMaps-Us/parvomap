@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { z } from 'zod'
 import { addFlag, getVerifiedRaw } from '@/lib/redis'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 // Allow flagging from either canonical host (same as the report endpoint).
 const ALLOWED_ORIGINS = new Set(['https://parvomaps.us', 'https://www.parvomaps.us'])
@@ -28,6 +29,14 @@ const FlagSchema = z.object({
 
 export async function POST(req: NextRequest) {
   const cors = corsHeaders(req.headers.get('origin'))
+
+  // Unauth + writes to the moderation queue — cap so one IP can't bury the
+  // admin dashboard in junk flags.
+  const rl = await checkRateLimit(req, 'flag', 10, '1 h')
+  if (!rl.ok) {
+    return rateLimitResponse(rl.retryAfterSeconds, cors)
+  }
+
   try {
     const parsed = FlagSchema.safeParse(await req.json())
     if (!parsed.success) {

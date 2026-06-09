@@ -69,6 +69,10 @@ export const ReportSchema = z.object({
     .max(600)
     .optional()
     .refine(u => !u || /^https?:\/\/.+/i.test(u), 'Photo URL must be http(s)'),
+
+  // Honeypot: hidden field humans never see. Bots that autofill every input
+  // populate it; the API silently drops those submissions.
+  company: z.string().max(200).optional(),
 }).refine(
   d => /^\d{5}$/.test(d.zip ?? '') || (d.locationLat != null && d.locationLng != null),
   { message: 'Enter a ZIP code or pin an exact location', path: ['zip'] },

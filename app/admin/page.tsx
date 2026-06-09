@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { listFlags, getVerifiedRaw, type Report } from '@/lib/redis'
+import { getAdminFromCookies } from '@/lib/admin-auth'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
@@ -19,28 +21,32 @@ export default async function AdminPage({
   const { key } = await searchParams
   const adminKey = process.env.ADMIN_KEY
 
-  // Gate: require the ADMIN_KEY via ?key=. If the key isn't configured at all,
-  // lock the page entirely rather than leaving it open.
-  if (!adminKey || key !== adminKey) {
-    return (
-      <main style={{ maxWidth: 520, margin: '80px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
-        <h1 style={{ fontSize: 18, marginBottom: 12 }}>🔒 Moderation</h1>
-        <p style={{ color: 'var(--text-dim)', fontSize: 13, lineHeight: 1.6 }}>
-          {adminKey
-            ? 'Access denied. Append the correct ?key= to the URL.'
-            : 'ADMIN_KEY is not configured. Set it in your Vercel environment to enable this dashboard.'}
-        </p>
-      </main>
-    )
+  // Gate: prefer the session cookie (set via /admin/login magic link); fall back
+  // to the legacy ?key= so existing bookmarks keep working until it's retired.
+  const sessionEmail = await getAdminFromCookies()
+  const legacyKey = !!adminKey && key === adminKey
+  if (!sessionEmail && !legacyKey) {
+    redirect('/admin/login')
   }
 
   const [flags, verified] = await Promise.all([listFlags(), getVerifiedRaw()])
   const byId = new Map<string, Report>(verified.map(v => [v.report.id, v.report]))
-  const qs = `key=${encodeURIComponent(key)}`
+  // Action links only carry the key when that's how this page was opened —
+  // cookie sessions keep URLs clean.
+  const qs = legacyKey ? `&key=${encodeURIComponent(key!)}` : ''
 
   return (
     <main style={{ maxWidth: 760, margin: '40px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
-      <h1 style={{ fontSize: 20, marginBottom: 4 }}>🚩 Moderation</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <h1 style={{ fontSize: 20, marginBottom: 4 }}>🚩 Moderation</h1>
+        {sessionEmail && (
+          <form action="/api/admin/logout" method="post" style={{ margin: 0 }}>
+            <button type="submit" style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit' }}>
+              {sessionEmail} · sign out
+            </button>
+          </form>
+        )}
+      </div>
       <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 24 }}>
         {flags.length} flagged report{flags.length !== 1 ? 's' : ''} · most recently flagged first
       </p>
@@ -84,13 +90,13 @@ export default async function AdminPage({
 
               <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
                 <a
-                  href={`/api/admin/remove?id=${encodeURIComponent(f.id)}&${qs}`}
+                  href={`/api/admin/remove?id=${encodeURIComponent(f.id)}${qs}`}
                   style={{ background: 'var(--red)', color: '#fff', textDecoration: 'none', fontSize: 11, fontWeight: 700, padding: '7px 14px', borderRadius: 4 }}
                 >
                   🗑 Remove from map
                 </a>
                 <a
-                  href={`/api/admin/dismiss?id=${encodeURIComponent(f.id)}&${qs}`}
+                  href={`/api/admin/dismiss?id=${encodeURIComponent(f.id)}${qs}`}
                   style={{ border: '1px solid var(--border)', color: 'var(--text-muted)', textDecoration: 'none', fontSize: 11, padding: '7px 14px', borderRadius: 4 }}
                 >
                   Dismiss flag

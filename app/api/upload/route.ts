@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { put } from '@vercel/blob'
 import { moderateImage } from '@/lib/moderation'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 // Photo upload for lost-dog reports. Accepts a single image via multipart form
 // data and stores it in Vercel Blob, returning the public URL. Photos are the
@@ -32,6 +33,13 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const cors = corsHeaders(req.headers.get('origin'))
+
+  // Each upload costs Blob storage + a moderation API call; cap per-IP abuse.
+  // 10/hour covers a reporter retrying a few photos.
+  const rl = await checkRateLimit(req, 'upload', 10, '1 h')
+  if (!rl.ok) {
+    return rateLimitResponse(rl.retryAfterSeconds, cors)
+  }
 
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return Response.json(

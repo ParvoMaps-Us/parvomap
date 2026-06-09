@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { isActiveSubscriber } from '@/lib/alerts'
 import { makeMagicToken } from '@/lib/magic-link'
 import { sendAlertMagicLink } from '@/lib/notifications'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 const ALLOWED_ORIGINS = new Set([
   'https://parvomaps.us',
@@ -26,6 +27,12 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const cors = corsHeaders(req.headers.get('origin'))
+
+  // Sends an email per request — classic email-bomb vector without a cap.
+  const rl = await checkRateLimit(req, 'alerts-link', 5, '1 h')
+  if (!rl.ok) {
+    return rateLimitResponse(rl.retryAfterSeconds, cors)
+  }
 
   let email = ''
   try {

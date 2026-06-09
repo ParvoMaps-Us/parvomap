@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { getStripe, priceIdFor, PLANS, type PlanKey } from '@/lib/stripe'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 // Same canonical-host CORS dance as /api/report: the pricing page may post from
 // the apex or the www host, and a cross-origin 308 redirect would silently drop
@@ -27,6 +28,13 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const cors = corsHeaders(req.headers.get('origin'))
+
+  // Each call creates a Stripe Checkout Session; keep scripted abuse from
+  // piling up sessions. 10/min is far above a human clicking the pricing page.
+  const rl = await checkRateLimit(req, 'checkout', 10, '1 m')
+  if (!rl.ok) {
+    return rateLimitResponse(rl.retryAfterSeconds, cors)
+  }
 
   const stripe = getStripe()
   if (!stripe) {

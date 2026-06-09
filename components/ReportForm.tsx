@@ -256,6 +256,10 @@ export default function ReportForm() {
           sourceUrl: sourceUrl.trim() || undefined,
         }
 
+    // Honeypot: forwarded so the API can drop bot autofills; empty for humans.
+    const company = (form.elements.namedItem('company') as HTMLInputElement | null)?.value
+    if (company) (data as Record<string, unknown>).company = company
+
     try {
       const res = await fetch(`${apiBase()}/api/report`, {
         method:  'POST',
@@ -360,6 +364,12 @@ export default function ReportForm() {
       </p>
 
       <form onSubmit={handleSubmit}>
+        {/* Honeypot — visually hidden from humans, autofilled by bots. aria-hidden
+            + tabIndex=-1 keep it out of screen readers and tab order. */}
+        <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', height: 0, overflow: 'hidden' }}>
+          <label htmlFor="company">Company</label>
+          <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+        </div>
         <div className="form-grid">
           {/* Report type: disease/hazard vs lost dog */}
           <div className="form-group full">

@@ -3,6 +3,8 @@ import { getDashboardData, getFilterOptions, type Bucket, type DashboardData } f
 import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
 import { listFlags, getVerifiedRaw, type Report, type FlagRecord } from '@/lib/redis'
 import { getDiseaseRequests, type DiseaseRequest } from '@/lib/alerts'
+import { getAdminFromCookies } from '@/lib/admin-auth'
+import { redirect } from 'next/navigation'
 import DiseaseChips from '@/app/clinic/dashboard/DiseaseChips'
 
 export const dynamic = 'force-dynamic'
@@ -93,17 +95,11 @@ export default async function DashboardPage({
   const adminKey = process.env.ADMIN_KEY
   const diseases = (Array.isArray(disease) ? disease : disease ? [disease] : []).filter(Boolean)
 
-  if (!adminKey || key !== adminKey) {
-    return (
-      <main style={{ maxWidth: 520, margin: '80px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
-        <h1 style={{ fontSize: 18, marginBottom: 12 }}>🔒 Tracking Dashboard</h1>
-        <p style={{ color: 'var(--text-dim)', fontSize: 13, lineHeight: 1.6 }}>
-          {adminKey
-            ? 'Access denied. Append the correct ?key= to the URL.'
-            : 'ADMIN_KEY is not configured. Set it in your Vercel environment to enable this dashboard.'}
-        </p>
-      </main>
-    )
+  // Gate: session cookie from /admin/login, with the legacy ?key= as fallback.
+  const sessionEmail = await getAdminFromCookies()
+  const legacyKey = !!adminKey && key === adminKey
+  if (!sessionEmail && !legacyKey) {
+    redirect('/admin/login')
   }
 
   const filter = { state: state || undefined, county: county || undefined, city: city || undefined, diseases }
@@ -115,7 +111,7 @@ export default async function DashboardPage({
     getDiseaseRequests(),
   ])
   const reportById = new Map<string, Report>(verified.map(v => [v.report.id, v.report]))
-  const qs = `key=${encodeURIComponent(key)}&from=dashboard`
+  const qs = legacyKey ? `&key=${encodeURIComponent(key!)}&from=dashboard` : '&from=dashboard'
   const selectStyle = { padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 120 } as const
   const regionLabel = [city, county, state].filter(Boolean).join(', ') || 'all regions'
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 } as const
@@ -130,7 +126,7 @@ export default async function DashboardPage({
 
       {/* ─── Filters ─── */}
       <form method="GET" style={{ border: '1px solid var(--border)', borderRadius: 6, padding: 16, background: 'var(--bg-card)', marginBottom: 28, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <input type="hidden" name="key" value={key} />
+        {legacyKey && <input type="hidden" name="key" value={key} />}
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div>
             <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>State</label>
@@ -157,7 +153,7 @@ export default async function DashboardPage({
             Apply
           </button>
           {(state || county || city || diseases.length > 0) && (
-            <a href={`/dashboard?key=${encodeURIComponent(key)}`} style={{ alignSelf: 'center', fontSize: 12, color: 'var(--text-dim)' }}>Clear</a>
+            <a href={legacyKey ? `/dashboard?key=${encodeURIComponent(key!)}` : '/dashboard'} style={{ alignSelf: 'center', fontSize: 12, color: 'var(--text-dim)' }}>Clear</a>
           )}
         </div>
         <div>
@@ -251,13 +247,13 @@ export default async function DashboardPage({
 
               <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
                 <a
-                  href={`/api/admin/remove?id=${encodeURIComponent(f.id)}&${qs}`}
+                  href={`/api/admin/remove?id=${encodeURIComponent(f.id)}${qs}`}
                   style={{ background: 'var(--red)', color: '#fff', textDecoration: 'none', fontSize: 11, fontWeight: 700, padding: '7px 14px', borderRadius: 4 }}
                 >
                   🗑 Remove from map
                 </a>
                 <a
-                  href={`/api/admin/dismiss?id=${encodeURIComponent(f.id)}&${qs}`}
+                  href={`/api/admin/dismiss?id=${encodeURIComponent(f.id)}${qs}`}
                   style={{ border: '1px solid var(--border)', color: 'var(--text-muted)', textDecoration: 'none', fontSize: 11, padding: '7px 14px', borderRadius: 4 }}
                 >
                   Dismiss flag

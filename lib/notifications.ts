@@ -342,6 +342,39 @@ export async function sendClinicMagicLink(email: string, dashboardUrl: string): 
   })
 }
 
+// ─── ADMIN: MODERATION LOGIN MAGIC LINK ───────────────────────────────────────
+
+export async function sendAdminMagicLink(email: string, loginUrl: string): Promise<void> {
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject: 'Your ParvoMaps admin sign-in link',
+    html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    <div style="margin-bottom:32px;">
+      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
+    </div>
+    <h1 style="font-size:24px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#f0f0f0;margin:0 0 16px;">Admin Sign-In</h1>
+    <p style="color:#888;font-size:14px;margin:0 0 28px;line-height:1.6;">
+      Click below to open the moderation dashboard. You'll stay signed in on this device for 7 days.
+    </p>
+    <a href="${loginUrl}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin-bottom:24px;">
+      Open Dashboard →
+    </a>
+    <p style="color:#555;font-size:12px;margin:24px 0 0;line-height:1.6;">
+      This link expires in 15 minutes. If you did not request it, someone has your admin password — rotate it.
+    </p>
+    <div style="border-top:1px solid #222;margin:32px 0;"></div>
+    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease Tracker · parvomaps.us</p>
+  </div>
+</body>
+</html>`,
+  })
+}
+
 // ─── PRO CLINIC: DISEASE-TRACKING REQUEST ─────────────────────────────────────
 
 /** Notify the team that a Pro Clinic asked us to start tracking a new disease. */
