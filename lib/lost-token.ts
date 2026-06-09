@@ -1,12 +1,10 @@
 import { createHmac, timingSafeEqual } from 'crypto'
+import { signingSecret as secret } from './secret'
 
 // Stateless HMAC token authorizing removal of a lost-dog report. Derived from
 // the report id so it needs no storage and stays valid for the report's whole
 // life (unlike the 24 h verification token). Put in the confirmation email so an
 // owner can take their post + photo down the moment the dog is found.
-function secret(): string {
-  return process.env.VERIFICATION_SECRET || process.env.CRON_SECRET || 'parvomaps-dev-secret'
-}
 
 export function signLostToken(reportId: string): string {
   return createHmac('sha256', secret()).update(reportId).digest('hex')

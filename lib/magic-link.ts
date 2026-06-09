@@ -1,11 +1,9 @@
 import { createHmac, timingSafeEqual } from 'crypto'
+import { signingSecret as secret } from './secret'
 
 // Stateless magic-link token for the alerts preferences page. Signs the email
 // plus an expiry so a link can't be reused forever and can't be forged without
 // the secret. No storage needed — verify recomputes the HMAC.
-function secret(): string {
-  return process.env.VERIFICATION_SECRET || process.env.CRON_SECRET || 'parvomaps-dev-secret'
-}
 
 const TTL_MS = 1000 * 60 * 60 * 24 // 24 hours
 
