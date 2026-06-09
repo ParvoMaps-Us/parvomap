@@ -13,27 +13,15 @@ function fmt(ts: number): string {
   return new Date(ts).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
 }
 
-export default async function AdminPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ key?: string }>
-}) {
-  const { key } = await searchParams
-  const adminKey = process.env.ADMIN_KEY
-
-  // Gate: prefer the session cookie (set via /admin/login magic link); fall back
-  // to the legacy ?key= so existing bookmarks keep working until it's retired.
+export default async function AdminPage() {
+  // Gate on the admin session cookie (set via /admin/login magic link).
   const sessionEmail = await getAdminFromCookies()
-  const legacyKey = !!adminKey && key === adminKey
-  if (!sessionEmail && !legacyKey) {
+  if (!sessionEmail) {
     redirect('/admin/login')
   }
 
   const [flags, verified] = await Promise.all([listFlags(), getVerifiedRaw()])
   const byId = new Map<string, Report>(verified.map(v => [v.report.id, v.report]))
-  // Action links only carry the key when that's how this page was opened —
-  // cookie sessions keep URLs clean.
-  const qs = legacyKey ? `&key=${encodeURIComponent(key!)}` : ''
 
   return (
     <main style={{ maxWidth: 760, margin: '40px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
@@ -90,13 +78,13 @@ export default async function AdminPage({
 
               <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
                 <a
-                  href={`/api/admin/remove?id=${encodeURIComponent(f.id)}${qs}`}
+                  href={`/api/admin/remove?id=${encodeURIComponent(f.id)}`}
                   style={{ background: 'var(--red)', color: '#fff', textDecoration: 'none', fontSize: 11, fontWeight: 700, padding: '7px 14px', borderRadius: 4 }}
                 >
                   🗑 Remove from map
                 </a>
                 <a
-                  href={`/api/admin/dismiss?id=${encodeURIComponent(f.id)}${qs}`}
+                  href={`/api/admin/dismiss?id=${encodeURIComponent(f.id)}`}
                   style={{ border: '1px solid var(--border)', color: 'var(--text-muted)', textDecoration: 'none', fontSize: 11, padding: '7px 14px', borderRadius: 4 }}
                 >
                   Dismiss flag

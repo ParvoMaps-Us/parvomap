@@ -91,14 +91,12 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<{ key?: string; state?: string; county?: string; city?: string; disease?: string | string[] }>
 }) {
-  const { key, state, county, city, disease } = await searchParams
-  const adminKey = process.env.ADMIN_KEY
+  const { state, county, city, disease } = await searchParams
   const diseases = (Array.isArray(disease) ? disease : disease ? [disease] : []).filter(Boolean)
 
-  // Gate: session cookie from /admin/login, with the legacy ?key= as fallback.
+  // Gate on the admin session cookie (set via /admin/login magic link).
   const sessionEmail = await getAdminFromCookies()
-  const legacyKey = !!adminKey && key === adminKey
-  if (!sessionEmail && !legacyKey) {
+  if (!sessionEmail) {
     redirect('/admin/login')
   }
 
@@ -111,7 +109,7 @@ export default async function DashboardPage({
     getDiseaseRequests(),
   ])
   const reportById = new Map<string, Report>(verified.map(v => [v.report.id, v.report]))
-  const qs = legacyKey ? `&key=${encodeURIComponent(key!)}&from=dashboard` : '&from=dashboard'
+  const qs = '&from=dashboard'
   const selectStyle = { padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 120 } as const
   const regionLabel = [city, county, state].filter(Boolean).join(', ') || 'all regions'
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 } as const
@@ -126,7 +124,6 @@ export default async function DashboardPage({
 
       {/* ─── Filters ─── */}
       <form method="GET" style={{ border: '1px solid var(--border)', borderRadius: 6, padding: 16, background: 'var(--bg-card)', marginBottom: 28, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {legacyKey && <input type="hidden" name="key" value={key} />}
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div>
             <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>State</label>
@@ -153,7 +150,7 @@ export default async function DashboardPage({
             Apply
           </button>
           {(state || county || city || diseases.length > 0) && (
-            <a href={legacyKey ? `/dashboard?key=${encodeURIComponent(key!)}` : '/dashboard'} style={{ alignSelf: 'center', fontSize: 12, color: 'var(--text-dim)' }}>Clear</a>
+            <a href="/dashboard" style={{ alignSelf: 'center', fontSize: 12, color: 'var(--text-dim)' }}>Clear</a>
           )}
         </div>
         <div>
