@@ -54,6 +54,11 @@ export default async function AdminPage() {
                   <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{f.summary}</div>
                   <div style={{ fontSize: 11, color: 'var(--text-dim)' }}>
                     {f.count} flag{f.count !== 1 ? 's' : ''} · first {fmt(f.firstAt)} · last {fmt(f.lastAt)}
+                    {r?.country && (
+                      <span style={{ color: r.country !== 'US' ? 'var(--amber)' : 'var(--text-dim)', fontWeight: r.country !== 'US' ? 700 : 400 }}>
+                        {' · '}{r.country !== 'US' ? `⚠ from ${r.country}` : `from ${r.country}`}
+                      </span>
+                    )}
                   </div>
                   {r?.contact && (
                     <div style={{ fontSize: 11, color: '#60a5fa', marginTop: 4 }}>contact: {r.contact}</div>

@@ -61,6 +61,10 @@ export interface Report {
   // True when the reporter's email belongs to an active Pro Clinic account.
   // Computed at verify time (PII never stored). Drives the "✓ clinic" badge.
   verifiedClinic?: boolean
+  // ISO country code of the submitting IP (from Vercel's edge geo header).
+  // Internal MODERATION signal only — deliberately excluded from the public
+  // /api/reports feed. Coarse (country-level), set at submission time.
+  country?: string
 
   // ─── Lost-dog reports ───
   // Distinguishes a lost-dog report from a disease/hazard one.
@@ -139,6 +143,7 @@ export async function publishVerifiedReport(report: PendingReport): Promise<void
     sourceUrl: report.sourceUrl ?? undefined,
     reporterType: report.reporterType ?? undefined,
     verifiedClinic: report.verifiedClinic ?? undefined,
+    country: report.country ?? undefined,
     kind: report.kind ?? undefined,
     lostKind: report.lostKind ?? undefined,
     dogName: report.dogName ?? undefined,

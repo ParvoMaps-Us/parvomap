@@ -63,11 +63,16 @@ function RecentTable({ rows, lost }: { rows: Report[]; lost?: boolean }) {
           <tr style={{ color: 'var(--text-dim)', textAlign: 'left' }}>
             <th style={{ padding: '4px 8px' }}>{lost ? 'Dog / kind' : 'Disease'}</th>
             <th style={{ padding: '4px 8px' }}>Location</th>
+            <th style={{ padding: '4px 8px' }}>From</th>
             <th style={{ padding: '4px 8px' }}>When</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map(r => (
+          {rows.map(r => {
+            // Submitting-IP country: blank/US is unremarkable; any other country
+            // is highlighted so off-US submissions are easy to spot at a glance.
+            const nonUS = !!r.country && r.country !== 'US'
+            return (
             <tr key={r.id} style={{ borderTop: '1px solid var(--border-dim, var(--border))' }}>
               <td style={{ padding: '6px 8px' }}>
                 {lost
@@ -77,9 +82,13 @@ function RecentTable({ rows, lost }: { rows: Report[]; lost?: boolean }) {
               <td style={{ padding: '6px 8px', color: 'var(--text-muted)' }}>
                 {[r.city, r.state].filter(Boolean).join(', ') || r.zip || '—'}
               </td>
+              <td style={{ padding: '6px 8px', color: nonUS ? 'var(--amber)' : 'var(--text-dim)', fontWeight: nonUS ? 700 : 400 }}>
+                {r.country ? `${nonUS ? '⚠ ' : ''}${r.country}` : '—'}
+              </td>
               <td style={{ padding: '6px 8px', color: 'var(--text-dim)' }}>{fmt(r.timestamp)}</td>
             </tr>
-          ))}
+            )
+          })}
         </tbody>
       </table>
     </div>

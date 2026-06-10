@@ -135,6 +135,9 @@ export async function POST(req: NextRequest) {
       confidence,
       verified:  false,
       timestamp: Date.now(),
+      // Country of the submitting IP (Vercel edge geo header). Internal
+      // moderation signal — absent in local dev where the header isn't set.
+      country: req.headers.get('x-vercel-ip-country') || undefined,
       // Lost-dog specifics (undefined for disease/hazard reports)
       kind,
       lostKind:       isLost ? lostKind : undefined,
