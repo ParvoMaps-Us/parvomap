@@ -14,14 +14,10 @@ export default function Footer() {
         or sooner if the owner marks the dog as found.
       </div>
       <div className="footer-links">
-        {BIOREST_ENABLED ? (
+        {BIOREST_ENABLED && (
           <a href="https://scoopie.us" className="scoopie-link" target="_blank" rel="noopener noreferrer">
             🐾 Dog illness in Utah? → Scoopie BioRest™
           </a>
-        ) : (
-          <span className="scoopie-link" style={{ opacity: 0.55, cursor: 'default' }}>
-            🐾 Scoopie BioRest™ — Coming Soon
-          </span>
         )}
         <a
           href="mailto:parvomaps.us@gmail.com?subject=ParvoMap%20feedback%20%E2%80%94%20feature%20or%20bug"
