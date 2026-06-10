@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -48,7 +49,9 @@ const jsonLd = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Nonce set by middleware.ts — required for inline scripts under the CSP.
+  const nonce = (await headers()).get('x-nonce') ?? undefined
   return (
     <html lang="en">
       <head>
@@ -59,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script
           type="application/ld+json"
+          nonce={nonce}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
