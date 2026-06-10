@@ -1,10 +1,18 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { unstable_cache } from 'next/cache'
 import { getDiseaseInfo, CATEGORY_LABELS, SEVERITY_LABELS, type DiseaseSeverity } from '@/lib/diseases'
 import { getDiseaseStats, type Bucket } from '@/lib/dashboard'
 
-export const dynamic = 'force-dynamic'
+// Pages render dynamically (the per-request CSP nonce in the root layout rules
+// out static generation app-wide), but the stats are read from Redis on every
+// hit. Wrap that read in unstable_cache so it's fetched at most once an hour and
+// shared across all visitors — keeping the dynamic render cheap.
+const cachedDiseaseStats = (slug: string) =>
+  unstable_cache(() => getDiseaseStats(slug), ['disease-stats', slug], {
+    revalidate: 3600,
+  })()
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
@@ -71,11 +79,53 @@ export default async function DiseasePage({ params }: { params: Promise<{ slug: 
   const info = getDiseaseInfo(slug)
   if (!info) notFound()
 
-  const stats = await getDiseaseStats(slug)
+  const stats = await cachedDiseaseStats(slug)
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 12 } as const
+
+  const url = `https://www.parvomaps.us/diseases/${slug}`
+  // Schema.org structured data: a MedicalWebPage describing a MedicalCondition,
+  // plus breadcrumbs. Makes the page eligible for rich results and gives Google
+  // the symptoms/cause/prevention as machine-readable fields. No nonce needed —
+  // application/ld+json is data, not executed script, and crawlers ignore CSP.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'MedicalWebPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: `${info.name} in Dogs — Symptoms, Spread & Prevention`,
+        description: info.blurb,
+        inLanguage: 'en-US',
+        isPartOf: { '@type': 'WebSite', name: 'ParvoMaps', url: 'https://www.parvomaps.us' },
+        about: {
+          '@type': 'MedicalCondition',
+          name: info.name,
+          ...(info.aka ? { alternateName: info.aka } : {}),
+          description: info.blurb,
+          signOrSymptom: info.symptoms.map(s => ({ '@type': 'MedicalSignOrSymptom', name: s })),
+          cause: { '@type': 'MedicalCause', name: info.transmission },
+          primaryPrevention: { '@type': 'MedicalTherapy', name: info.prevention },
+        },
+        audience: { '@type': 'MedicalAudience', audienceType: 'Dog owners and veterinarians' },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.parvomaps.us/' },
+          { '@type': 'ListItem', position: 2, name: 'Dog Diseases', item: 'https://www.parvomaps.us/diseases' },
+          { '@type': 'ListItem', position: 3, name: info.name, item: url },
+        ],
+      },
+    ],
+  }
 
   return (
     <main style={wrap}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div style={{ marginBottom: 20 }}>
         <Link href="/diseases" style={{ fontSize: 13, color: 'var(--text-dim)', textDecoration: 'none' }}>← All diseases</Link>
       </div>
