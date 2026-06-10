@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import { hasCurrentRecall } from '@/lib/recalls'
 
-export default function Header() {
+export default async function Header() {
+  const recallActive = await hasCurrentRecall()
   return (
     <header role="banner">
       <div className="logo-group">
@@ -13,7 +15,7 @@ export default function Header() {
       <nav>
         <Link href="/diseases" className="nav-link">Diseases</Link>
         <Link href="/recalls" className="nav-link recall-tab">
-          Recalls<span className="recall-dot" aria-hidden="true" />
+          Recalls{recallActive && <span className="recall-dot" aria-hidden="true" />}
         </Link>
         <Link href="/alerts" className="nav-link">Alerts</Link>
         <Link href="/pro" className="nav-link">Pro</Link>

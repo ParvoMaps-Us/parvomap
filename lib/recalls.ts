@@ -127,6 +127,13 @@ export async function getPetFoodRecalls(): Promise<Recall[]> {
   }
 }
 
+/** Is there a pet-food recall in the FDA's current alerts? Drives the flashing
+ *  Recalls-tab dot. Uses the 6h-cached live feed, so it's cheap to call on the
+ *  map page render. */
+export async function hasCurrentRecall(): Promise<boolean> {
+  return (await getPetFoodRecalls()).length > 0
+}
+
 // ─── Persistent archive ───────────────────────────────────────────────────────
 // The live feed only holds the latest ~20 recalls. We upsert every pet recall we
 // see (keyed by slug) into a Redis hash so the list page keeps history and each
