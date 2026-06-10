@@ -224,6 +224,55 @@ nav a:hover { color: var(--text); }
 .btn-report:hover { background: var(--green-dim); }
 .btn-report:active { transform: scale(0.98); }
 
+/* Mobile hamburger menu — hidden on desktop, shown <=767px (see media query) */
+.menu-wrap { position: relative; display: none; }
+.menu-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px;
+}
+.menu-backdrop { position: fixed; inset: 0; z-index: 90; }
+.mobile-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  min-width: 184px;
+  padding: 6px;
+  background: rgba(10,10,10,0.98);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.55);
+}
+.mobile-menu a {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 13px 14px;
+  border-radius: 6px;
+}
+.mobile-menu a:hover, .mobile-menu a:active { background: var(--bg-card); color: var(--text); }
+.recall-dot-inline {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  margin-left: 7px;
+  vertical-align: middle;
+  box-shadow: 0 0 6px 1px rgba(239,68,68,0.85);
+  animation: blink 0.9s steps(1, end) infinite;
+}
+
 /* ─── STATS BAR ─── */
 .stats-bar {
   background: #000;
@@ -941,6 +990,9 @@ html body .leaflet-bar a:last-child {
   }
   .nav-link {
     display: none !important;
+  }
+  .menu-wrap {
+    display: inline-flex !important;
   }
   .btn-report {
     font-size: 11px !important;

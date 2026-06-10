@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { hasCurrentRecall } from '@/lib/recalls'
+import MobileMenu from './MobileMenu'
 
 export default async function Header() {
   const recallActive = await hasCurrentRecall()
@@ -26,6 +27,7 @@ export default async function Header() {
             <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
           </svg>
         </Link>
+        <MobileMenu recallActive={recallActive} />
       </nav>
     </header>
   )
