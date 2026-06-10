@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getPetFoodRecalls, FDA_PET_RECALLS_URL } from '@/lib/recalls'
 
-const title = 'Dog Food Recalls — Current FDA Pet Food Recall List | ParvoMaps'
+const title = 'Dog Food Recalls - Current FDA Pet Food Recall List | ParvoMaps'
 const description =
   'Current dog and cat food recalls from the FDA, plus what to do if your pet food is recalled, common recall reasons, and how to check your brand. Updated automatically.'
 
@@ -28,7 +28,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 const RECALL_REASONS = [
-  ['Salmonella & Listeria', 'Bacterial contamination — a risk to pets and the people who handle the food.'],
+  ['Salmonella & Listeria', 'Bacterial contamination - a risk to pets and the people who handle the food.'],
   ['Aflatoxin', 'A mold toxin from contaminated grains; has killed dogs in past recalls.'],
   ['Excess Vitamin D', 'A formulation error that can cause kidney damage at high doses.'],
   ['Foreign material', 'Metal, plastic, or other fragments found in the product.'],
@@ -90,7 +90,7 @@ export default async function RecallsPage() {
         <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }}>🗺️ Is illness spreading near you?</div>
         <div style={{ fontSize: 13, lineHeight: 1.6, marginBottom: 12 }}>
           Recalls are only half the picture. See real-time parvo, distemper, and other canine disease
-          reports on the live ParvoMaps outbreak map — and report a case to warn your neighbors.
+          reports on the live ParvoMaps outbreak map - and report a case to warn your neighbors.
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <Link href="/" style={{ padding: '11px 22px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 800, background: '#04130b', color: 'var(--green)' }}>
@@ -106,7 +106,7 @@ export default async function RecallsPage() {
       <Section title="Current FDA recalls">
         {recalls.length === 0 ? (
           <div style={{ ...card, fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-            No pet-food recalls are in the FDA&apos;s latest alerts right now. That can change daily —
+            No pet-food recalls are in the FDA&apos;s latest alerts right now. That can change daily -
             check the{' '}
             <a href={FDA_PET_RECALLS_URL} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa' }}>
               FDA pet-food recall page
@@ -126,7 +126,7 @@ export default async function RecallsPage() {
           </div>
         )}
         <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 12, lineHeight: 1.6 }}>
-          Source: FDA Recalls &amp; Safety Alerts. ParvoMaps mirrors the FDA feed for convenience — the{' '}
+          Source: FDA Recalls &amp; Safety Alerts. ParvoMaps mirrors the FDA feed for convenience - the{' '}
           <a href={FDA_PET_RECALLS_URL} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa' }}>
             FDA pet-food recall page
           </a>{' '}
@@ -138,7 +138,7 @@ export default async function RecallsPage() {
       <div style={{ ...card, borderColor: 'var(--green)', marginBottom: 28 }}>
         <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4 }}>🛑 Get alerted the moment your brand is recalled</div>
         <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: 12 }}>
-          Tell us what food your dog eats and we&apos;ll email you the instant the FDA recalls it — no
+          Tell us what food your dog eats and we&apos;ll email you the instant the FDA recalls it - no
           checking back required. Included with a ParvoMaps Guardian membership, from $5/mo.
         </div>
         <Link href="/pro" style={{ display: 'inline-block', padding: '11px 22px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 800, background: 'var(--green)', color: '#04130b' }}>
@@ -149,10 +149,10 @@ export default async function RecallsPage() {
       {/* ─── Evergreen SEO content ─── */}
       <Section title="If your dog's food is recalled">
         <ol style={{ margin: 0, paddingLeft: 20, fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.9 }}>
-          <li><strong>Stop feeding it immediately</strong> and seal or set aside the bag — note the lot number and best-by date.</li>
+          <li><strong>Stop feeding it immediately</strong> and seal or set aside the bag - note the lot number and best-by date.</li>
           <li><strong>Check the recall details</strong> against your product&apos;s lot/UPC; not every bag of a brand is always affected.</li>
           <li><strong>Watch your dog</strong> for vomiting, diarrhea, lethargy, or loss of appetite, and call your vet if anything seems off.</li>
-          <li><strong>Keep the packaging</strong> — you may need it for a refund and it helps your vet and the manufacturer.</li>
+          <li><strong>Keep the packaging</strong> - you may need it for a refund and it helps your vet and the manufacturer.</li>
           <li><strong>Report a problem</strong> to the FDA&apos;s Safety Reporting Portal if your pet got sick.</li>
         </ol>
       </Section>
@@ -180,7 +180,7 @@ export default async function RecallsPage() {
       </div>
 
       <p style={{ fontSize: 11, color: 'var(--text-dim)', lineHeight: 1.6, marginTop: 24 }}>
-        Recall information is sourced from the FDA and provided for convenience only — always verify with the
+        Recall information is sourced from the FDA and provided for convenience only - always verify with the
         official FDA listing and your veterinarian. Not veterinary advice.
       </p>
     </main>

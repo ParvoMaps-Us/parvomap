@@ -35,11 +35,14 @@ export function matchBrand(recall: Recall, brands: string[]): string | null {
   return null
 }
 
-// Word-boundary pet signals in the recall title. "animal food/feed" included;
-// bare "pet" avoided on its own (it appears in plastics as "PET") — we require
-// pet-as-animal context via the other terms or "pet food/treat".
+// Pet signals checked against the recall title AND description. Some pet-food
+// recalls name only the brand + product (e.g. "Steve's Real Food Freeze-Dried
+// Chicken Recipe, Low Thiamine") with no "dog/cat" word, so we also match
+// pet-food formulation cues: thiamine (a classic pet-food deficiency recall),
+// freeze-dried, kibble, "raw food". "animal food/feed" and "pet food/treat"
+// stay phrase-bound; bare "pet" is avoided (it appears as plastics "PET").
 const PET_RE =
-  /\b(dog|cat|canine|feline|puppy|kitten)\b|\bpet (food|treat)|\banimal (food|feed)\b/i
+  /\b(dog|cat|canine|feline|puppy|kitten|kibble|thiamine)\b|\bpet (food|treat)|\banimal (food|feed)\b|\bfreeze-?dried\b|\braw food\b/i
 
 function decodeEntities(s: string): string {
   return s
@@ -75,8 +78,10 @@ export async function getPetFoodRecalls(): Promise<Recall[]> {
     const recalls: Recall[] = []
     for (const block of items) {
       const title = tag(block, 'title')
-      if (!PET_RE.test(title)) continue
       const description = tag(block, 'description')
+      // Check both title and description — some pet recalls carry the pet signal
+      // only in the body (or only in the brand/formulation, hence the cues above).
+      if (!PET_RE.test(`${title} ${description}`)) continue
       // FDA descriptions lead with the date, e.g. "June 5, 2026 — ...".
       const dateMatch = description.match(
         /([A-Z][a-z]+ \d{1,2},? \d{4})/,
