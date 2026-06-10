@@ -157,7 +157,9 @@ body::before {
 header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  /* Above Leaflet's map panes (which go up to z-index ~700) so the mobile
+     dropdown menu isn't painted behind the map. */
+  z-index: 1000;
   background: rgba(10,10,10,0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
