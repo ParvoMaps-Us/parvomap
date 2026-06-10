@@ -37,6 +37,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.7,
     },
+    {
+      url: `${base}/recalls`,
+      lastModified: now,
+      changeFrequency: 'daily', // FDA feed refreshes; recalls change often
+      priority: 0.8,
+    },
     ...diseasePages,
     { url: `${base}/privacy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${base}/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },

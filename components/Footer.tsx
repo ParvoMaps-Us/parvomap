@@ -28,6 +28,10 @@ export default function Footer() {
         <div className="footer-copy">
           © {year} ParvoMaps · parvomaps.us<br />
           Community-powered canine disease surveillance<br />
+          <a href="/diseases" style={{ color: 'inherit', textDecoration: 'underline' }}>Diseases</a>
+          {' · '}
+          <a href="/recalls" style={{ color: 'inherit', textDecoration: 'underline' }}>Dog food recalls</a>
+          {' · '}
           <a href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>Privacy</a>
           {' · '}
           <a href="/terms" style={{ color: 'inherit', textDecoration: 'underline' }}>Terms</a>
