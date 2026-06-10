@@ -12,7 +12,9 @@ export default function Header() {
       </div>
       <nav>
         <Link href="/diseases" className="nav-link">Diseases</Link>
-        <Link href="/recalls" className="nav-link">Recalls</Link>
+        <Link href="/recalls" className="nav-link recall-tab">
+          Recalls<span className="recall-dot" aria-hidden="true" />
+        </Link>
         <Link href="/alerts" className="nav-link">Alerts</Link>
         <Link href="/pro" className="nav-link">Pro</Link>
         <a href="#report" className="btn-report">+ Report a Case</a>

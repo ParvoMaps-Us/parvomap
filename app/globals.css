@@ -88,6 +88,20 @@ body::before {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.2; }
 }
+/* Attention dot above the Recalls tab — flickers so map users notice it. */
+.recall-tab { position: relative; }
+.recall-dot {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  width: 7px;
+  height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  box-shadow: 0 0 6px 1px rgba(239, 68, 68, 0.85);
+  animation: blink 0.9s steps(1, end) infinite;
+  pointer-events: none;
+}
 @keyframes ticker {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }

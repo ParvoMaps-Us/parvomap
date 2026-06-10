@@ -23,7 +23,7 @@ const TIERS: Tier[] = [
     blurb: 'For pet owners who want a heads-up before trouble reaches their block.',
     features: [
       'Real-time outbreak alerts for your ZIP',
-      '🛑 Dog food recall alerts for your brand',
+      'Dog food recall alerts for your brand',
       'Lost-dog notifications near you',
       'Unlimited reports & photo uploads',
       'Email + push alerts',
@@ -39,7 +39,7 @@ const TIERS: Tier[] = [
     blurb: 'Same Guardian coverage, two months free.',
     features: [
       'Everything in Guardian monthly',
-      '🛑 Dog food recall alerts for your brand',
+      'Dog food recall alerts for your brand',
       'Save ~17% vs monthly',
       'One bill a year',
     ],
