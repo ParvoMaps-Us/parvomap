@@ -342,6 +342,49 @@ export async function sendClinicMagicLink(email: string, dashboardUrl: string): 
   })
 }
 
+// ─── RECALL ALERT (paid Guardian perk) ────────────────────────────────────────
+
+/** Notify a subscriber that a brand they feed appears in an FDA pet-food recall. */
+export async function sendRecallAlert(
+  email: string,
+  brand: string,
+  recall: { title: string; url: string; summary: string; date: string },
+): Promise<void> {
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject: `🛑 Recall alert: ${brand} pet food`,
+    html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    <div style="margin-bottom:32px;">
+      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
+    </div>
+    <h1 style="font-size:22px;font-weight:700;color:#f0f0f0;margin:0 0 8px;">🛑 Recall alert for ${brand}</h1>
+    <p style="color:#888;font-size:14px;margin:0 0 20px;line-height:1.6;">
+      The FDA has posted a pet-food recall that matches a brand you told us your dog eats. Check the details and your lot number right away.
+    </p>
+    <div style="border:1px solid #222;border-radius:8px;padding:16px;margin-bottom:24px;">
+      <div style="font-size:15px;font-weight:700;color:#f0f0f0;margin-bottom:6px;">${recall.title}</div>
+      ${recall.date ? `<div style="font-size:12px;color:#666;margin-bottom:8px;">${recall.date} · FDA</div>` : ''}
+      ${recall.summary ? `<div style="font-size:13px;color:#aaa;line-height:1.6;">${recall.summary}…</div>` : ''}
+    </div>
+    <a href="${recall.url}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;padding:14px 28px;margin-bottom:8px;">
+      Read the FDA notice →
+    </a>
+    <p style="color:#555;font-size:12px;margin:20px 0 0;line-height:1.6;">
+      Not every bag of a brand is always affected — verify your lot number and best-by date against the FDA notice. This is not veterinary advice; if your dog seems unwell, call your vet.
+    </p>
+    <div style="border-top:1px solid #222;margin:28px 0;"></div>
+    <p style="color:#444;font-size:11px;line-height:1.6;">You receive recall alerts as a ParvoMaps Guardian. Manage your brands and alerts anytime from your alert settings · parvomaps.us</p>
+  </div>
+</body>
+</html>`,
+  })
+}
+
 // ─── ADMIN: MODERATION LOGIN MAGIC LINK ───────────────────────────────────────
 
 export async function sendAdminMagicLink(email: string, loginUrl: string): Promise<void> {

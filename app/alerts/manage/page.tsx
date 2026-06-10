@@ -54,7 +54,7 @@ export default async function ManageAlertsPage({
           exp={expNum}
           token={t ?? ''}
           diseaseOptions={diseaseOptions}
-          initial={prefs ? { zip: prefs.zip, radiusMiles: prefs.radiusMiles, diseases: prefs.diseases, lostDogs: prefs.lostDogs } : null}
+          initial={prefs ? { zip: prefs.zip, radiusMiles: prefs.radiusMiles, diseases: prefs.diseases, lostDogs: prefs.lostDogs, foodBrands: prefs.foodBrands } : null}
         />
       </div>
     </main>

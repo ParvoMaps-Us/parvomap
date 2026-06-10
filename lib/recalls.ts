@@ -23,6 +23,18 @@ export interface Recall {
   date: string // human-readable, e.g. "June 5, 2026"
 }
 
+/** Does a recall mention one of the subscriber's brands? Returns the matched
+ *  brand (as the user typed it) or null. Case-insensitive substring match on the
+ *  recall title + summary; brands under 3 chars are ignored to avoid noise. */
+export function matchBrand(recall: Recall, brands: string[]): string | null {
+  const hay = `${recall.title} ${recall.summary}`.toLowerCase()
+  for (const b of brands) {
+    const needle = b.trim().toLowerCase()
+    if (needle.length >= 3 && hay.includes(needle)) return b.trim()
+  }
+  return null
+}
+
 // Word-boundary pet signals in the recall title. "animal food/feed" included;
 // bare "pet" avoided on its own (it appears in plastics as "PET") — we require
 // pet-as-animal context via the other terms or "pet food/treat".

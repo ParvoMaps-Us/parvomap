@@ -130,6 +130,9 @@ export interface AlertPrefs {
   diseases: 'all' | string[]
   /** Also alert on nearby lost-dog reports. */
   lostDogs: boolean
+  /** Dog-food brands the subscriber feeds — they get a recall alert when one of
+   *  these shows up in an FDA pet-food recall. Lowercased, deduped. (Paid perk.) */
+  foodBrands?: string[]
   updatedAt: number
 }
 
@@ -179,6 +182,27 @@ export async function getAllAlertPrefs(): Promise<AlertPrefs[]> {
     }
   }
   return out
+}
+
+// ─── Recall-alert dedupe ──────────────────────────────────────────────────────
+// One Redis set tracks which (subscriber, recall) pairs have already been
+// emailed, so the recall-alert cron never double-sends the same recall.
+const RECALL_SENT_SET = 'recall_alerts_sent'
+
+function recallSentMember(email: string, recallUrl: string): string {
+  return `${keyFor(email)}|${recallUrl}`
+}
+
+export async function wasRecallAlerted(email: string, recallUrl: string): Promise<boolean> {
+  const client = getRedisClient()
+  if (!client) return false
+  return (await client.sismember(RECALL_SENT_SET, recallSentMember(email, recallUrl))) === 1
+}
+
+export async function markRecallAlerted(email: string, recallUrl: string): Promise<void> {
+  const client = getRedisClient()
+  if (!client) return
+  await client.sadd(RECALL_SENT_SET, recallSentMember(email, recallUrl))
 }
 
 // ─── Matching / delivery ──────────────────────────────────────────────────────

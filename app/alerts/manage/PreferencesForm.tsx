@@ -14,6 +14,7 @@ interface Props {
     radiusMiles: number
     diseases: 'all' | string[]
     lostDogs: boolean
+    foodBrands?: string[]
   } | null
 }
 
@@ -47,6 +48,8 @@ export default function PreferencesForm({ email, exp, token, diseaseOptions, ini
     new Set(initial && initial.diseases !== 'all' ? initial.diseases : []),
   )
   const [lostDogs, setLostDogs] = useState(initial?.lostDogs ?? true)
+  // Dog-food brands for recall alerts, as one comma-separated text field.
+  const [foodBrands, setFoodBrands] = useState((initial?.foodBrands ?? []).join(', '))
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [error, setError] = useState<string | null>(null)
 
@@ -69,11 +72,12 @@ export default function PreferencesForm({ email, exp, token, diseaseOptions, ini
     setError(null)
     setStatus('saving')
     const diseases = allDiseases ? 'all' : [...selected]
+    const brands = foodBrands.split(',').map(b => b.trim()).filter(Boolean)
     try {
       const res = await fetch('/api/alerts/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, exp, token, zip, radiusMiles: radius, diseases, lostDogs }),
+        body: JSON.stringify({ email, exp, token, zip, radiusMiles: radius, diseases, lostDogs, foodBrands: brands }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
@@ -136,6 +140,20 @@ export default function PreferencesForm({ email, exp, token, diseaseOptions, ini
         <button type="button" onClick={() => setLostDogs(v => !v)} style={chipStyle(lostDogs)}>
           {lostDogs ? '✓ ' : ''}🐶 Alert me about lost dogs nearby
         </button>
+      </div>
+
+      <div style={{ marginBottom: 26 }}>
+        <span style={label}>🛑 Dog food recall alerts</span>
+        <p style={{ fontSize: 11, color: 'var(--text-dim)', margin: '0 0 10px' }}>
+          What food does your dog eat? We&apos;ll email you the moment the FDA recalls one of your brands.
+          Separate multiple brands with commas.
+        </p>
+        <input
+          value={foodBrands}
+          onChange={e => setFoodBrands(e.target.value)}
+          placeholder="e.g. Purina Pro Plan, Blue Buffalo, Sportmix"
+          style={{ width: '100%', fontFamily: 'var(--mono)' }}
+        />
       </div>
 
       <button type="submit" disabled={status === 'saving'} style={{ width: '100%', padding: '13px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700, background: 'var(--green)', color: '#04130b' }}>

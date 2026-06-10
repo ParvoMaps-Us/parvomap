@@ -134,6 +134,18 @@ export default async function RecallsPage() {
         </p>
       </Section>
 
+      {/* ─── Recall-alert upsell (paid Guardian perk) ─── */}
+      <div style={{ ...card, borderColor: 'var(--green)', marginBottom: 28 }}>
+        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4 }}>🛑 Get alerted the moment your brand is recalled</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: 12 }}>
+          Tell us what food your dog eats and we&apos;ll email you the instant the FDA recalls it — no
+          checking back required. Included with a ParvoMaps Guardian membership, from $5/mo.
+        </div>
+        <Link href="/pro" style={{ display: 'inline-block', padding: '11px 22px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 800, background: 'var(--green)', color: '#04130b' }}>
+          Set up recall alerts →
+        </Link>
+      </div>
+
       {/* ─── Evergreen SEO content ─── */}
       <Section title="If your dog's food is recalled">
         <ol style={{ margin: 0, paddingLeft: 20, fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.9 }}>

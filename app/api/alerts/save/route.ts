@@ -69,9 +69,20 @@ export async function POST(req: NextRequest) {
     diseases = 'all'
   }
 
-  // Must want at least one kind of alert.
-  if (diseases !== 'all' && diseases.length === 0 && !lostDogs) {
-    return Response.json({ error: 'Pick at least one disease or enable lost-dog alerts.' }, { status: 400, headers: cors })
+  // Dog-food brands for recall alerts: trim, drop blanks/dupes, cap length+count.
+  const foodBrands = Array.isArray(body.foodBrands)
+    ? Array.from(
+        new Set(
+          body.foodBrands
+            .map(b => String(b).trim())
+            .filter(b => b.length >= 2 && b.length <= 60),
+        ),
+      ).slice(0, 20)
+    : []
+
+  // Must want at least one kind of alert (an area alert or a recall watch).
+  if (diseases !== 'all' && diseases.length === 0 && !lostDogs && foodBrands.length === 0) {
+    return Response.json({ error: 'Pick at least one disease, enable lost-dog alerts, or add a food brand.' }, { status: 400, headers: cors })
   }
 
   // 4. Geocode the ZIP so delivery can do radius matching.
@@ -85,6 +96,7 @@ export async function POST(req: NextRequest) {
     radiusMiles,
     diseases,
     lostDogs,
+    foodBrands,
     updatedAt: Date.now(),
   }
 
