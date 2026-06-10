@@ -13,6 +13,7 @@ const DISEASES = [
   { key: 'giardia', label: 'Giardia', color: 'var(--d-giardia)' },
   { key: 'ringworm', label: 'Ringworm', color: 'var(--d-ringworm)' },
   { key: 'brucella', label: 'Brucellosis', color: 'var(--d-brucella)' },
+  { key: 'screwworm', label: 'New World Screwworm', color: 'var(--d-screwworm)' },
   { key: 'cyano', label: 'Blue-green Algae', color: 'var(--d-cyano)' },
   { key: 'lyme', label: 'Lyme Disease', color: 'var(--d-lyme)' },
   { key: 'rmsf', label: 'RMSF', color: 'var(--d-rmsf)' },

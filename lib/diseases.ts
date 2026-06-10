@@ -72,6 +72,13 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
     transmission: 'Through breeding and contact with reproductive fluids or aborted tissue.',
     prevention: 'Test breeding dogs before mating; avoid contact with infected animals.',
   },
+  screwworm: {
+    name: 'New World Screwworm', category: 'infectious', pinTtlDays: 365, severity: 'high', aka: 'NWS, Screwworm myiasis',
+    blurb: 'A reportable parasitic infestation in which the larvae (maggots) of the New World screwworm fly burrow into the living flesh of warm-blooded animals. Wounds enlarge rapidly and can be fatal if untreated. After decades of US eradication, cases have re-emerged as the fly spreads north from Central America and Mexico.',
+    symptoms: ['A wound that keeps enlarging instead of healing', 'Visible maggots deep within a wound', 'Foul-smelling or bloody discharge', 'Pain, head-shaking, or constant licking of one spot', 'Loss of appetite and lethargy', 'Withdrawing from people or other animals'],
+    transmission: 'Adult female flies lay eggs at the edges of open wounds — even tiny ones like tick bites or scratches — or on moist tissue (nostrils, eyes, genitals). The hatched larvae feed on living flesh. Not spread directly dog-to-dog.',
+    prevention: 'Keep wounds clean and covered, treat injuries promptly, and inspect animals after travel to affected areas. Screwworm is a reportable foreign animal disease — if you suspect it, contact your veterinarian and state animal-health officials immediately.',
+  },
   cyano: {
     name: 'Blue-green Algae', category: 'environmental', pinTtlDays: 30, severity: 'high', aka: 'Cyanobacteria',
     blurb: 'A toxin produced by cyanobacteria in warm, stagnant water. Exposure can be rapidly fatal — treat any suspected case as an emergency.',

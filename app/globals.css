@@ -28,6 +28,7 @@
   --d-giardia:    #14b8a6;
   --d-ringworm:   #eab308;
   --d-brucella:   #6b7280;
+  --d-screwworm:  #fb7185;
   --d-cyano:      #06b6d4;
   --d-lyme:       #84cc16;
   --d-rmsf:       #dc2626;
@@ -333,6 +334,7 @@ nav a:hover { color: var(--text); }
 .pin[data-disease="giardia"]    { background: var(--d-giardia); }
 .pin[data-disease="ringworm"]   { background: var(--d-ringworm); }
 .pin[data-disease="brucella"]   { background: var(--d-brucella); }
+.pin[data-disease="screwworm"]  { background: var(--d-screwworm); }
 .pin[data-disease="cyano"]      { background: var(--d-cyano); }
 .pin[data-disease="lyme"]       { background: var(--d-lyme); }
 .pin[data-disease="rmsf"]       { background: var(--d-rmsf); }
