@@ -12,6 +12,7 @@ const DISEASE_COLORS: Record<string, string> = {
   ringworm: '#ec4899',
   brucella: '#f43f5e',
   screwworm: '#fb7185',
+  fleas: '#9a3412',
   cyano: '#14b8a6',
   lyme: '#22c55e',
   rmsf: '#fb923c',

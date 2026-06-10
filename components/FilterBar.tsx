@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 
 const INFECTIOUS = [
-  { key: 'all', label: 'All', color: '#f0f0f0', count: 27 },
+  { key: 'all', label: 'All', color: '#f0f0f0', count: 28 },
   { key: 'parvo', label: 'Parvovirus', color: 'var(--d-parvo)', count: 3 },
   { key: 'distemper', label: 'Distemper', color: 'var(--d-distemper)', count: 3 },
   { key: 'kennel', label: 'Kennel cough', color: 'var(--d-kennel)', count: 3 },
@@ -12,6 +12,7 @@ const INFECTIOUS = [
   { key: 'ringworm', label: 'Ringworm', color: 'var(--d-ringworm)', count: 1 },
   { key: 'brucella', label: 'Brucellosis', color: 'var(--d-brucella)', count: 1 },
   { key: 'screwworm', label: 'New World Screwworm', color: 'var(--d-screwworm)', count: 1 },
+  { key: 'fleas', label: 'Fleas', color: 'var(--d-fleas)', count: 1 },
 ]
 
 const ENVIRONMENTAL = [

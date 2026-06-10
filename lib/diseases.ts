@@ -79,6 +79,13 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
     transmission: 'Adult female flies lay eggs at the edges of open wounds — even tiny ones like tick bites or scratches — or on moist tissue (nostrils, eyes, genitals). The hatched larvae feed on living flesh. Not spread directly dog-to-dog.',
     prevention: 'Keep wounds clean and covered, treat injuries promptly, and inspect animals after travel to affected areas. Screwworm is a reportable foreign animal disease — if you suspect it, contact your veterinarian and state animal-health officials immediately.',
   },
+  fleas: {
+    name: 'Fleas', category: 'infectious', pinTtlDays: 90, severity: 'low', aka: 'Flea infestation, Ctenocephalides',
+    blurb: 'A common external parasite. Beyond intense itching, fleas can trigger allergic dermatitis, transmit tapeworm and Bartonella, and cause anemia in puppies or heavy infestations.',
+    symptoms: ['Persistent scratching, biting, or licking', 'Hair loss, especially near the tail base', 'Red, irritated, or scabbed skin', 'Visible fleas or black "flea dirt" in the coat', 'Restlessness', 'Pale gums in heavy infestations'],
+    transmission: 'Picked up from infested animals, bedding, carpets, yards, or wildlife. Fleas jump onto a host and reproduce rapidly in the environment.',
+    prevention: 'Year-round flea preventives, washing bedding in hot water, and treating the home and yard. Treat every pet in the household at once.',
+  },
   cyano: {
     name: 'Blue-green Algae', category: 'environmental', pinTtlDays: 30, severity: 'high', aka: 'Cyanobacteria',
     blurb: 'A toxin produced by cyanobacteria in warm, stagnant water. Exposure can be rapidly fatal — treat any suspected case as an emergency.',

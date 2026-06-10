@@ -14,6 +14,7 @@ const DISEASES = [
   { key: 'ringworm', label: 'Ringworm', color: 'var(--d-ringworm)' },
   { key: 'brucella', label: 'Brucellosis', color: 'var(--d-brucella)' },
   { key: 'screwworm', label: 'New World Screwworm', color: 'var(--d-screwworm)' },
+  { key: 'fleas', label: 'Fleas', color: 'var(--d-fleas)' },
   { key: 'cyano', label: 'Blue-green Algae', color: 'var(--d-cyano)' },
   { key: 'lyme', label: 'Lyme Disease', color: 'var(--d-lyme)' },
   { key: 'rmsf', label: 'RMSF', color: 'var(--d-rmsf)' },
