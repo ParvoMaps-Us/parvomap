@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getPetFoodRecalls, FDA_PET_RECALLS_URL } from '@/lib/recalls'
+import { getRecallsForList, FDA_PET_RECALLS_URL } from '@/lib/recalls'
 
 const title = 'Dog Food Recalls - Current FDA Pet Food Recall List | ParvoMaps'
 const description =
@@ -37,7 +37,7 @@ const RECALL_REASONS = [
 ]
 
 export default async function RecallsPage() {
-  const recalls = await getPetFoodRecalls()
+  const recalls = await getRecallsForList()
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -58,7 +58,7 @@ export default async function RecallsPage() {
                   '@type': 'ListItem',
                   position: i + 1,
                   name: r.title,
-                  url: r.url,
+                  url: `https://www.parvomaps.us/recalls/${r.slug}`,
                 })),
               },
             }
@@ -116,12 +116,12 @@ export default async function RecallsPage() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {recalls.map(r => (
-              <a key={r.url} href={r.url} target="_blank" rel="noopener noreferrer" style={{ ...card, textDecoration: 'none', color: 'inherit', display: 'block' }}>
+              <Link key={r.slug} href={`/recalls/${r.slug}`} style={{ ...card, textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{r.title}</div>
                 {r.date && <div style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 6 }}>{r.date} · FDA</div>}
                 {r.summary && <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>{r.summary}…</div>}
-                <div style={{ fontSize: 11, color: '#60a5fa', marginTop: 8 }}>Read the FDA notice ↗</div>
-              </a>
+                <div style={{ fontSize: 11, color: '#60a5fa', marginTop: 8 }}>See recall details →</div>
+              </Link>
             ))}
           </div>
         )}

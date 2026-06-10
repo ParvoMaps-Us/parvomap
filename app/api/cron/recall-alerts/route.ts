@@ -1,4 +1,4 @@
-import { getPetFoodRecalls, matchBrand } from '@/lib/recalls'
+import { getPetFoodRecalls, archiveRecalls, matchBrand } from '@/lib/recalls'
 import {
   getAllAlertPrefs,
   isActiveSubscriber,
@@ -26,6 +26,11 @@ export async function GET(req: Request) {
   }
 
   const recalls = await getPetFoodRecalls()
+
+  // Persist every recall we see so the list page keeps history and each gets a
+  // durable detail page after it ages out of the FDA feed.
+  await archiveRecalls(recalls)
+
   if (recalls.length === 0) {
     return Response.json({ ok: true, sent: 0, reason: 'no current pet-food recalls' })
   }

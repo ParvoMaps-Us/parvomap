@@ -1,9 +1,18 @@
 import type { MetadataRoute } from 'next'
 import { DISEASE_MAP } from '@/lib/diseases'
+import { getArchivedRecalls } from '@/lib/recalls'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://www.parvomaps.us'
   const now = new Date()
+
+  // Per-recall detail pages from the archive (best-effort; empty if Redis down).
+  const recallPages: MetadataRoute.Sitemap = (await getArchivedRecalls()).map(r => ({
+    url: `${base}/recalls/${r.slug}`,
+    lastModified: r.ts ? new Date(r.ts) : now,
+    changeFrequency: 'monthly',
+    priority: 0.5,
+  }))
 
   const diseasePages: MetadataRoute.Sitemap = Object.keys(DISEASE_MAP).map(slug => ({
     url: `${base}/diseases/${slug}`,
@@ -43,6 +52,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily', // FDA feed refreshes; recalls change often
       priority: 0.8,
     },
+    ...recallPages,
     ...diseasePages,
     { url: `${base}/privacy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${base}/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
