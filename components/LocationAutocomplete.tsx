@@ -128,7 +128,7 @@ export default function LocationAutocomplete({ value, placeholder, bias, onChang
         </ul>
       )}
       {loading && (
-        <span style={{ position: 'absolute', right: 10, top: 10, fontSize: 11, color: '#666' }}>…</span>
+        <span style={{ position: 'absolute', right: 10, top: 10, fontSize: 11, color: '#999' }}>…</span>
       )}
     </div>
   )

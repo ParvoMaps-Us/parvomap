@@ -1,6 +1,7 @@
 'use client'
 import dynamic from 'next/dynamic'
 import type { Report } from '@/lib/redis'
+import { getDiseaseName } from '@/lib/diseases'
 
 const DISEASE_COLORS: Record<string, string> = {
   parvo: '#ef4444',
@@ -42,6 +43,28 @@ export default function Map({ reports = [] }: MapProps) {
   return (
     <section className="map-section" aria-label="US canine disease outbreak map">
       <div className="map-label">Live Outbreak Map · US</div>
+
+      {/* Screen-reader text alternative to the visual map — the canvas/markers
+          aren't perceivable to assistive tech, so expose the same reports as a
+          plain list. */}
+      <div className="sr-only">
+        <h2>Reported cases on the map</h2>
+        {reports.length === 0 ? (
+          <p>No reports yet.</p>
+        ) : (
+          <ul>
+            {reports.map(r => {
+              const where = [r.city, r.state].filter(Boolean).join(', ') || r.zip || 'location not specified'
+              const what = r.kind === 'lost'
+                ? `Lost dog${r.dogName ? ` named ${r.dogName}` : ''}`
+                : getDiseaseName(r.disease)
+              const when = new Date(r.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+              return <li key={r.id}>{what} — {where} — reported {when}</li>
+            })}
+          </ul>
+        )}
+      </div>
+
       <LeafletMap reports={reports} pinColor={pinColor} recencyClass={recencyClass} />
     </section>
   )

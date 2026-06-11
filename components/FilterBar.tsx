@@ -31,7 +31,7 @@ const groupLabelStyle: React.CSSProperties = {
   fontFamily: "'IBM Plex Mono', monospace",
   fontSize: '8px',
   letterSpacing: '0.14em',
-  color: '#777777',
+  color: '#999999',
   textTransform: 'uppercase',
   padding: '0 10px 0 16px',
   whiteSpace: 'nowrap',

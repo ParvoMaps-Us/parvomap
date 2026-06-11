@@ -28,7 +28,7 @@ function escapeHtml(s: string): string {
 
 /** Small "report this pin" control appended to each report popup for moderation. */
 function flagButtonHtml(id: string): string {
-  return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#777;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">🚩 Report this pin</button>`
+  return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#999;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">🚩 Report this pin</button>`
 }
 
 /** Popup markup for a lost-dog pin: photo, name, details, exact address, contact. */
@@ -51,7 +51,7 @@ function lostPopupHtml(report: Report, ageLabel: string): string {
       ${lastSeen ? `<div style="display:flex;justify-content:space-between;gap:16px;"><span style="color:#aaa;">Last seen</span><span style="color:#e0e0e0;">${lastSeen}</span></div>` : ''}
       <div style="display:flex;justify-content:space-between;gap:16px;"><span style="color:#aaa;">Reported</span><span style="color:#e0e0e0;">${ageLabel}</span></div>
       ${report.contact ? `<div style="margin-top:8px;padding-top:6px;border-top:1px solid #222;color:#60a5fa;font-size:11px;word-break:break-word;">📞 ${escapeHtml(report.contact)}</div>` : ''}
-      <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Community lost-dog report</div>
+      <div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Community lost-dog report</div>
       ${flagButtonHtml(report.id)}
     </div>
   `
@@ -157,7 +157,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       hint.style.cssText = `
         position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
         background:rgba(10,10,10,0.85);border:1px solid #2a2a2a;
-        color:#666;font-family:'IBM Plex Mono',monospace;font-size:10px;
+        color:#999;font-family:'IBM Plex Mono',monospace;font-size:10px;
         letter-spacing:0.1em;padding:6px 14px;pointer-events:none;
         z-index:1001;white-space:nowrap;opacity:0;transition:opacity 0.3s;
       `
@@ -292,7 +292,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             <span style="color:#aaa;">Reported</span>
             <span style="color:#e0e0e0;">${ageLabel}</span>
           </div>
-          ${report.verifiedClinic ? `<div style="margin-top:8px;color:#00ff88;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Anonymous community report</div>`}
+          ${report.verifiedClinic ? `<div style="margin-top:8px;color:#00ff88;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Anonymous community report</div>`}
           ${report.locationDetail ? reportBtnHtml : ''}
           ${flagButtonHtml(report.id)}
         </div>
@@ -340,7 +340,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           <div style="color:#fff;margin-bottom:6px;">${escapeHtml(area)}</div>
           <div style="color:#aaa;margin-bottom:6px;">${valid.length} reports in this area</div>
           ${breakdown}
-          <div style="margin-top:8px;font-size:9px;color:#777;letter-spacing:0.08em;">Double-click to zoom in · individual reports</div>
+          <div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Double-click to zoom in · individual reports</div>
           ${reportBtnHtml}
         </div>
       `)
@@ -503,7 +503,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           <div style={{
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: '12px',
-            color: '#777777',
+            color: '#999999',
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
             marginBottom: '6px',
@@ -511,7 +511,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           <div style={{
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: '10px',
-            color: '#555555',
+            color: '#999999',
             letterSpacing: '0.08em',
           }}>Be the first to report a case</div>
         </div>
@@ -598,7 +598,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           <span style={{
             fontFamily: "'IBM Plex Mono', monospace",
             fontSize: '9px',
-            color: '#777',
+            color: '#999',
             letterSpacing: '0.06em',
             whiteSpace: 'nowrap',
           }}>{item.label}</span>
