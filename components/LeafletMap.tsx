@@ -128,6 +128,9 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 19,
+        // Lighten CARTO's very dark basemap so land/borders are legible while
+        // keeping the dark theme. Applied via CSS on the .map-tiles class.
+        className: 'map-tiles',
       }
     )
 

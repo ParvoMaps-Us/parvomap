@@ -118,6 +118,10 @@ body::before {
     scroll-behavior: auto !important;
   }
 }
+/* Lighten the very dark CARTO basemap so land/coastlines/borders read clearly
+   without abandoning the dark theme. Tune brightness to taste. */
+.map-tiles { filter: brightness(1.55) contrast(1.05); }
+
 /* Visually hidden but available to screen readers. */
 .sr-only {
   position: absolute;
