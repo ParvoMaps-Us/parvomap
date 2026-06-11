@@ -241,7 +241,7 @@ export default async function DashboardPage({
                 </div>
                 {r?.kind === 'lost' && r.photoUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={r.photoUrl} alt="flagged" style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)', flex: 'none' }} />
+                  <img src={r.photoUrl} alt={`Photo from flagged report: ${f.summary}`} style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border)', flex: 'none' }} />
                 )}
               </div>
 

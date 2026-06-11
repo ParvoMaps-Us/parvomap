@@ -28,6 +28,9 @@ export default async function HomePage({
   return (
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
+      {/* Document heading — the visual brand is the logo, so the page h1 is
+          screen-reader-only. Comes before the map's h2 to keep heading order. */}
+      <h1 className="sr-only">ParvoMaps — Live US canine disease outbreak map</h1>
       <WelcomePopup />
       {verified && <VerifiedBanner status={verified} />}
       {removed && <VerifiedBanner status={removed} param="removed" />}
