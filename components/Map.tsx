@@ -33,7 +33,20 @@ function recencyClass(timestamp: number): string {
   return 'green'
 }
 
-const LeafletMap = dynamic(() => import('./LeafletMap'), { ssr: false })
+// Reserve the map's height with a matching skeleton while the client-only
+// Leaflet chunk loads. Without this the map area is 0px on first paint then
+// snaps to full height, shoving the page down (large Cumulative Layout Shift).
+const LeafletMap = dynamic(() => import('./LeafletMap'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ position: 'relative', width: '100%' }} aria-hidden="true">
+      <div
+        className="map-container"
+        style={{ width: '100%', height: 'calc(100vh - 140px)', minHeight: 500, maxHeight: 800, background: '#060606' }}
+      />
+    </div>
+  ),
+})
 
 interface MapProps {
   reports?: Report[]
