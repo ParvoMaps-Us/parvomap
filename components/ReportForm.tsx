@@ -498,6 +498,7 @@ export default function ReportForm() {
               <input
                 type="url"
                 inputMode="url"
+                aria-label="Article link"
                 placeholder="https://…"
                 maxLength={500}
                 value={sourceUrl}
@@ -516,6 +517,8 @@ export default function ReportForm() {
             <input
               type="text"
               name="zip"
+              aria-label="ZIP code"
+              autoComplete="postal-code"
               placeholder="e.g. 84101"
               maxLength={5}
               pattern="\d{5}"
@@ -533,7 +536,7 @@ export default function ReportForm() {
           {!isSighting && (
             <div className="form-group">
               <label>How was it confirmed? <span className="opt">(optional)</span></label>
-              <select name="source">
+              <select name="source" aria-label="How was it confirmed?">
                 <option value="">Select…</option>
                 <option value="vet-diagnosed">Veterinarian diagnosed</option>
                 <option value="positive-test">Positive test result</option>
@@ -545,12 +548,12 @@ export default function ReportForm() {
 
           <div className="form-group">
             <label>Your Email <span className="req">*</span> <span className="opt">(to verify & notify)</span></label>
-            <input type="email" name="email" placeholder="your@email.com" required />
+            <input type="email" name="email" aria-label="Your email" autoComplete="email" placeholder="your@email.com" required />
           </div>
 
           <div className="form-group">
             <label>Dog&apos;s Breed <span className="opt">(optional)</span></label>
-            <input type="text" name="breed" placeholder="e.g. Labrador, mixed breed..." />
+            <input type="text" name="breed" aria-label="Dog's breed" placeholder="e.g. Labrador, mixed breed..." />
           </div>
 
           <div className="form-group full">
@@ -559,6 +562,7 @@ export default function ReportForm() {
             </label>
             <textarea
               name="notes"
+              aria-label="Notes"
               placeholder="Additional details — symptoms, exposure location, timeline..."
               maxLength={280}
               value={notes}
@@ -626,7 +630,7 @@ export default function ReportForm() {
                 </div>
               </div>
             ) : (
-              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhoto} />
+              <input type="file" accept="image/jpeg,image/png,image/webp" aria-label="Upload a photo of the dog" onChange={handlePhoto} />
             )}
             {photoError && !photoPreview && (
               <div style={{ marginTop: 4, fontSize: 10, color: 'var(--red)', fontFamily: 'var(--mono)' }}>{photoError}</div>
@@ -640,6 +644,7 @@ export default function ReportForm() {
             </label>
             <input
               type="text"
+              aria-label="Dog's name"
               placeholder={lostKind === 'sighting' ? 'e.g. tag said “Buddy”' : 'e.g. Buddy'}
               maxLength={60}
               value={dogName}
@@ -651,6 +656,7 @@ export default function ReportForm() {
             <label>Breed <span className="opt">(optional)</span></label>
             <input
               type="text"
+              aria-label="Dog's breed"
               placeholder="e.g. Golden Retriever, mixed…"
               maxLength={60}
               value={dogBreed}
@@ -661,6 +667,7 @@ export default function ReportForm() {
           <div className="form-group full">
             <label>Description <span className="opt">(color, size, collar, markings…)</span></label>
             <textarea
+              aria-label="Dog description"
               placeholder="e.g. Medium, tan with white chest, blue collar, very friendly…"
               maxLength={280}
               value={dogDescription}
@@ -691,6 +698,7 @@ export default function ReportForm() {
             <label>Last seen <span className="opt">(optional)</span></label>
             <input
               type="datetime-local"
+              aria-label="Last seen date and time"
               value={lastSeen}
               onChange={e => setLastSeen(e.target.value)}
             />
@@ -700,6 +708,7 @@ export default function ReportForm() {
             <label>Public contact <span className="opt">(phone/email shown on the map)</span></label>
             <input
               type="text"
+              aria-label="Public contact (phone or email)"
               placeholder="e.g. 801-555-0143 or name@email.com"
               maxLength={120}
               value={contact}
@@ -709,7 +718,7 @@ export default function ReportForm() {
 
           <div className="form-group full">
             <label>Your Email <span className="req">*</span> <span className="opt">(to verify — not shown publicly)</span></label>
-            <input type="email" name="email" placeholder="your@email.com" required />
+            <input type="email" name="email" aria-label="Your email" autoComplete="email" placeholder="your@email.com" required />
           </div>
 
           <div className="privacy-note">

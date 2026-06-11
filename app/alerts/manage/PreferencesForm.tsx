@@ -106,12 +106,12 @@ export default function PreferencesForm({ email, exp, token, diseaseOptions, ini
 
       <div style={{ marginBottom: 22 }}>
         <span style={label}>Your ZIP code</span>
-        <input value={zip} onChange={e => setZip(e.target.value)} inputMode="numeric" maxLength={5} placeholder="84101" required style={{ width: 140, fontFamily: 'var(--mono)' }} />
+        <input value={zip} onChange={e => setZip(e.target.value)} inputMode="numeric" maxLength={5} placeholder="84101" required aria-label="Your ZIP code" autoComplete="postal-code" style={{ width: 140, fontFamily: 'var(--mono)' }} />
       </div>
 
       <div style={{ marginBottom: 24 }}>
         <span style={label}>Alert radius — <strong style={{ color: 'var(--text)' }}>{radius} miles</strong></span>
-        <input type="range" min={1} max={100} value={radius} onChange={e => setRadius(Number(e.target.value))} style={{ width: '100%', accentColor: 'var(--green)', height: 6 }} />
+        <input type="range" min={1} max={100} value={radius} onChange={e => setRadius(Number(e.target.value))} aria-label={`Alert radius: ${radius} miles`} style={{ width: '100%', accentColor: 'var(--green)', height: 6 }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-dim)', marginTop: 2 }}>
           <span>1 mi</span><span>100 mi</span>
         </div>
@@ -151,6 +151,7 @@ export default function PreferencesForm({ email, exp, token, diseaseOptions, ini
         <input
           value={foodBrands}
           onChange={e => setFoodBrands(e.target.value)}
+          aria-label="Dog food brands for recall alerts"
           placeholder="e.g. Purina Pro Plan, Blue Buffalo, Sportmix"
           style={{ width: '100%', fontFamily: 'var(--mono)' }}
         />

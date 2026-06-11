@@ -106,6 +106,24 @@ body::before {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+
+/* ─── Accessibility ─── */
+/* Honour reduced-motion: stop decorative blinking/pulsing/scrolling for users
+   who get motion sickness or have vestibular disorders. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* Visible focus ring for keyboard users (many buttons set outline:none inline). */
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 @keyframes pulse-disease {
   0%   { box-shadow: 0 0 0 0 var(--pulse-color, rgba(239,68,68,0.6)); }
   70%  { box-shadow: 0 0 0 10px transparent; }

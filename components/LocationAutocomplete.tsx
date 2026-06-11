@@ -90,6 +90,7 @@ export default function LocationAutocomplete({ value, placeholder, bias, onChang
       <input
         type="text"
         autoComplete="off"
+        aria-label={placeholder || 'Location'}
         value={value}
         placeholder={placeholder}
         maxLength={120}

@@ -49,6 +49,7 @@ export default function RequestDiseaseForm() {
         <input
           type="text"
           required
+          aria-label="Disease to track"
           value={disease}
           onChange={e => setDisease(e.target.value)}
           placeholder="e.g. Canine respiratory disease complex (atypical)"
@@ -61,6 +62,7 @@ export default function RequestDiseaseForm() {
           value={note}
           onChange={e => setNote(e.target.value)}
           rows={3}
+          aria-label="Why or context (optional)"
           placeholder="Region, strain, what you need it for…"
           style={{ ...field, resize: 'vertical' }}
         />

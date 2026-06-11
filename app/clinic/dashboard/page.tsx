@@ -176,21 +176,21 @@ export default async function ClinicDashboardPage({
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div>
             <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>State</label>
-            <select name="state" defaultValue={state ?? ''} style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 120 }}>
+            <select name="state" defaultValue={state ?? ''} aria-label="Filter by state" style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 120 }}>
               <option value="">All states</option>
               {options.states.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div>
             <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>County</label>
-            <select name="county" defaultValue={county ?? ''} style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 150 }}>
+            <select name="county" defaultValue={county ?? ''} aria-label="Filter by county" style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 150 }}>
               <option value="">All counties{state ? ` in ${state}` : ''}</option>
               {options.counties.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div>
             <label style={{ display: 'block', fontSize: 11, color: 'var(--text-dim)', marginBottom: 5 }}>City</label>
-            <select name="city" defaultValue={city ?? ''} style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 140 }}>
+            <select name="city" defaultValue={city ?? ''} aria-label="Filter by city" style={{ padding: '8px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text)', fontFamily: 'var(--mono)', fontSize: 13, minWidth: 140 }}>
               <option value="">All cities{state ? ` in ${state}` : ''}</option>
               {options.cities.map(c => <option key={c} value={c}>{c}</option>)}
             </select>

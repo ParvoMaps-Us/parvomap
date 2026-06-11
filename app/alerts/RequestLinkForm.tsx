@@ -48,6 +48,8 @@ export default function RequestLinkForm() {
         <input
           type="email"
           required
+          aria-label="Email address"
+          autoComplete="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           placeholder="you@example.com"

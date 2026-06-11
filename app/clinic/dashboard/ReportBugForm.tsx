@@ -56,6 +56,7 @@ export default function ReportBugForm() {
       <label style={{ fontSize: 11, color: 'var(--text-dim)' }}>Describe the bug — what happened, what you expected</label>
       <textarea
         required
+        aria-label="Bug description"
         value={message}
         onChange={e => setMessage(e.target.value)}
         rows={4}
