@@ -3,6 +3,7 @@ import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe'
 import { getRedisClient } from '@/lib/redis'
 import { sendSubscriptionWelcome } from '@/lib/notifications'
+import { claimFounderSlot } from '@/lib/founders'
 
 // Stripe signs the *raw* request body. Next.js route handlers give us the
 // untouched bytes via req.text(); never parse to JSON before verifying.
@@ -32,15 +33,31 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const s = event.data.object as Stripe.Checkout.Session
+        const plan = (s.metadata?.plan as string | undefined) ?? null
+        const subId = typeof s.subscription === 'string' ? s.subscription : s.subscription?.id ?? null
         await recordSubscriber({
           customerId:   typeof s.customer === 'string' ? s.customer : s.customer?.id ?? null,
           email:        s.customer_details?.email ?? null,
-          plan:         (s.metadata?.plan as string | undefined) ?? null,
-          subscription: typeof s.subscription === 'string' ? s.subscription : s.subscription?.id ?? null,
+          plan,
+          subscription: subId,
           status:       'active',
           ts:           Date.now(),
         })
-        console.log('New subscriber:', s.customer_details?.email, s.metadata?.plan)
+        console.log('New subscriber:', s.customer_details?.email, plan)
+
+        // Founding Guardian: claim a price-locked slot (idempotent, hard-capped).
+        // Tagging the subscription is what marks it "never migrate" for life.
+        try {
+          const claim = await claimFounderSlot(plan, subId)
+          if (claim.isFounder && subId) {
+            await stripe.subscriptions.update(subId, {
+              metadata: { plan: plan ?? '', founder: 'true', founder_number: String(claim.number) },
+            })
+            console.log(`Founding Guardian #${claim.number} locked in:`, s.customer_details?.email)
+          }
+        } catch (e) {
+          console.error('Founder slot claim failed:', e)
+        }
 
         // Welcome email with directions to set up alerts (the perk they paid for).
         const newEmail = s.customer_details?.email

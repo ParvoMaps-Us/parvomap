@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import PricingCards from './PricingCards'
+import FoundingBanner from './FoundingBanner'
 
 export const metadata: Metadata = {
   title: 'Go Pro — ParvoMaps',
@@ -40,6 +41,8 @@ export default async function ProPage({
           Checkout cancelled — no charge was made. Come back anytime.
         </div>
       )}
+
+      <FoundingBanner />
 
       <PricingCards />
     </main>

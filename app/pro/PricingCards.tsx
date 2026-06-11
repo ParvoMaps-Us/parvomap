@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { PlanKey } from '@/lib/stripe'
 
 interface Tier {
@@ -12,6 +12,16 @@ interface Tier {
   features: string[]
   highlight?: boolean
   cta: string
+  /** Founding-Guardian price lock: today's price holds for life; `regular` is
+   *  the anchor price new buyers pay once the founding cohort fills. */
+  founder?: { regular: string }
+}
+
+interface FounderStatus {
+  taken: number
+  remaining: number
+  total: number
+  open: boolean
 }
 
 const TIERS: Tier[] = [
@@ -30,6 +40,7 @@ const TIERS: Tier[] = [
     ],
     cta: 'Become a Guardian',
     highlight: true,
+    founder: { regular: '$8' },
   },
   {
     plan: 'guardian-annual',
@@ -44,6 +55,7 @@ const TIERS: Tier[] = [
       'One bill a year',
     ],
     cta: 'Get annual',
+    founder: { regular: '$80' },
   },
   {
     plan: 'pro-clinic',
@@ -64,6 +76,20 @@ const TIERS: Tier[] = [
 export default function PricingCards() {
   const [loading, setLoading] = useState<PlanKey | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [founder, setFounder] = useState<FounderStatus | null>(null)
+
+  useEffect(() => {
+    let live = true
+    fetch('/api/founders')
+      .then(r => (r.ok ? r.json() : null))
+      .then(d => { if (live && d) setFounder(d as FounderStatus) })
+      .catch(() => {})
+    return () => { live = false }
+  }, [])
+
+  // While loading we optimistically treat the offer as open (the common case),
+  // so the founding price doesn't flash to the regular price then back.
+  const founderOpen = founder ? founder.open : true
 
   async function checkout(plan: PlanKey) {
     setError(null)
@@ -101,7 +127,9 @@ export default function PricingCards() {
           gap: 18,
         }}
       >
-        {TIERS.map(t => (
+        {TIERS.map(t => {
+          const showFounder = !!t.founder && founderOpen
+          return (
           <div
             key={t.plan}
             style={{
@@ -114,10 +142,43 @@ export default function PricingCards() {
               boxShadow: t.highlight ? '0 0 24px var(--green-glow, transparent)' : 'none',
             }}
           >
+            {showFounder && (
+              <div
+                style={{
+                  fontFamily: 'var(--mono)',
+                  fontSize: 10.5,
+                  fontWeight: 700,
+                  letterSpacing: 0.5,
+                  textTransform: 'uppercase',
+                  color: 'var(--green)',
+                  border: '1px solid var(--green)',
+                  borderRadius: 4,
+                  padding: '3px 8px',
+                  alignSelf: 'flex-start',
+                  marginBottom: 10,
+                }}
+              >
+                {founder
+                  ? `⚡ ${founder.remaining.toLocaleString()} of ${founder.total.toLocaleString()} founding spots left`
+                  : '⚡ Founding price'}
+              </div>
+            )}
             <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 6 }}>{t.name}</div>
             <div style={{ marginBottom: 10 }}>
-              <span style={{ fontSize: 30, fontWeight: 800 }}>{t.price}</span>
+              {showFounder && t.founder && (
+                <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-dim)', textDecoration: 'line-through', marginRight: 8 }}>
+                  {t.founder.regular}
+                </span>
+              )}
+              <span style={{ fontSize: 30, fontWeight: 800 }}>
+                {!t.founder || showFounder ? t.price : t.founder.regular}
+              </span>
               <span style={{ fontSize: 13, color: 'var(--text-dim)' }}>{t.cadence}</span>
+              {showFounder && (
+                <div style={{ fontSize: 11, color: 'var(--green)', marginTop: 4, lineHeight: 1.5 }}>
+                  Locked for life — your rate never rises, even after the price goes to {t.founder!.regular}{t.cadence}.
+                </div>
+              )}
             </div>
             <p style={{ fontSize: 12.5, color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: 16, minHeight: 56 }}>
               {t.blurb}
@@ -151,9 +212,16 @@ export default function PricingCards() {
               {loading === t.plan ? 'Redirecting…' : t.cta}
             </button>
           </div>
-        ))}
+          )
+        })}
       </div>
-      <p style={{ fontSize: 11, color: 'var(--text-dim)', textAlign: 'center', marginTop: 20, lineHeight: 1.6 }}>
+      {founderOpen && (
+        <p style={{ fontSize: 11.5, color: 'var(--green)', textAlign: 'center', marginTop: 20, lineHeight: 1.6, fontWeight: 600 }}>
+          ⚡ Founding Guardian: the first 1,000 members lock in today&apos;s price for life.
+          Stay subscribed and your rate never rises — even when Guardian goes to $8/mo ($80/yr).
+        </p>
+      )}
+      <p style={{ fontSize: 11, color: 'var(--text-dim)', textAlign: 'center', marginTop: founderOpen ? 8 : 20, lineHeight: 1.6 }}>
         Sales tax is calculated at checkout based on your location. Cancel anytime.
       </p>
       <p style={{ fontSize: 11, color: 'var(--text-dim)', textAlign: 'center', marginTop: 8, lineHeight: 1.6 }}>
