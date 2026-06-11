@@ -832,14 +832,14 @@ textarea { resize: vertical; min-height: 80px; }
 .alert-icon {
   font-family: var(--mono);
   font-size: 9px;
-  color: var(--red);
+  color: #fca5a5; /* lighter red — passes AA on the dark red-tint background */
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  background: rgba(239,68,68,0.15);
+  background: rgba(239,68,68,0.18);
   padding: 2px 8px;
   white-space: nowrap;
 }
-.alert-text { font-size: 12px; color: var(--text-muted); }
+.alert-text { font-size: 12px; color: #cccccc; }
 .alert-text strong { color: var(--text); }
 
 /* ─── FOOTER ─── */
