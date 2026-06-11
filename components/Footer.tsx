@@ -4,6 +4,16 @@ export default function Footer() {
   const year = new Date().getFullYear()
   return (
     <footer>
+      <div className="footer-brand">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/parvomaps-emblem.svg"
+          alt="ParvoMaps — US canine pathogen tracking & mapping"
+          className="footer-emblem"
+          width={1280}
+          height={768}
+        />
+      </div>
       <div className="footer-disclaimer">
         <strong>ParvoMaps is a community reporting tool.</strong> Data is user-submitted and unverified.
         Do not use this map as a substitute for veterinary advice. If your dog is showing symptoms,

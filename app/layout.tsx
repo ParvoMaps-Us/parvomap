@@ -17,12 +17,21 @@ export const metadata: Metadata = {
     description: 'Community-powered map tracking parvo, distemper, kennel cough, leptospirosis, blue-green algae, and more. See what infectious diseases are reported near you. Protect your dog.',
     siteName: 'ParvoMaps',
     locale: 'en_US',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'ParvoMaps — US canine pathogen tracking & mapping',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@parvomap',
     title: 'ParvoMaps — US Canine Disease Outbreak Tracker',
     description: 'Real-time crowdsourced map of parvo, distemper, kennel cough & blue-green algae dangers for dogs across the US.',
+    images: ['/og-image.png'],
   },
 }
 

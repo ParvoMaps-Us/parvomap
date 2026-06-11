@@ -854,6 +854,8 @@ footer {
   margin-left: auto;
   margin-right: auto;
 }
+.footer-brand { grid-column: 1 / -1; display: flex; justify-content: center; margin-bottom: 8px; }
+.footer-emblem { width: 100%; max-width: 320px; height: auto; opacity: 0.9; }
 .footer-disclaimer { font-size: 11px; color: var(--text-dim); line-height: 1.7; }
 .footer-disclaimer strong { color: var(--text-muted); }
 .footer-links { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
