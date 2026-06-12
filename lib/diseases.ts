@@ -79,6 +79,13 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
     transmission: 'Adult female flies lay eggs at the edges of open wounds — even tiny ones like tick bites or scratches — or on moist tissue (nostrils, eyes, genitals). The hatched larvae feed on living flesh. Not spread directly dog-to-dog.',
     prevention: 'Keep wounds clean and covered, treat injuries promptly, and inspect animals after travel to affected areas. Screwworm is a reportable foreign animal disease — if you suspect it, contact your veterinarian and state animal-health officials immediately.',
   },
+  rabies: {
+    name: 'Rabies', category: 'infectious', pinTtlDays: 180, severity: 'high', aka: 'Rabies Virus',
+    blurb: 'A fatal virus that attacks the nervous system of all mammals, including dogs and people. Nearly 100% fatal once symptoms appear, but nearly 100% preventable by vaccine.',
+    symptoms: ['Behavior changes (aggression or unusual tameness)', 'Excess drooling or foaming', 'Difficulty swallowing', 'Disorientation, staggering', 'Paralysis and seizures'],
+    transmission: 'Bite of a rabid animal (virus is in saliva); also saliva in a scratch, cut, or mucous membrane. Main US reservoirs: raccoons, bats, skunks, foxes.',
+    prevention: "Keep the rabies vaccine current (required by law in most states), avoid wildlife, supervise and leash, and don't leave food/trash that attracts wildlife.",
+  },
   fleas: {
     name: 'Fleas', category: 'infectious', pinTtlDays: 90, severity: 'low', aka: 'Flea infestation, Ctenocephalides',
     blurb: 'A common external parasite. Beyond intense itching, fleas can trigger allergic dermatitis, transmit tapeworm and Bartonella, and cause anemia in puppies or heavy infestations.',

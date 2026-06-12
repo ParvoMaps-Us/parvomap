@@ -29,6 +29,7 @@
   --d-ringworm:   #eab308;
   --d-brucella:   #6b7280;
   --d-screwworm:  #fb7185;
+  --d-rabies:     #e11d48;
   --d-fleas:      #9a3412;
   --d-cyano:      #06b6d4;
   --d-lyme:       #84cc16;
@@ -435,6 +436,7 @@ nav a:hover { color: var(--text); }
 .pin[data-disease="ringworm"]   { background: var(--d-ringworm); }
 .pin[data-disease="brucella"]   { background: var(--d-brucella); }
 .pin[data-disease="screwworm"]  { background: var(--d-screwworm); }
+.pin[data-disease="rabies"]     { background: var(--d-rabies); }
 .pin[data-disease="fleas"]      { background: var(--d-fleas); }
 .pin[data-disease="cyano"]      { background: var(--d-cyano); }
 .pin[data-disease="lyme"]       { background: var(--d-lyme); }
