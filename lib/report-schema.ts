@@ -1,4 +1,12 @@
 import { z } from 'zod'
+import { DISEASE_MAP } from './diseases'
+
+// The only disease values the API accepts: every tracked disease key, plus the
+// 'lost' sentinel that lost-dog reports submit (the map keys those off `kind`,
+// not this value). Sourced from DISEASE_MAP so it can't drift from the tracker.
+// Rejecting unknown strings at ingest is the root-cause fix for HTML/script
+// injection via `disease` (it's rendered in map popups and internal emails).
+export const VALID_DISEASES = [...Object.keys(DISEASE_MAP), 'lost'] as const
 
 export const SOURCE_VALUES = [
   'vet-diagnosed',
@@ -25,8 +33,12 @@ export const LOST_KINDS = ['owner', 'sighting'] as const
 export const ReportSchema = z.object({
   // What kind of report this is. Defaults to a disease/hazard report.
   kind: z.enum(['disease', 'lost']).optional().default('disease'),
-  // Required for disease reports; for lost-dog reports it's set to 'lost' below.
-  disease: z.string().min(1, 'Disease is required'),
+  // Required for disease reports; lost-dog reports submit the 'lost' sentinel.
+  // Constrained to known keys so arbitrary strings can't be stored or rendered.
+  disease: z.string().min(1, 'Disease is required').refine(
+    d => (VALID_DISEASES as readonly string[]).includes(d),
+    'Unknown disease',
+  ),
   // ZIP is optional: remote-area reporters can instead pin an exact place
   // (locationLat/Lng). A cross-field check below requires one or the other.
   // Accept '' (form sends empty when omitted) or a valid 5-digit ZIP.

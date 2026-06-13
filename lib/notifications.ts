@@ -11,6 +11,18 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 const FROM_HELLO  = 'hello@parvomaps.us'
 const FROM_ALERTS = 'alerts@parvomaps.us'
 
+/** Escape user-supplied text before interpolating into an HTML email body.
+ *  Prevents HTML/script injection into recipients' inboxes (notes, dog names,
+ *  bug reports, clinic requests are all free text). */
+function esc(s: string | null | undefined): string {
+  return (s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 // Human-readable location for a report. ZIP-based reports read "ZIP 84101";
 // remote-area reports that pinned an exact spot fall back to city/state/place.
 function areaLabel(report: PendingReport): string {
@@ -200,13 +212,13 @@ export async function sendInternalAlert(report: PendingReport): Promise<void> {
     ${rows.map(([k, v]) => `
     <tr>
       <td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;text-transform:uppercase;letter-spacing:0.06em;width:40%;">${k}</td>
-      <td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${v}</td>
+      <td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${esc(v)}</td>
     </tr>`).join('')}
   </table>
   ${report.notes ? `
   <div style="margin-top:16px;padding:12px;background:#111;border-left:2px solid #333;color:#888;font-size:12px;line-height:1.6;">
     <div style="color:#555;margin-bottom:4px;font-size:10px;letter-spacing:0.1em;">NOTES</div>
-    ${report.notes}
+    ${esc(report.notes)}
   </div>` : ''}
   <div style="margin-top:24px;padding:12px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;font-size:11px;letter-spacing:0.06em;">
     → SCOOPIE BIOREST™ PROSPECT — Recommend follow-up within 30 minutes
@@ -426,16 +438,16 @@ export async function sendDiseaseTrackRequest(email: string, disease: string, no
     from:    FROM_ALERTS,
     to:      'parvomaps.us@gmail.com',
     replyTo: email,
-    subject: `Pro Clinic disease-tracking request: ${disease}`,
+    subject: `Pro Clinic disease-tracking request: ${disease.replace(/[\r\n]+/g, ' ').trim()}`,
     html: `
 <div style="font-family:monospace;background:#0a0a0a;color:#f0f0f0;padding:24px;max-width:480px;">
   <div style="color:#00ff88;font-size:16px;font-weight:bold;margin-bottom:16px;letter-spacing:0.1em;">NEW DISEASE-TRACKING REQUEST</div>
   <table style="width:100%;border-collapse:collapse;font-size:12px;">
-    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;width:35%;">DISEASE</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${disease}</td></tr>
-    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;">REQUESTED BY</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${email}</td></tr>
+    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;width:35%;">DISEASE</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${esc(disease)}</td></tr>
+    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;">REQUESTED BY</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${esc(email)}</td></tr>
     <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;">WHEN</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${new Date().toLocaleString()}</td></tr>
   </table>
-  ${note ? `<div style="margin-top:16px;padding:12px;background:#111;border-left:2px solid #333;color:#888;font-size:12px;line-height:1.6;"><div style="color:#555;margin-bottom:4px;font-size:10px;letter-spacing:0.1em;">NOTE</div>${note}</div>` : ''}
+  ${note ? `<div style="margin-top:16px;padding:12px;background:#111;border-left:2px solid #333;color:#888;font-size:12px;line-height:1.6;"><div style="color:#555;margin-bottom:4px;font-size:10px;letter-spacing:0.1em;">NOTE</div>${esc(note)}</div>` : ''}
   <div style="margin-top:24px;color:#f59e0b;font-size:11px;letter-spacing:0.06em;">→ Target: begin tracking within 24–72 hours</div>
 </div>`,
   })
@@ -449,16 +461,16 @@ export async function sendBugReport(reporterEmail: string, message: string): Pro
     from:    FROM_ALERTS,
     to:      'parvomaps.us@gmail.com',
     replyTo: reporterEmail,
-    subject: `Bug report from ${reporterEmail}`,
+    subject: `Bug report from ${reporterEmail.replace(/[\r\n]+/g, ' ').trim()}`,
     html: `
 <div style="font-family:monospace;background:#0a0a0a;color:#f0f0f0;padding:24px;max-width:480px;">
   <div style="color:#f59e0b;font-size:16px;font-weight:bold;margin-bottom:16px;letter-spacing:0.1em;">🐞 BUG REPORT</div>
   <table style="width:100%;border-collapse:collapse;font-size:12px;">
-    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;width:35%;">FROM</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${reporterEmail}</td></tr>
+    <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;width:35%;">FROM</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${esc(reporterEmail)}</td></tr>
     <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;">SOURCE</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">Pro Clinic dashboard</td></tr>
     <tr><td style="color:#555;padding:6px 12px 6px 0;border-bottom:1px solid #222;">WHEN</td><td style="color:#aaa;padding:6px 0;border-bottom:1px solid #222;">${new Date().toLocaleString()}</td></tr>
   </table>
-  <div style="margin-top:16px;padding:12px;background:#111;border-left:2px solid #333;color:#ccc;font-size:13px;line-height:1.6;white-space:pre-wrap;">${message}</div>
+  <div style="margin-top:16px;padding:12px;background:#111;border-left:2px solid #333;color:#ccc;font-size:13px;line-height:1.6;white-space:pre-wrap;">${esc(message)}</div>
 </div>`,
   })
 }
@@ -468,17 +480,22 @@ export async function sendBugReport(reporterEmail: string, message: string): Pro
 /** Notify a subscriber that a new verified report matched their alert area. */
 export async function sendAlertNotification(email: string, report: Report): Promise<void> {
   const isLost = report.kind === 'lost'
-  const area = report.zip ? `ZIP ${report.zip}` : (report.city || report.state || 'your area')
-  const thing = isLost
+  // dogName/city are user/geocoder-supplied: strip CR/LF from anything that
+  // lands in the subject header, HTML-escape anything in the body.
+  const oneLine = (s: string) => s.replace(/[\r\n]+/g, ' ').trim()
+  const areaRaw = report.zip ? `ZIP ${report.zip}` : (report.city || report.state || 'your area')
+  const thingRaw = isLost
     ? (report.dogName ? `Lost dog (${report.dogName})` : 'Lost dog')
     : getDiseaseName(report.disease)
+  const area = esc(areaRaw)
+  const thing = esc(thingRaw)
   const verb = isLost ? 'reported near' : 'case reported near'
   const unsubUrl = `https://www.parvomaps.us/alerts/unsubscribe?e=${encodeURIComponent(email)}&t=${signUnsubToken(email)}`
 
   await sendEmail({
     from:    FROM_ALERTS,
     to:      email,
-    subject: `🚨 ${thing} ${verb} ${area}`,
+    subject: `🚨 ${oneLine(thingRaw)} ${verb} ${oneLine(areaRaw)}`,
     html: `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
@@ -489,9 +506,9 @@ export async function sendAlertNotification(email: string, report: Report): Prom
     </div>
     <h1 style="font-size:22px;font-weight:700;color:#f0f0f0;margin:0 0 12px;">${thing} near ${area}</h1>
     <p style="color:#888;font-size:14px;margin:0 0 8px;line-height:1.6;">
-      A new ${isLost ? 'lost-dog report' : 'verified case'} just appeared inside your alert area${report.city ? ` (${report.city}${report.state ? ', ' + report.state : ''})` : ''}.
+      A new ${isLost ? 'lost-dog report' : 'verified case'} just appeared inside your alert area${report.city ? ` (${esc(report.city)}${report.state ? ', ' + esc(report.state) : ''})` : ''}.
     </p>
-    ${report.notes ? `<p style="color:#aaa;font-size:14px;margin:0 0 8px;line-height:1.6;">"${report.notes}"</p>` : ''}
+    ${report.notes ? `<p style="color:#aaa;font-size:14px;margin:0 0 8px;line-height:1.6;">"${esc(report.notes)}"</p>` : ''}
     <a href="https://www.parvomaps.us/" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin:16px 0 24px;">
       View The Map →
     </a>

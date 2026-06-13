@@ -284,12 +284,12 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           : `
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #2a2a2a;border-radius:4px;min-width:160px;">
           <div style="color:#fff;font-weight:700;margin-bottom:6px;font-size:12px;">${report.zip ? `ZIP ${report.zip}` : escapeHtml(report.city || report.locationDetail || report.state || 'Pinned location')}</div>
-          <div style="color:#888;margin-bottom:2px;">${report.zip ? (report.city ?? '') : (report.state ?? '')}</div>
+          <div style="color:#888;margin-bottom:2px;">${escapeHtml(report.zip ? (report.city ?? '') : (report.state ?? ''))}</div>
           ${report.locationDetail ? `<div style="color:#00ff88;margin:4px 0 2px;font-size:11px;line-height:1.4;">📍 ${escapeHtml(report.locationDetail)}</div>` : ''}
           ${report.sourceUrl && /^https?:\/\//i.test(report.sourceUrl) ? `<a href="${escapeHtml(report.sourceUrl)}" target="_blank" rel="noopener noreferrer" style="display:block;color:#60a5fa;margin:4px 0 2px;font-size:11px;text-decoration:underline;">📰 Source article ↗</a>` : ''}
           <div style="margin-top:6px;display:flex;justify-content:space-between;gap:16px;">
             <span style="color:#aaa;">Disease</span>
-            <span style="color:${color};font-weight:600;text-transform:capitalize;">${report.disease}</span>
+            <span style="color:${color};font-weight:600;text-transform:capitalize;">${escapeHtml(report.disease)}</span>
           </div>
           <div style="display:flex;justify-content:space-between;gap:16px;">
             <span style="color:#aaa;">Reported</span>
