@@ -14,7 +14,7 @@ const li = { fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.7, marginBo
 const ul = { margin: '0 0 12px', paddingLeft: 20, listStyleType: 'disc' as const }
 
 const EMAIL = 'parvomaps.us@gmail.com'
-const UPDATED = 'June 7, 2026'
+const UPDATED = 'June 12, 2026'
 
 export default function PrivacyPage() {
   return (
@@ -66,6 +66,7 @@ export default function PrivacyPage() {
         <li style={li}><strong>OpenAI</strong> — automated image moderation of uploaded photos.</li>
         <li style={li}><strong>Upstash (Redis)</strong> — data storage.</li>
         <li style={li}><strong>Vercel</strong> — hosting, and Vercel Blob for lost-dog photo storage.</li>
+        <li style={li}><strong>Cloudflare (R2)</strong> — encrypted off-site backups of Service data.</li>
         <li style={li}><strong>Photon / Zippopotam</strong> — converting ZIP codes and coordinates to place names.</li>
       </ul>
       <p style={p}>We do not sell your personal information.</p>
@@ -75,6 +76,7 @@ export default function PrivacyPage() {
         <li style={li}>Parvovirus pins remain for 12 months; other disease pins for 90 days.</li>
         <li style={li}>Lost-dog reports and their photos are removed after 30 days, or sooner if marked found.</li>
         <li style={li}>Subscriber records are kept while your subscription is active and as needed for legal/accounting purposes.</li>
+        <li style={li}>We keep encrypted off-site backups for up to 30 days. Information removed from the live Service may persist in these backups until they expire.</li>
       </ul>
 
       <h2 style={h2}>Your choices &amp; rights</h2>
