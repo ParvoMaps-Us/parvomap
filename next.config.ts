@@ -16,6 +16,9 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self), payment=()' },
+          // Enforce HTTPS for 2 years incl. all subdomains; preload-eligible.
+          // Commitment: every *.parvomaps.us host must stay HTTPS-only.
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
         ]
       }
     ]
