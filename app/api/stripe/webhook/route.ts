@@ -4,6 +4,7 @@ import { getStripe } from '@/lib/stripe'
 import { getRedisClient } from '@/lib/redis'
 import { sendSubscriptionWelcome } from '@/lib/notifications'
 import { claimFounderSlot } from '@/lib/founders'
+import { maskEmail } from '@/lib/log'
 
 // Stripe signs the *raw* request body. Next.js route handlers give us the
 // untouched bytes via req.text(); never parse to JSON before verifying.
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
           status:       'active',
           ts:           Date.now(),
         })
-        console.log('New subscriber:', s.customer_details?.email, plan)
+        console.log('New subscriber:', maskEmail(s.customer_details?.email), plan)
 
         // Founding Guardian: claim a price-locked slot (idempotent, hard-capped).
         // Tagging the subscription is what marks it "never migrate" for life.
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
             await stripe.subscriptions.update(subId, {
               metadata: { plan: plan ?? '', founder: 'true', founder_number: String(claim.number) },
             })
-            console.log(`Founding Guardian #${claim.number} locked in:`, s.customer_details?.email)
+            console.log(`Founding Guardian #${claim.number} locked in:`, maskEmail(s.customer_details?.email))
           }
         } catch (e) {
           console.error('Founder slot claim failed:', e)

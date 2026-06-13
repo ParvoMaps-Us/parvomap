@@ -6,6 +6,7 @@ import {
   markRecallAlerted,
 } from '@/lib/alerts'
 import { sendRecallAlert } from '@/lib/notifications'
+import { maskEmail } from '@/lib/log'
 
 /**
  * Cron job — checks current FDA pet-food recalls against each paying
@@ -51,7 +52,7 @@ export async function GET(req: Request) {
         await markRecallAlerted(p.email, recall.url)
         sent++
       } catch (e) {
-        console.error('Recall alert send failed:', p.email, recall.url, e)
+        console.error('Recall alert send failed:', maskEmail(p.email), recall.url, e)
       }
     }
   }

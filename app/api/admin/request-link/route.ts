@@ -3,6 +3,7 @@ import { isAdminEmail, checkAdminPassword } from '@/lib/admin-auth'
 import { makeAdminToken } from '@/lib/magic-link'
 import { sendAdminMagicLink } from '@/lib/notifications'
 import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
+import { maskEmail } from '@/lib/log'
 
 // Step 1 of admin login: email + password. Both must check out before a magic
 // link is emailed; the response is identical either way so the endpoint can't
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
       console.error('Admin magic-link email failed:', e)
     }
   } else {
-    console.warn('Failed admin login attempt for:', email)
+    console.warn('Failed admin login attempt for:', maskEmail(email))
   }
 
   return Response.json({ ok: true, message: 'If the details were correct, a sign-in link is on its way.' })

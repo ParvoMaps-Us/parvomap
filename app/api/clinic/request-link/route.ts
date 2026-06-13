@@ -3,6 +3,7 @@ import { isProClinic } from '@/lib/alerts'
 import { makeMagicToken } from '@/lib/magic-link'
 import { sendClinicMagicLink } from '@/lib/notifications'
 import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
+import { maskEmail } from '@/lib/log'
 
 const ALLOWED_ORIGINS = new Set([
   'https://parvomaps.us',
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
         console.error('Clinic magic-link email failed:', e)
       }
     } else {
-      console.log('Clinic dashboard link requested by non-clinic:', email)
+      console.log('Clinic dashboard link requested by non-clinic:', maskEmail(email))
     }
   } catch (e) {
     console.error('clinic request-link error:', e)

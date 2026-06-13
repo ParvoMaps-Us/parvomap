@@ -3,6 +3,7 @@ import { isActiveSubscriber } from '@/lib/alerts'
 import { makeMagicToken } from '@/lib/magic-link'
 import { sendAlertMagicLink } from '@/lib/notifications'
 import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
+import { maskEmail } from '@/lib/log'
 
 const ALLOWED_ORIGINS = new Set([
   'https://parvomaps.us',
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
         console.error('Alert magic-link email failed:', e)
       }
     } else {
-      console.log('Alert link requested by non-subscriber:', email)
+      console.log('Alert link requested by non-subscriber:', maskEmail(email))
     }
   } catch (e) {
     console.error('request-link error:', e)

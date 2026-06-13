@@ -95,8 +95,6 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     const innerWidth = window.innerWidth
     const isMobile = screenWidth <= 768 || innerWidth <= 768
 
-    console.log('Screen:', screenWidth, 'Inner:', innerWidth, 'Mobile:', isMobile)
-
     const startCenter: [number, number] = isMobile ? [38, -96] : [38.5, -90]
     const startZoom = isMobile ? 3 : 4
 
