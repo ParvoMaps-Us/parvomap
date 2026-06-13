@@ -10,12 +10,16 @@ across the United States.
 
 ## Tech Stack
 
-- **Framework:** Next.js 16 (App Router) + TypeScript
-- **Hosting:** Vercel
-- **Database:** Upstash Redis (REST)
+- **Framework:** Next.js 16 (App Router) + React 19 + TypeScript
+- **Styling:** Tailwind CSS v4
+- **Hosting:** Vercel (US-East); cron jobs via `vercel.json`
+- **Database:** Upstash Redis (REST) — the only datastore (no SQL)
+- **Validation:** Zod · **Auth/tokens:** jose (magic-link cookie sessions)
+- **Payments:** Stripe (signature-verified webhooks)
 - **Email:** Resend
-- **Payments:** Stripe
-- **Map:** Leaflet.js
+- **File storage:** Vercel Blob (lost-dog photos) · **Image moderation:** OpenAI
+- **Map:** Leaflet.js + CARTO basemap · **Geocoding:** Photon / Zippopotam / US Census
+- **Backups:** Cloudflare R2 (daily, immutable) · **Monitoring:** UptimeRobot
 - **DNS:** Cloudflare
 
 ## Local Development

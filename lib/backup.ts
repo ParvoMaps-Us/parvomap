@@ -106,10 +106,19 @@ export async function r2Put(objectKey: string, body: Uint8Array | string, conten
   }
 }
 
-/** Fetch the public repo tarball from GitHub (no token needed — repo is public). */
+/** Fetch the repo tarball from GitHub for the code backup. Uses the API endpoint
+ *  with a token (GITHUB_BACKUP_TOKEN, fine-grained PAT w/ Contents:read) so it
+ *  works now that the repo is private. Without the token this 404s — the caller
+ *  treats that as a non-fatal repoError (the Redis snapshot still succeeds). */
 export async function fetchRepoTarball(): Promise<Uint8Array> {
-  const url = 'https://codeload.github.com/ParvoMaps-Us/parvomap/tar.gz/refs/heads/main'
-  const res = await fetch(url)
+  const url = 'https://api.github.com/repos/ParvoMaps-Us/parvomap/tarball/main'
+  const headers: Record<string, string> = {
+    'User-Agent': 'parvomaps-backup',
+    'Accept': 'application/vnd.github+json',
+  }
+  const token = process.env.GITHUB_BACKUP_TOKEN
+  if (token) headers['Authorization'] = `Bearer ${token}`
+  const res = await fetch(url, { headers }) // follows the redirect to codeload
   if (!res.ok) throw new Error(`GitHub tarball fetch failed: ${res.status}`)
   return new Uint8Array(await res.arrayBuffer())
 }
