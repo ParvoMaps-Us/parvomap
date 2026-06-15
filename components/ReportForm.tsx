@@ -24,6 +24,16 @@ const DISEASES = [
   { key: 'tickspot', label: 'Tick Sighting', color: 'var(--d-tickspot)' },
 ]
 
+// Fire a GA4 event if gtag is loaded; no-op when analytics is blocked/absent.
+function track(action: string, params?: Record<string, unknown>) {
+  try {
+    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag
+    gtag?.('event', action, params)
+  } catch {
+    /* ignore */
+  }
+}
+
 type ReporterType = 'individual' | 'vet' | 'facility' | 'news'
 type ReportMode = 'health' | 'lost'
 type LostKind = 'owner' | 'sighting'
@@ -279,6 +289,13 @@ export default function ReportForm() {
       }
 
       setSubmitted(true)
+      // Conversion: server accepted the report (pre-email-verification). Tag the
+      // type so disease vs. lost-dog reports can be segmented in GA4.
+      track('report_submitted', {
+        report_mode: mode,
+        report_type: mode === 'lost' ? lostKind : disease,
+        reporter_type: mode === 'lost' ? 'individual' : reporterType,
+      })
     } catch {
       setError('Network error — please check your connection and try again.')
     }
