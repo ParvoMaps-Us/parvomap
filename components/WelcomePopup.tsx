@@ -3,20 +3,38 @@ import { useEffect, useState } from 'react'
 
 const STORAGE_KEY = 'parvomap:welcome-seen'
 
+// Fire a GA4 event if gtag is loaded. No-op when analytics is blocked/absent so
+// the popup never depends on it.
+function track(action: string) {
+  try {
+    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag
+    gtag?.('event', action, { event_category: 'welcome_popup' })
+  } catch {
+    /* ignore */
+  }
+}
+
 export default function WelcomePopup() {
   const [open, setOpen] = useState(false)
 
   // Show once per browser. Gate on localStorage so returning visitors aren't nagged.
   useEffect(() => {
     try {
-      if (!localStorage.getItem(STORAGE_KEY)) setOpen(true)
+      if (!localStorage.getItem(STORAGE_KEY)) {
+        setOpen(true)
+        track('welcome_popup_view')
+      }
     } catch {
       // localStorage blocked (private mode / SSR mismatch) — just show it.
       setOpen(true)
+      track('welcome_popup_view')
     }
   }, [])
 
-  function close() {
+  // `reason` records how the popup was dismissed so we can compare CTA clicks
+  // against plain dismissals in GA4.
+  function close(reason: string) {
+    track(`welcome_popup_${reason}`)
     setOpen(false)
     try {
       localStorage.setItem(STORAGE_KEY, '1')
@@ -29,7 +47,7 @@ export default function WelcomePopup() {
   useEffect(() => {
     if (!open) return
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') close()
+      if (e.key === 'Escape') close('dismiss_escape')
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
@@ -43,10 +61,10 @@ export default function WelcomePopup() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="welcome-title"
-      onClick={close}
+      onClick={() => close('dismiss_backdrop')}
     >
       <div className="welcome-card" onClick={e => e.stopPropagation()}>
-        <button className="welcome-close" aria-label="Close" onClick={close}>
+        <button className="welcome-close" aria-label="Close" onClick={() => close('dismiss_x')}>
           ✕
         </button>
 
@@ -77,13 +95,13 @@ export default function WelcomePopup() {
         </ul>
 
         <div className="welcome-actions">
-          <button className="welcome-btn-primary" onClick={close}>
+          <button className="welcome-btn-primary" onClick={() => close('explore_click')}>
             → Explore the map
           </button>
           <a
             className="welcome-btn-ghost"
             href="#report"
-            onClick={close}
+            onClick={() => close('report_click')}
           >
             Report a case
           </a>
