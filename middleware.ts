@@ -3,8 +3,10 @@ import { NextRequest, NextResponse } from 'next/server'
 // Per-request nonce CSP. Generating the nonce here (not in next.config.ts) lets
 // us drop 'unsafe-inline' and 'unsafe-eval' from script-src: Next.js reads the
 // nonce from the request's CSP header and stamps it onto its own hydration
-// scripts, and 'strict-dynamic' lets those scripts load their chunks. We have no
-// third-party JS, so nothing else needs allowing.
+// scripts, and 'strict-dynamic' lets those scripts load their chunks. The only
+// third-party JS is GA4 (gtag.js), loaded via a nonce'd <script> in layout.tsx —
+// strict-dynamic propagates trust to the chunks it pulls in, so script-src needs
+// no host entry. GA's network calls are allowed via connect-src/img-src below.
 //
 // style-src keeps 'unsafe-inline' on purpose — Leaflet renders map popups as
 // HTML strings with inline style="" attributes, which a nonce can't cover.
@@ -20,8 +22,8 @@ export function middleware(req: NextRequest) {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${devEval}`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://unpkg.com https://*.tile.openstreetmap.org https://*.public.blob.vercel-storage.com",
-    "connect-src 'self' https://parvomaps.us https://www.parvomaps.us https://*.basemaps.cartocdn.com https://geocoding.geo.census.gov https://photon.komoot.io https://api.zippopotam.us https://*.upstash.io https://*.resend.com",
+    "img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://unpkg.com https://*.tile.openstreetmap.org https://*.public.blob.vercel-storage.com https://*.google-analytics.com https://*.googletagmanager.com",
+    "connect-src 'self' https://parvomaps.us https://www.parvomaps.us https://*.basemaps.cartocdn.com https://geocoding.geo.census.gov https://photon.komoot.io https://api.zippopotam.us https://*.upstash.io https://*.resend.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
     "worker-src blob:",
     "object-src 'none'",
     "base-uri 'self'",
