@@ -529,8 +529,13 @@ export async function sendAlertNotification(email: string, report: Report): Prom
 
 /** Sent right after a successful subscription — tells the new member how to turn
  *  on their alerts (the perk they just paid for). */
-export async function sendSubscriptionWelcome(email: string, plan?: string | null): Promise<void> {
+export async function sendSubscriptionWelcome(
+  email: string,
+  plan?: string | null,
+  opts?: { enrolledZip?: string | null },
+): Promise<void> {
   const isClinic = plan?.startsWith('pro') ?? false
+  const enrolledZip = opts?.enrolledZip ?? null
   const planLabel = isClinic ? 'Pro Clinic' : 'Guardian'
   const alertsUrl = 'https://www.parvomaps.us/alerts'
   const clinicUrl = 'https://www.parvomaps.us/clinic'
@@ -571,6 +576,19 @@ export async function sendSubscriptionWelcome(email: string, plan?: string | nul
       <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
     </div>
     <h1 style="font-size:24px;font-weight:700;color:#f0f0f0;margin:0 0 16px;">You're in — welcome to ${planLabel} 🎉</h1>
+    ${enrolledZip ? `
+    <p style="color:#888;font-size:14px;margin:0 0 20px;line-height:1.7;">
+      Thanks for subscribing — <strong style="color:#00ff88">your alerts are already on.</strong>
+      We've set you up to watch <strong style="color:#f0f0f0">all diseases within 25 miles of ${enrolledZip}</strong>,
+      including nearby lost dogs. You'll get an email the moment a new verified case is reported in your area.
+    </p>
+    <p style="color:#888;font-size:14px;margin:0 0 20px;line-height:1.7;">
+      Want to fine-tune your ZIP, radius, or which diseases to watch? Adjust anytime:
+    </p>
+    <a href="${alertsUrl}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin-bottom:28px;">
+      Adjust My Alerts →
+    </a>
+    ` : `
     <p style="color:#888;font-size:14px;margin:0 0 20px;line-height:1.7;">
       Thanks for subscribing. One quick step to start getting alerts:
     </p>
@@ -585,6 +603,7 @@ export async function sendSubscriptionWelcome(email: string, plan?: string | nul
     <p style="color:#888;font-size:13px;line-height:1.7;margin:0 0 8px;">
       After that, you'll get an email the moment a new verified case or lost dog is reported in your area.
     </p>
+    `}
     ${clinicBlock}
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
     <p style="color:#888;font-size:12px;line-height:1.7;margin:0 0 12px;">

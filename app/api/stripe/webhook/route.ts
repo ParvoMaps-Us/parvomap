@@ -5,6 +5,8 @@ import { getRedisClient } from '@/lib/redis'
 import { sendSubscriptionWelcome } from '@/lib/notifications'
 import { claimFounderSlot } from '@/lib/founders'
 import { maskEmail } from '@/lib/log'
+import { getAlertPrefs, saveAlertPrefs } from '@/lib/alerts'
+import { geocodeZip } from '@/lib/geocode'
 
 // Stripe signs the *raw* request body. Next.js route handlers give us the
 // untouched bytes via req.text(); never parse to JSON before verifying.
@@ -60,11 +62,24 @@ export async function POST(req: NextRequest) {
           console.error('Founder slot claim failed:', e)
         }
 
-        // Welcome email with directions to set up alerts (the perk they paid for).
+        // Auto-enroll in alerts using the billing ZIP Stripe already collected, so
+        // a new member doesn't have to retype their email on /alerts and configure
+        // from scratch. Best-effort: any failure just falls back to manual setup.
         const newEmail = s.customer_details?.email
+        let enrolledZip: string | null = null
         if (newEmail) {
           try {
-            await sendSubscriptionWelcome(newEmail, (s.metadata?.plan as string | undefined) ?? null)
+            enrolledZip = await autoEnrollAlerts(newEmail, s.customer_details?.address?.postal_code ?? null)
+          } catch (e) {
+            console.error('Alert auto-enroll failed:', e)
+          }
+        }
+
+        // Welcome email — confirms alerts are on (or how to set them up if we
+        // couldn't auto-enroll, e.g. a non-US billing ZIP).
+        if (newEmail) {
+          try {
+            await sendSubscriptionWelcome(newEmail, (s.metadata?.plan as string | undefined) ?? null, { enrolledZip })
           } catch (e) {
             console.error('Welcome email failed:', e)
           }
@@ -88,6 +103,37 @@ export async function POST(req: NextRequest) {
   }
 
   return Response.json({ received: true })
+}
+
+/**
+ * Turn alerts on for a brand-new subscriber using the ZIP they entered at
+ * checkout. Returns the 5-digit ZIP we enrolled them at, or null if we couldn't
+ * (no/foreign ZIP, geocode failure) — caller falls back to manual setup. Never
+ * overwrites prefs they've already configured.
+ */
+async function autoEnrollAlerts(email: string, postalCode: string | null): Promise<string | null> {
+  // Stripe postal codes can be ZIP+4 ("84101-1234") or non-US; only take a clean
+  // US 5-digit ZIP.
+  const zip = (postalCode ?? '').trim().slice(0, 5)
+  if (!/^\d{5}$/.test(zip)) return null
+
+  // Don't clobber an existing configuration (e.g. a resubscribe).
+  if (await getAlertPrefs(email)) return null
+
+  // Geocode for radius matching; if it fails, exact-ZIP matching still works.
+  const geo = await geocodeZip(zip)
+
+  await saveAlertPrefs({
+    email,
+    zip,
+    lat: geo?.lat,
+    lng: geo?.lng,
+    radiusMiles: 25,      // sensible default; member can widen/narrow later
+    diseases: 'all',      // every disease until they pick favorites
+    lostDogs: true,       // include nearby lost dogs by default
+    updatedAt: Date.now(),
+  })
+  return zip
 }
 
 interface SubscriberRecord {

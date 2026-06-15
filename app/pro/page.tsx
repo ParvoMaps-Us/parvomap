@@ -33,7 +33,8 @@ export default async function ProPage({
 
       {checkout === 'success' && (
         <div style={{ border: '1px solid var(--green)', background: 'var(--green-dim)', borderRadius: 6, padding: '12px 16px', marginBottom: 24, fontSize: 13, color: 'var(--green)', textAlign: 'center' }}>
-          🎉 You’re in! Your subscription is active — check your email for a receipt.
+          🎉 You’re in! Your subscription is active and <strong>your alerts are already on</strong> for your
+          area — check your email to confirm or fine-tune them.
         </div>
       )}
       {checkout === 'cancelled' && (
