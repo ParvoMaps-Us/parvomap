@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { hasCurrentRecall } from '@/lib/recalls'
 import MobileMenu from './MobileMenu'
+import ProCta from './ProCta'
 
 export default async function Header() {
   const recallActive = await hasCurrentRecall()
@@ -19,8 +20,8 @@ export default async function Header() {
           Recalls{recallActive && <span className="recall-dot" aria-hidden="true" />}
         </Link>
         <Link href="/alerts" className="nav-link">Alerts</Link>
-        <Link href="/pro" className="nav-link">Pro</Link>
         <a href="#report" className="btn-report">+ Report a Case</a>
+        <ProCta location="header" />
         <Link href="/account" className="nav-link" aria-label="Account & billing" title="Account & billing" style={{ display: 'inline-flex', alignItems: 'center' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <circle cx="12" cy="8" r="4" />
