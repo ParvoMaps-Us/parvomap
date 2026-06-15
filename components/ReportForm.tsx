@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { LOCATION_DETAIL_DISEASES } from '@/lib/report-schema'
 import { downscaleImage } from '@/lib/resize-image'
 import LocationAutocomplete from './LocationAutocomplete'
+import ProCta from './ProCta'
 
 const DISEASES = [
   { key: 'parvo', label: 'Parvovirus', color: 'var(--d-parvo)' },
@@ -333,6 +334,18 @@ export default function ReportForm() {
           <div className="success-body">
             Your report has been submitted. <strong>Check your email</strong> to verify and publish it to the map.
           </div>
+
+          {/* High-intent upsell: someone who just filed a report is the warmest
+              possible lead for outbreak alerts. */}
+          <div className="success-upsell">
+            <strong>Want a heads-up when disease is reported near you?</strong>
+            <span>
+              Guardian members get real-time alerts for their area — founding pricing is $5/mo,
+              locked for life.
+            </span>
+            <ProCta location="report_success">🔔 Get Outbreak Alerts</ProCta>
+          </div>
+
           <button
             className="btn-another"
             onClick={() => {
