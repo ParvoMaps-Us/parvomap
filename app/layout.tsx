@@ -75,6 +75,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           nonce={nonce}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        {/* Google tag (gtag.js) — GA4 property G-8LNR8C5J3F.
+            Nonce'd so it's trusted under the strict-dynamic CSP; gtag.js then
+            loads its own chunks via strict-dynamic. */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-8LNR8C5J3F"
+          nonce={nonce}
+        />
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8LNR8C5J3F');`,
+          }}
+        />
       </head>
       <body>{children}</body>
     </html>
