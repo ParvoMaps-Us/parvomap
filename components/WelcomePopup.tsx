@@ -75,7 +75,7 @@ export default function WelcomePopup() {
 
         <p className="welcome-lede">
           A community-powered early-warning map for <strong>parvo and other contagious
-          dog diseases</strong> — so you know what&apos;s spreading near you before your dog
+          dog diseases</strong>, so you know what&apos;s spreading near you before your dog
           is at risk.
         </p>
 
