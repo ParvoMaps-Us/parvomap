@@ -1,7 +1,15 @@
 import { getVerifiedRaw, type Report } from '@/lib/redis'
 import { getDiseaseName } from '@/lib/diseases'
+import { CLINIC_DEMO, demoReports } from '@/lib/demo-data'
 
 const DAY = 24 * 60 * 60 * 1000
+
+/** Verified reports for dashboard views. In demo mode (CLINIC_DEMO=1) we serve
+ *  synthetic data so previews render without Redis; otherwise read live Redis. */
+async function dashboardReports(limit = 5000): Promise<Report[]> {
+  if (CLINIC_DEMO) return demoReports().slice(0, limit)
+  return (await getVerifiedRaw(limit)).map(v => v.report)
+}
 
 export interface Bucket { key: string; label: string; count: number }
 
@@ -131,7 +139,7 @@ export function filterReports(rows: Report[], filter?: ReportFilter): Report[] {
 /** Distinct states (and cities within an optional state) present in the data —
  *  powers the clinic filter dropdowns. */
 export async function getFilterOptions(state?: string): Promise<{ states: string[]; counties: string[]; cities: string[] }> {
-  const all = (await getVerifiedRaw(5000)).map(v => v.report)
+  const all = await dashboardReports()
   const states = [...new Set(all.map(r => r.state).filter(Boolean) as string[])].sort()
   const target = state?.trim().toLowerCase()
   const inState = all.filter(r => !target || (r.state || '').toLowerCase() === target)
@@ -177,7 +185,7 @@ export async function getDiseaseCounts(): Promise<Record<string, number>> {
 /** Aggregate verified reports into disease + lost-dog dashboard views,
  *  optionally narrowed to a state/city region. */
 export async function getDashboardData(filter?: ReportFilter): Promise<DashboardData> {
-  const all = filterReports((await getVerifiedRaw(5000)).map(v => v.report), filter)
+  const all = filterReports(await dashboardReports(), filter)
   const now = Date.now()
   const within = (r: Report, days: number) => now - r.timestamp < days * DAY
 

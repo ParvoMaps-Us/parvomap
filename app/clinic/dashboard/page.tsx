@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { verifyMagicToken, readClinicSession, CLINIC_SESSION_COOKIE } from '@/lib/magic-link'
 import { isProClinic } from '@/lib/alerts'
+import { CLINIC_DEMO, DEMO_CLINIC_EMAIL } from '@/lib/demo-data'
 import { getDashboardData, getFilterOptions, type Bucket } from '@/lib/dashboard'
 import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
 import type { Report } from '@/lib/redis'
@@ -109,21 +110,28 @@ export default async function ClinicDashboardPage({
     </main>
   )
 
-  // Auth: prefer the session cookie. A legacy magic-link token (e/exp/t) is
-  // upgraded by bouncing through the login route, which sets the cookie.
-  const cookieStore = await cookies()
-  const sessionEmail = readClinicSession(cookieStore.get(CLINIC_SESSION_COOKIE)?.value)
+  // Demo mode (CLINIC_DEMO=1, Preview env only) skips auth + Stripe and serves
+  // synthetic data, so a preview deploy is shareable without real credentials.
+  let email: string
+  if (CLINIC_DEMO) {
+    email = DEMO_CLINIC_EMAIL
+  } else {
+    // Auth: prefer the session cookie. A legacy magic-link token (e/exp/t) is
+    // upgraded by bouncing through the login route, which sets the cookie.
+    const cookieStore = await cookies()
+    const sessionEmail = readClinicSession(cookieStore.get(CLINIC_SESSION_COOKIE)?.value)
 
-  if (!sessionEmail) {
-    if (verifyMagicToken((e ?? '').trim().toLowerCase(), Number(exp), t ?? '')) {
-      redirect(`/api/clinic/login?e=${encodeURIComponent((e ?? '').trim().toLowerCase())}&exp=${Number(exp)}&t=${encodeURIComponent(t ?? '')}`)
+    if (!sessionEmail) {
+      if (verifyMagicToken((e ?? '').trim().toLowerCase(), Number(exp), t ?? '')) {
+        redirect(`/api/clinic/login?e=${encodeURIComponent((e ?? '').trim().toLowerCase())}&exp=${Number(exp)}&t=${encodeURIComponent(t ?? '')}`)
+      }
+      return denied
     }
-    return denied
-  }
 
-  const email = sessionEmail
-  // Re-check live status so a cancelled clinic loses access even mid-session.
-  if (!(await isProClinic(email))) return denied
+    email = sessionEmail
+    // Re-check live status so a cancelled clinic loses access even mid-session.
+    if (!(await isProClinic(email))) return denied
+  }
 
   const filter = { state: state || undefined, county: county || undefined, city: city || undefined, diseases }
   const [data, options] = await Promise.all([
@@ -148,6 +156,12 @@ export default async function ClinicDashboardPage({
       <div style={{ marginBottom: 20 }}>
         <Link href="/" style={{ fontSize: 13, color: 'var(--text-dim)', textDecoration: 'none' }}>← Back to the map</Link>
       </div>
+
+      {CLINIC_DEMO && (
+        <div style={{ ...card, marginBottom: 16, borderColor: 'var(--amber)', color: 'var(--amber)', fontSize: 12, fontWeight: 700 }}>
+          🧪 Demo mode — synthetic sample data, not real reports.
+        </div>
+      )}
 
       <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>🏥 Pro Clinic dashboard</h1>
       <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 16 }}>
