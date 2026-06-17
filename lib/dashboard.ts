@@ -5,6 +5,52 @@ const DAY = 24 * 60 * 60 * 1000
 
 export interface Bucket { key: string; label: string; count: number }
 
+/** One day of the case-count time series. `date` is an ISO yyyy-mm-dd (UTC). */
+export interface TrendPoint { date: string; count: number }
+
+/** One disease's case-count time series, for overlaying on the trend chart. */
+export interface TrendSeries { key: string; label: string; points: TrendPoint[] }
+
+/** The yyyy-mm-dd (UTC) keys for the last `days` days, oldest first. */
+function dayKeys(days: number, now: number): string[] {
+  const out: string[] = []
+  for (let i = days - 1; i >= 0; i--) out.push(new Date(now - i * DAY).toISOString().slice(0, 10))
+  return out
+}
+
+/** Daily case counts for the last `days` days, oldest first. Days with no
+ *  reports are included as zeros so the chart x-axis stays evenly spaced. */
+function dailyTrend(rows: Report[], days: number): TrendPoint[] {
+  const now = Date.now()
+  const counts: Record<string, number> = {}
+  const cutoff = now - days * DAY
+  for (const r of rows) {
+    if (r.timestamp < cutoff) continue
+    const key = new Date(r.timestamp).toISOString().slice(0, 10)
+    counts[key] = (counts[key] ?? 0) + 1
+  }
+  return dayKeys(days, now).map(key => ({ date: key, count: counts[key] ?? 0 }))
+}
+
+/** Per-disease daily series for the top `limit` diseases (by total volume),
+ *  for overlaying as separate lines on the trend chart. */
+function dailyTrendByDisease(rows: Report[], days: number, limit: number): TrendSeries[] {
+  const now = Date.now()
+  const cutoff = now - days * DAY
+  const inWindow = rows.filter(r => r.timestamp >= cutoff)
+  const top = tally(inWindow, r => r.disease, getDiseaseName).slice(0, limit)
+  const keys = dayKeys(days, now)
+  return top.map(({ key, label }) => {
+    const counts: Record<string, number> = {}
+    for (const r of inWindow) {
+      if (r.disease !== key) continue
+      const day = new Date(r.timestamp).toISOString().slice(0, 10)
+      counts[day] = (counts[day] ?? 0) + 1
+    }
+    return { key, label, points: keys.map(d => ({ date: d, count: counts[d] ?? 0 })) }
+  })
+}
+
 export interface DashboardData {
   generatedAt: number
   disease: {
@@ -16,6 +62,8 @@ export interface DashboardData {
     byState: Bucket[]
     byCounty: Bucket[]
     byReporter: Bucket[]
+    trend: TrendPoint[]
+    trendByDisease: TrendSeries[]
     recent: Report[]
   }
   lost: {
@@ -147,6 +195,8 @@ export async function getDashboardData(filter?: ReportFilter): Promise<Dashboard
       byState:    tally(disease, r => r.state || undefined),
       byCounty:   tally(disease, r => r.county || undefined),
       byReporter: tally(disease, r => r.reporterType, k => REPORTER_LABELS[k] ?? k),
+      trend: dailyTrend(disease, 365),
+      trendByDisease: dailyTrendByDisease(disease, 365, 6),
       recent: disease.slice(0, 15),
     },
     lost: {

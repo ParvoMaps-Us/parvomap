@@ -10,6 +10,7 @@ import type { Report } from '@/lib/redis'
 import RequestDiseaseForm from './RequestDiseaseForm'
 import DiseaseChips from './DiseaseChips'
 import ReportBugForm from './ReportBugForm'
+import TrendChart from './TrendChart'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
@@ -161,7 +162,7 @@ export default async function ClinicDashboardPage({
         <ol style={{ margin: '12px 0 0', paddingLeft: 20, color: 'var(--text-muted)', listStyleType: 'decimal' }}>
           <li><strong style={{ color: 'var(--text)' }}>Filter by region</strong> — pick a State, County, or City, then <em>Apply</em>. Leave them on “All” to see every region.</li>
           <li><strong style={{ color: 'var(--text)' }}>Filter by disease</strong> — tap the disease chips to focus on specific ones. None selected = all diseases.</li>
-          <li><strong style={{ color: 'var(--text)' }}>Read the data</strong> — the tiles show counts over time; the bar charts break cases down by disease, state, county, and reporter type.</li>
+          <li><strong style={{ color: 'var(--text)' }}>Read the data</strong> — the tiles show counts over time, the trend chart plots cases day-by-day (hover for any day, toggle 30d/90d/1y, or split into one line per disease), and the bar charts break cases down by disease, state, county, and reporter type.</li>
           <li><strong style={{ color: 'var(--text)' }}>Export</strong> — <em>Export CSV</em> downloads the filtered case data. Labs/pharma can pull it programmatically via an API key — just ask.</li>
           <li><strong style={{ color: 'var(--text)' }}>Track something new</strong> — use “Track a specific disease” at the bottom; we begin tracking within 24–72 hours.</li>
         </ol>
@@ -221,6 +222,9 @@ export default async function ClinicDashboardPage({
         <StatTile label="Last 48 h" value={data.disease.last48} />
         <StatTile label="Last 7 days" value={data.disease.last7} />
         <StatTile label="Last 30 days" value={data.disease.last30} />
+      </div>
+      <div style={{ marginBottom: 14 }}>
+        <TrendChart data={data.disease.trend} byDisease={data.disease.trendByDisease} accent="var(--green)" />
       </div>
       <div style={{ ...grid2, marginBottom: 14 }}>
         <BarList title="By disease" buckets={data.disease.byDisease} accent="var(--d-parvo, var(--green))" />
