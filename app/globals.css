@@ -82,10 +82,13 @@ body::before {
   text-decoration: none;
   transition: top 0.1s;
 }
-/* Only reveal on real keyboard focus (:focus-visible), not the programmatic
-   focus that lands here after click/touch navigation — which made the link
-   flash on screen when arriving from e.g. the recalls "See the map" button. */
-.skip-link:focus-visible { top: 8px; }
+/* Reveal only when the user is actually navigating by keyboard (see
+   KeyboardModality.tsx). iOS Safari treats the focus Next.js puts on this link
+   after a client-side navigation as :focus-visible, so a pure-CSS rule made it
+   flash on screen when arriving from e.g. the recalls "View the outbreak map"
+   link. Gating on .user-tabbing avoids that while keeping the link for keyboard
+   users. */
+html.user-tabbing .skip-link:focus { top: 8px; }
 
 /* ─── ANIMATIONS ─── */
 @keyframes blink {

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import './globals.css'
+import KeyboardModality from '@/components/KeyboardModality'
 
 export const metadata: Metadata = {
   title: 'ParvoMaps — US Canine Disease & Tick Outbreak Tracker | Parvo, Lyme, RMSF, Kennel Cough & More',
@@ -93,7 +94,10 @@ gtag('config', 'G-8LNR8C5J3F');`,
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <KeyboardModality />
+        {children}
+      </body>
     </html>
   )
 }
