@@ -79,7 +79,7 @@ function slugFor(url: string, title: string): string {
     /* fall through */
   }
   return (
-    title
+    (title ?? '')
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')
@@ -184,13 +184,25 @@ export async function getRecallsForList(): Promise<Recall[]> {
   const bySlug = new Map<string, Recall>()
   for (const r of archived) bySlug.set(r.slug, r)
   for (const r of live) bySlug.set(r.slug, r) // live overwrites archived
-  return [...bySlug.values()].sort((a, b) => b.ts - a.ts)
+  // Drop any legacy/dirty record without a usable slug — it would render a dead
+  // /recalls/undefined link that 404s.
+  return [...bySlug.values()]
+    .filter(r => typeof r.slug === 'string' && r.slug.length > 0)
+    .sort((a, b) => b.ts - a.ts)
 }
 
-/** A single recall for its detail page: archive first, then the live feed. */
+/** A single recall for its detail page. Tries, in order: an exact archive-key
+ *  hit, the live feed, then a scan of archived records by their `slug` field —
+ *  the last guards against legacy entries whose Redis key drifted from the slug
+ *  the list page links to. */
 export async function getRecallBySlug(slug: string): Promise<Recall | null> {
   const archived = await getArchivedRecall(slug)
   if (archived) return archived
+
   const live = await getPetFoodRecalls()
-  return live.find(r => r.slug === slug) ?? null
+  const liveHit = live.find(r => r.slug === slug)
+  if (liveHit) return liveHit
+
+  const allArchived = await getArchivedRecalls()
+  return allArchived.find(r => r.slug === slug) ?? null
 }
