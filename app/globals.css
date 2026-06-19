@@ -1082,6 +1082,11 @@ html body .leaflet-bar a:last-child {
   .nav-link {
     display: none !important;
   }
+  /* The Pro button lives in the hamburger menu on mobile — hide the header copy
+     so it doesn't crowd/overflow the top bar. (Keeps the success-upsell one.) */
+  header .btn-pro {
+    display: none !important;
+  }
   .menu-wrap {
     display: inline-flex !important;
   }
