@@ -82,7 +82,10 @@ body::before {
   text-decoration: none;
   transition: top 0.1s;
 }
-.skip-link:focus { top: 8px; }
+/* Only reveal on real keyboard focus (:focus-visible), not the programmatic
+   focus that lands here after click/touch navigation — which made the link
+   flash on screen when arriving from e.g. the recalls "See the map" button. */
+.skip-link:focus-visible { top: 8px; }
 
 /* ─── ANIMATIONS ─── */
 @keyframes blink {
