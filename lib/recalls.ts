@@ -106,7 +106,9 @@ export async function getPetFoodRecalls(): Promise<Recall[]> {
       // Check both title and description — some pet recalls carry the pet signal
       // only in the body (or only in the brand/formulation, hence the cues above).
       if (!PET_RE.test(`${title} ${description}`)) continue
-      const url = tag(block, 'link')
+      // FDA's RSS uses http:// links that 301 to https — upgrade so we don't
+      // emit insecure/redirecting external links (SEO: avoids the broken-link flag).
+      const url = tag(block, 'link').replace(/^http:\/\//i, 'https://')
       // FDA descriptions lead with the date, e.g. "June 5, 2026 - ...".
       const dateMatch = description.match(/([A-Z][a-z]+ \d{1,2},? \d{4})/)
       const date = dateMatch ? dateMatch[1] : ''
