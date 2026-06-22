@@ -1,18 +1,17 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getRecallsForList, FDA_PET_RECALLS_URL } from '@/lib/recalls'
-
-const title = 'Dog Food Recalls - Current FDA Pet Food Recall List | ParvoMaps'
-const description =
-  'Current dog and cat food recalls from the FDA, plus what to do if your pet food is recalled, common recall reasons, and how to check your brand. Updated automatically.'
+import { buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = {
-  title,
-  description,
+  ...buildMetadata({
+    title: 'Dog Food Recalls — Current FDA Recall List | ParvoMaps',
+    description:
+      'Current dog and cat food recalls from the FDA, what to do if your brand is recalled, common reasons, and how to check. Updated automatically.',
+    path: '/recalls',
+  }),
   keywords:
     'dog food recall, dog food recall 2026, cat food recall, pet food recall, recalled dog food, FDA dog food recall, dog treats recall, dog food recall list',
-  alternates: { canonical: 'https://www.parvomaps.us/recalls' },
-  openGraph: { title, description, url: 'https://www.parvomaps.us/recalls', type: 'website' },
 }
 
 const wrap = { maxWidth: 760, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
@@ -46,8 +45,8 @@ export default async function RecallsPage() {
         '@type': 'CollectionPage',
         '@id': 'https://www.parvomaps.us/recalls#webpage',
         url: 'https://www.parvomaps.us/recalls',
-        name: title,
-        description,
+        name: 'Dog Food Recalls — Current FDA Recall List',
+        description: 'Current dog and cat food recalls from the FDA, what to do if your brand is recalled, common reasons, and how to check.',
         inLanguage: 'en-US',
         isPartOf: { '@type': 'WebSite', name: 'ParvoMaps', url: 'https://www.parvomaps.us' },
         ...(recalls.length > 0

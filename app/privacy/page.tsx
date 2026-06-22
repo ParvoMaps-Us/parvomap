@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { buildMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'Privacy Policy — ParvoMaps',
   description: 'How ParvoMaps collects, uses, and protects your information.',
-  alternates: { canonical: 'https://www.parvomaps.us/privacy' },
-}
+  path: '/privacy',
+})
 
 const wrap = { maxWidth: 760, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
 const h2 = { fontSize: 16, fontWeight: 700, margin: '28px 0 8px' } as const

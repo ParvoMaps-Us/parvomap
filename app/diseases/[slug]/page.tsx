@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
-import { getDiseaseInfo, CATEGORY_LABELS, SEVERITY_LABELS, type DiseaseSeverity } from '@/lib/diseases'
+import { getDiseaseInfo, getRelatedDiseases, CATEGORY_LABELS, SEVERITY_LABELS, type DiseaseSeverity } from '@/lib/diseases'
 import { getDiseaseStats, type Bucket } from '@/lib/dashboard'
+import { buildMetadata } from '@/lib/seo'
 
 // Pages render dynamically (the per-request CSP nonce in the root layout rules
 // out static generation app-wide), but the stats are read from Redis on every
@@ -18,13 +19,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const info = getDiseaseInfo(slug)
   if (!info) return { title: 'Disease not found — ParvoMaps' }
-  const title = `${info.name} in Dogs — Symptoms, Spread & Prevention | ParvoMaps`
-  return {
-    title,
+  return buildMetadata({
+    title: `${info.name} in Dogs: Symptoms & Prevention | ParvoMaps`,
     description: info.blurb,
-    alternates: { canonical: `https://www.parvomaps.us/diseases/${slug}` },
-    openGraph: { title, description: info.blurb, url: `https://www.parvomaps.us/diseases/${slug}` },
-  }
+    path: `/diseases/${slug}`,
+    type: 'article',
+  })
 }
 
 const wrap = { maxWidth: 760, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
@@ -80,6 +80,7 @@ export default async function DiseasePage({ params }: { params: Promise<{ slug: 
   if (!info) notFound()
 
   const stats = await cachedDiseaseStats(slug)
+  const related = getRelatedDiseases(slug)
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 12 } as const
 
   const url = `https://www.parvomaps.us/diseases/${slug}`
@@ -178,6 +179,22 @@ export default async function DiseasePage({ params }: { params: Promise<{ slug: 
                 <span style={{ color: 'var(--text-muted)' }}>{[r.city, r.state].filter(Boolean).join(', ') || r.zip || '—'}</span>
                 <span style={{ color: 'var(--text-dim)' }}>{fmt(r.timestamp)}</span>
               </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {related.length > 0 && (
+        <Section title={`Related ${CATEGORY_LABELS[info.category].toLowerCase()} conditions`}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {related.map(r => (
+              <Link
+                key={r.slug}
+                href={`/diseases/${r.slug}`}
+                style={{ fontSize: 13, padding: '7px 14px', borderRadius: 6, textDecoration: 'none', border: '1px solid var(--border)', color: 'var(--text-muted)', background: 'var(--bg-card)' }}
+              >
+                {r.name} in dogs →
+              </Link>
             ))}
           </div>
         </Section>

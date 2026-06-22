@@ -4,8 +4,8 @@ import './globals.css'
 import KeyboardModality from '@/components/KeyboardModality'
 
 export const metadata: Metadata = {
-  title: 'ParvoMaps — US Canine Disease & Tick Outbreak Tracker | Parvo, Lyme, RMSF, Kennel Cough & More',
-  description: 'The only real-time, crowdsourced map tracking canine disease outbreaks across the United States. Report parvo, distemper, Lyme disease, Rocky Mountain spotted fever, kennel cough, leptospirosis, dog flu, giardia, tick sightings, and blue-green algae dangers near you.',
+  title: 'ParvoMaps — US Canine Disease & Outbreak Tracker',
+  description: "Real-time, crowdsourced map of US canine disease outbreaks — parvo, distemper, Lyme, kennel cough, blue-green algae & more. See what's reported near you.",
   keywords: 'parvo map, canine parvovirus tracker, dog disease outbreak map, parvo outbreak near me, kennel cough map, distemper outbreak, leptospirosis dogs, blue green algae dog warning, dog flu tracker, canine disease surveillance, parvotrack alternative',
   metadataBase: new URL('https://www.parvomaps.us'),
   alternates: {

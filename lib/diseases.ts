@@ -145,6 +145,18 @@ export function getDiseaseInfo(key: string): DiseaseInfo | null {
   return DISEASE_MAP[key] ?? null
 }
 
+/** Related diseases for cross-linking (same category, excluding self). Powers
+ *  the "Related conditions" block on each disease page — un-orphans pages and
+ *  builds topical clusters (e.g. the tick-borne group links to each other). */
+export function getRelatedDiseases(key: string, limit = 5): { slug: string; name: string }[] {
+  const info = DISEASE_MAP[key]
+  if (!info) return []
+  return Object.entries(DISEASE_MAP)
+    .filter(([slug, d]) => slug !== key && d.category === info.category)
+    .slice(0, limit)
+    .map(([slug, d]) => ({ slug, name: d.name }))
+}
+
 export const CATEGORY_LABELS: Record<DiseaseCategory, string> = {
   infectious: 'Infectious',
   'tick-borne': 'Tick-borne',

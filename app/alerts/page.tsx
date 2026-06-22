@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import RequestLinkForm from './RequestLinkForm'
+import { buildMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'Manage Alerts — ParvoMaps',
   description: 'Fine-tune your ParvoMaps outbreak alerts — ZIP, radius, diseases, and lost-dog notifications. Alerts switch on automatically when you subscribe.',
-}
+  path: '/alerts',
+})
 
 export default function AlertsPage() {
   return (

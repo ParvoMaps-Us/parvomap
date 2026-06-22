@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getRecallBySlug, FDA_PET_RECALLS_URL } from '@/lib/recalls'
+import { buildMetadata } from '@/lib/seo'
 
 const wrap = { maxWidth: 720, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
 const card = { border: '1px solid var(--border)', borderRadius: 8, padding: 18, background: 'var(--bg-card)' } as const
@@ -10,14 +11,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const recall = await getRecallBySlug(slug)
   if (!recall) return { title: 'Recall not found | ParvoMaps' }
-  const title = `${recall.title} | Dog Food Recall | ParvoMaps`
-  const description = recall.summary || `Details on the ${recall.title} pet food recall reported by the FDA.`
-  return {
-    title,
-    description,
-    alternates: { canonical: `https://www.parvomaps.us/recalls/${slug}` },
-    openGraph: { title, description, url: `https://www.parvomaps.us/recalls/${slug}`, type: 'article' },
-  }
+  // The full FDA headline can be 170+ chars — keep the SEO title short (the full
+  // headline stays in the H1). Lead = brand/product before the first delimiter.
+  const lead = recall.title.split(/[—–:,(]| - /)[0].trim()
+  return buildMetadata({
+    title: `${lead} Dog Food Recall (FDA) | ParvoMaps`,
+    description: recall.summary || `Details on the ${lead} pet food recall reported by the FDA.`,
+    path: `/recalls/${slug}`,
+    type: 'article',
+  })
 }
 
 export default async function RecallDetailPage({ params }: { params: Promise<{ slug: string }> }) {

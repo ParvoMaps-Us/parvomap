@@ -2,13 +2,14 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { DISEASE_MAP, CATEGORY_LABELS, type DiseaseCategory } from '@/lib/diseases'
 import { getDiseaseCounts } from '@/lib/dashboard'
+import { buildMetadata } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
-export const metadata: Metadata = {
-  title: 'Dog Diseases We Track — Symptoms, Spread & Prevention | ParvoMaps',
-  description: 'Learn about the canine diseases ParvoMaps tracks — parvo, distemper, kennel cough, leptospirosis, Lyme, RMSF, blue-green algae and more. Symptoms, how they spread, and prevention.',
-  alternates: { canonical: 'https://www.parvomaps.us/diseases' },
-}
+export const metadata: Metadata = buildMetadata({
+  title: 'Dog Diseases We Track | ParvoMaps',
+  description: 'Canine diseases ParvoMaps tracks — parvo, distemper, kennel cough, leptospirosis, Lyme, RMSF, blue-green algae & more. Symptoms, spread, and prevention.',
+  path: '/diseases',
+})
 
 const wrap = { maxWidth: 900, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
 const card = { border: '1px solid var(--border)', borderRadius: 8, padding: 18, background: 'var(--bg-card)', textDecoration: 'none', color: 'inherit', display: 'block' } as const

@@ -2,11 +2,13 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import PricingCards from './PricingCards'
 import FoundingBanner from './FoundingBanner'
+import { buildMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'Go Pro — ParvoMaps',
-  description: 'Real-time outbreak and lost-dog alerts for pet owners, vet clinics, and shelters.',
-}
+  description: 'Real-time outbreak and lost-dog alerts for pet owners, vet clinics, shelters, and pharma — plus county dashboards and data export.',
+  path: '/pro',
+})
 
 export default async function ProPage({
   searchParams,
