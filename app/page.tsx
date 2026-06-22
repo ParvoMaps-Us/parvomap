@@ -56,7 +56,7 @@ export default async function HomePage({
         {/* Contextual internal links — give the homepage real in-content links to
             the hubs and headline disease pages (SEO: un-orphans content, spreads
             crawl equity from the highest-authority page). */}
-        <nav aria-label="Explore ParvoMaps" className="home-explore" style={{ maxWidth: 900, margin: '8px auto 0', padding: '24px', fontFamily: 'var(--mono)' }}>
+        <section aria-label="Explore ParvoMaps" className="home-explore" style={{ maxWidth: 900, margin: '8px auto 0', padding: '24px', fontFamily: 'var(--mono)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Track dog diseases near you</h2>
           <p style={{ fontSize: 13.5, color: 'var(--text-muted)', lineHeight: 1.8, margin: '0 0 14px' }}>
             ParvoMaps maps canine disease outbreaks across the US. Browse{' '}
@@ -76,7 +76,7 @@ export default async function HomePage({
               </Link>
             ))}
           </div>
-        </nav>
+        </section>
       </main>
       <Footer />
     </>
