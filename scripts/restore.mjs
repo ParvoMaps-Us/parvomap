@@ -68,9 +68,15 @@ for (const { key, type, ttl, value } of snapshot.entries) {
       case 'list':
         if (Array.isArray(value) && value.length) await redis.rpush(key, ...value)
         break
-      case 'hash':
-        if (value && Object.keys(value).length) await redis.hset(key, value)
+      case 'hash': {
+        // Older snapshots may hold a flat [field,value,...] array (deser-off
+        // HGETALL quirk) — pair it back into an object so we don't write numeric keys.
+        const obj = Array.isArray(value)
+          ? Object.fromEntries(value.reduce((acc, _, i) => (i % 2 ? acc : [...acc, [String(value[i]), value[i + 1]]]), []))
+          : value
+        if (obj && Object.keys(obj).length) await redis.hset(key, obj)
         break
+      }
       case 'zset': {
         // withScores → flat [member, score, member, score, ...]
         const members = []

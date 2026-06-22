@@ -17,6 +17,19 @@ import { getRedisClient } from '@/lib/redis'
  * that's what makes this resilient to a compromise of the app itself.
  */
 
+/** Normalize an HGETALL result to a plain object. With automaticDeserialization
+ *  off (how this app's Redis client is configured), HGETALL returns a FLAT
+ *  [field, value, field, value, ...] array instead of an object — storing that
+ *  array verbatim and restoring it would corrupt the hash into numeric keys. */
+function hashToObject(raw: unknown): Record<string, unknown> {
+  if (Array.isArray(raw)) {
+    const o: Record<string, unknown> = {}
+    for (let i = 0; i < raw.length; i += 2) o[String(raw[i])] = raw[i + 1]
+    return o
+  }
+  return (raw as Record<string, unknown>) ?? {}
+}
+
 export function isBackupConfigured(): boolean {
   return !!(
     process.env.R2_ACCOUNT_ID &&
@@ -62,7 +75,7 @@ export async function exportRedis(): Promise<RedisSnapshot> {
         case 'string': value = await client.get(key); break
         case 'set':    value = await client.smembers(key); break
         case 'list':   value = await client.lrange(key, 0, -1); break
-        case 'hash':   value = await client.hgetall(key); break
+        case 'hash':   value = hashToObject(await client.hgetall(key)); break
         case 'zset':   value = await client.zrange(key, 0, -1, { withScores: true }); break
         default:       continue // unknown/unsupported type — skip
       }

@@ -7,12 +7,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
 
   // Per-recall detail pages from the archive (best-effort; empty if Redis down).
-  const recallPages: MetadataRoute.Sitemap = (await getArchivedRecalls()).map(r => ({
-    url: `${base}/recalls/${r.slug}`,
-    lastModified: r.ts ? new Date(r.ts) : now,
-    changeFrequency: 'monthly',
-    priority: 0.5,
-  }))
+  const recallPages: MetadataRoute.Sitemap = (await getArchivedRecalls())
+    .filter(r => typeof r.slug === 'string' && r.slug.length > 3 && r.slug !== 'undefined')
+    .map(r => ({
+      url: `${base}/recalls/${r.slug}`,
+      lastModified: r.ts ? new Date(r.ts) : now,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    }))
 
   const diseasePages: MetadataRoute.Sitemap = Object.keys(DISEASE_MAP).map(slug => ({
     url: `${base}/diseases/${slug}`,
