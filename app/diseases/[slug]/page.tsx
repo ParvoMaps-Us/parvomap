@@ -83,6 +83,15 @@ export default async function DiseasePage({ params }: { params: Promise<{ slug: 
   const related = getRelatedDiseases(slug)
   const grid3 = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 12 } as const
 
+  // FAQ built from this disease's own data — adds useful content + FAQPage rich
+  // results, and lifts thin pages above the low-word-count threshold.
+  const faqs = [
+    { q: `What are the symptoms of ${info.name} in dogs?`, a: `Common signs include ${info.symptoms.join(', ')}. Signs vary by dog and stage — contact your veterinarian if you notice them.` },
+    { q: `How do dogs catch ${info.name}?`, a: info.transmission },
+    { q: `How can I prevent ${info.name} in dogs?`, a: info.prevention },
+    { q: `Is ${info.name} dangerous to dogs?`, a: `${info.name} is considered ${SEVERITY_LABELS[info.severity].toLowerCase()}. ${info.blurb}` },
+  ]
+
   const url = `https://www.parvomaps.us/diseases/${slug}`
   // Schema.org structured data: a MedicalWebPage describing a MedicalCondition,
   // plus breadcrumbs. Makes the page eligible for rich results and gives Google
@@ -117,6 +126,15 @@ export default async function DiseasePage({ params }: { params: Promise<{ slug: 
           { '@type': 'ListItem', position: 2, name: 'Dog Diseases', item: 'https://www.parvomaps.us/diseases' },
           { '@type': 'ListItem', position: 3, name: info.name, item: url },
         ],
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        mainEntity: faqs.map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
       },
     ],
   }
@@ -199,6 +217,17 @@ export default async function DiseasePage({ params }: { params: Promise<{ slug: 
           </div>
         </Section>
       )}
+
+      <Section title="Frequently asked questions">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {faqs.map((f, i) => (
+            <div key={i}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 4px' }}>{f.q}</h3>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.7, margin: 0 }}>{f.a}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
 
       {/* CTAs */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', margin: '28px 0 24px' }}>
