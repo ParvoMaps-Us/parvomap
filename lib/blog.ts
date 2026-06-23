@@ -52,8 +52,8 @@ const POSTS: BlogPost[] = [
       'What parvo actually looks like in real life, how it is diagnosed, the honest survival odds, and why acting the same day is the single biggest variable.',
     datePublished: '2026-06-23',
     author: 'ParvoMaps',
-    coverImage: '/og-image.png',
-    coverAlt: 'A quiet, lethargic puppy resting, an early warning sign of parvo',
+    coverImage: '/article-images/puppy-testing-positive-for-parvo.png',
+    coverAlt: 'A puppy at the vet testing positive for parvovirus',
     readingMinutes: 9,
     body: [
       {
