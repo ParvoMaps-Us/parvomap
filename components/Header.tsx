@@ -20,6 +20,7 @@ export default async function Header() {
           Recalls{recallActive && <span className="recall-dot" aria-hidden="true" />}
         </Link>
         <Link href="/alerts" className="nav-link">Alerts</Link>
+        <Link href="/blog" className="nav-link">Blog</Link>
         <a href="#report" className="btn-report">+ Report a Case</a>
         <ProCta location="header" />
         <Link href="/account" className="nav-link" aria-label="Account & billing" title="Account & billing" style={{ display: 'inline-flex', alignItems: 'center' }}>

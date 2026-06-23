@@ -23,14 +23,21 @@ export function buildMetadata({
   description,
   path = '',
   type = 'website',
+  image,
 }: {
   title: string
   description: string
   path?: string
   type?: 'website' | 'article'
+  /** Per-page OG/Twitter image override (e.g. a blog post cover). Defaults to the
+   *  site card. Width/height assume a 1200x630-ish landscape image. */
+  image?: { url: string; alt: string }
 }): Metadata {
   const url = `${SITE}${path}`
   const desc = clamp(description, 155) // meta description target; also feeds OG
+  const ogImage = image
+    ? { url: image.url, width: 1200, height: 630, alt: image.alt }
+    : { url: OG_IMAGE, width: 1200, height: 630, alt: 'ParvoMaps — US canine disease & outbreak tracker' }
   return {
     title: clamp(title, 60),
     description: desc,
@@ -42,14 +49,14 @@ export function buildMetadata({
       type,
       siteName: 'ParvoMaps',
       locale: 'en_US',
-      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'ParvoMaps — US canine disease & outbreak tracker' }],
+      images: [ogImage],
     },
     twitter: {
       card: 'summary_large_image',
       site: '@parvomap',
       title: clamp(title, 60),
       description: desc,
-      images: [OG_IMAGE],
+      images: [ogImage.url],
     },
   }
 }

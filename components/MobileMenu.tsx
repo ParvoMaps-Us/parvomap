@@ -43,6 +43,7 @@ export default function MobileMenu({ recallActive }: { recallActive: boolean }) 
               Recalls{recallActive && <span className="recall-dot-inline" aria-hidden="true" />}
             </Link>
             <Link href="/alerts" onClick={close}>Alerts</Link>
+            <Link href="/blog" onClick={close}>Blog</Link>
             <Link href="/account" onClick={close}>Account</Link>
             <ProCta location="mobile_menu" className="mobile-menu-pro" onClick={close} />
           </nav>
