@@ -10,7 +10,22 @@ import { NextRequest, NextResponse } from 'next/server'
 //
 // style-src keeps 'unsafe-inline' on purpose — Leaflet renders map popups as
 // HTML strings with inline style="" attributes, which a nonce can't cover.
+// Hosts the admin surface is hidden on. Admin (login, dashboard, admin APIs) is
+// reachable only via the Vercel deployment host — keeps /admin off the public,
+// indexed domain. The magic-link flow is host-relative (link URL from the request
+// origin, cookie has no domain attr), so it works wherever it's served.
+const PUBLIC_HOSTS = new Set(['parvomaps.us', 'www.parvomaps.us'])
+const ADMIN_PREFIXES = ['/admin', '/api/admin', '/dashboard']
+
 export function middleware(req: NextRequest) {
+  // Block the admin surface on the public custom domain → 404 (looks like it
+  // doesn't exist). Reach it via the project's *.vercel.app host instead.
+  const host = (req.headers.get('host') ?? '').toLowerCase()
+  const path = req.nextUrl.pathname
+  if (PUBLIC_HOSTS.has(host) && ADMIN_PREFIXES.some(p => path === p || path.startsWith(p + '/'))) {
+    return new NextResponse('Not found', { status: 404 })
+  }
+
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
 
   // Dev only: Next.js React Refresh / HMR compiles with eval, so the dev server
