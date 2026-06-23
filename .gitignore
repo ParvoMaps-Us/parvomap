@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local DB snapshots (contain real data — never commit; repo is public)
+migration-snapshot-*.json
+*.snapshot.json
