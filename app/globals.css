@@ -579,6 +579,16 @@ nav a:hover { color: var(--text); }
 .legend-dot.gray  { background: #555; }
 
 /* ─── FILTER BAR ─── */
+/* Pin the disease filter bar just below the sticky header (56px) so it stays
+   put while the map/page scrolls — and so horizontal-swiping the bar on mobile
+   doesn't carry it off-screen. The WRAPPER is sticky (not the inner overflow
+   scroller, whose short box would release sticky immediately). */
+.filter-bar-wrap {
+  position: sticky;
+  top: 56px;
+  z-index: 1500; /* above Leaflet map (~700) + map overlays (1000), below header (2000) */
+  background: #000;
+}
 .filter-bar {
   background: #000;
   border-bottom: 1px solid var(--border);
@@ -1168,6 +1178,7 @@ html body .leaflet-bar a:last-child {
   }
 
   /* Filter bar */
+  .filter-bar-wrap { top: 48px; } /* mobile header is 48px */
   .filter-bar {
     height: 36px !important;
     padding: 0 4px !important;

@@ -66,7 +66,7 @@ export default function FilterBar() {
   }, [])
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="filter-bar-wrap">
       <nav className="filter-bar" id="filter-bar" aria-label="Filter map by disease"
         style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
         <div className="filter-label">Filter</div>
