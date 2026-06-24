@@ -46,6 +46,348 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'can-my-puppy-survive-parvovirus',
+    title: 'Can My Puppy Survive Parvovirus?',
+    description:
+      'Most puppies survive parvo with prompt care. What survival actually depends on, what recovery looks like, and how breed, age, and vaccine status move the odds.',
+    datePublished: '2026-06-25',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/puppy-laying-in-crate.png',
+    coverAlt: 'A puppy resting in a crate while recovering from parvovirus',
+    readingMinutes: 12,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'If you are reading this because your puppy is sick and you are terrified, here is the most important thing first: most puppies survive parvo. With prompt veterinary care, survival rates land between 85 and 95 percent. The version of this disease that lives in people\'s heads, where parvo means the puppy is gone, is outdated. The odds are on your side the moment treatment starts. But those odds are not fixed. They are being set right now, by the next decision you make.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Stop reading, stop searching, and call your vet or get in the car. Everything else in this post will still be here when you get back. If you are staying because you want to understand what your puppy is up against, keep reading. This covers everything.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Survival Actually Depends On',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The question underneath "will my puppy make it" is usually "did I act in time," and the honest answer is that question is still open. The outcome is not sealed. A panicking owner often feels like a passenger watching something happen to them. They are not. The puppy\'s odds are being set, in real time, by how fast the owner moves from fear to a phone call.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Survival depends on a few things, and the owner controls the most important one.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'It depends on how early treatment starts. Day one is a different disease than day three. The body still has reserves early. The gut lining has not fully broken down. Every hour of waiting trades that advantage away.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'It depends on getting real supportive care. Parvo does not have a cure that kills the virus directly. Treatment keeps the puppy alive, hydrated, and protected from secondary infection while the puppy\'s own immune system clears the virus and its body rebuilds the gut lining the virus stripped. The dog beats parvo. The treatment keeps the dog alive long enough to do it.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'It depends on getting through the first 48 to 72 hours. That is the fight. Most puppies who are going to lose this lose it in the first two or three days. A puppy that clears that window with IV support, whose white blood cell count starts climbing back, has usually turned the corner. The first two nights are the hard part. Surviving them changes the story dramatically.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'And it depends on the owner acting instead of freezing. Not on loving the dog more, not on having done everything perfectly up to this point. On moving now. The early signs of parvo are built to look like nothing, so no owner should carry guilt for not seeing it sooner. But from this moment forward, speed is the lever, and it is theirs to pull.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What the Puppy Is Actually Going Through',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'From the puppy\'s side, the hospital stay is a hard, disorienting stretch of being kept alive while its own body does the actual fighting.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Parvo attacks the rapidly dividing cells lining the intestines. As that lining breaks down, the puppy deals with relentless nausea, painful cramping, and the exhaustion of fluid pouring out through vomiting and diarrhea. On top of that is dehydration and often a fever. The dog is not just unwell. It is in genuine physical distress, weak, and frightened, in a place that smells and sounds nothing like home.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'An IV catheter is placed in a front leg and stays in for days. The puppy is tethered to fluids running around the clock. It gets handled repeatedly: temperature checks, repositioning, cleaning, injections of medication, blood draws to track the white cell count. And it is largely done alone. Because parvo is so contagious, the puppy is in isolation, separated from other animals and from its owner. A young social animal cannot understand why the people it knows have disappeared and why strangers keep handling it.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What the Medicine Is and Is Not Doing',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Here is the idea that reframes everything. There is no drug that kills parvovirus. None of the IV fluids, none of the antibiotics, none of the anti-nausea medication attacks the virus directly. The antibiotics stop bacteria from leaking through the destroyed gut wall and causing sepsis. The fluids replace what the body is losing and keep the organs going. The anti-nausea medication makes the puppy comfortable enough to rest and eventually eat.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The actual fight against the virus is done by the puppy. The dog\'s own immune system clears parvovirus, and the dog\'s own body regenerates the stripped intestinal lining. The hospital\'s entire job is to keep the puppy alive, stable, and protected long enough for the puppy to win that fight itself. Treatment buys time. The puppy spends it.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The puppies that survive parvo are the ones that fought through it with their bodies while people kept them alive long enough to do so. The medicine holds the line. The dog wins the war.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How Breed, Age, and Vaccine Status Affect the Odds',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'These three factors move the odds in real ways, but the way most owners understand them is slightly off in directions that matter.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Age: The Biggest Risk Factor',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Age matters more than most owners realize. The highest-risk window is roughly 6 weeks to 6 months, with the youngest end of that range being the most dangerous. Puppies here have immature immune systems, almost no physiological reserve, and they dehydrate and crash faster than older dogs.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'What is underreported is the reason this window exists, and it is genuinely counterintuitive. Puppies absorb maternal antibodies from nursing, which protect them early. But those same maternal antibodies also interfere with vaccines, neutralizing the vaccine before it can teach the puppy\'s own immune system. There is a gap, often between 6 and 16 weeks, where maternal protection has faded enough to leave the puppy susceptible to the virus but is still present enough to blunt the vaccine. The puppy is, for a stretch, neither protected by mom nor fully protected by its shots.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Most owners have no idea this gap exists. It is exactly why the vaccine series is spaced across multiple doses rather than given once. The series is designed to keep hitting the immune system until one dose lands after maternal interference clears.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Vaccine Status: Protective, But Not a Simple On-Off Switch',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'A dog that has completed its full series is very well protected. But the misunderstanding is treating vaccination as binary, vaccinated or not, when the reality is a spectrum.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'A puppy partway through its series has partial immunity. That is real and meaningful even though it is incomplete. Partially vaccinated puppies who do get sick often fight the disease better than fully unvaccinated ones.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Two things are badly underreported here. First, one shot is not protection. Immunity depends on completing the full multi-dose series on schedule, with the final dose typically given at or after 16 weeks to clear the maternal-antibody gap. A puppy who got one shot and then went to a dog park is far less protected than the owner thinks. Second, even fully vaccinated dogs can occasionally contract parvo. A vaccinated dog showing classic symptoms should still be taken seriously. The false reassurance of "it can\'t be parvo, she\'s vaccinated" costs time at the exact moment time matters most.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Breed: Real, Consistent, and Almost Never Discussed',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'This is the factor most owners have never heard about, and it is the most underreported of the three. Certain breeds have documented higher severity and higher mortality from parvo, independent of age and vaccine status. The breeds repeatedly identified include Rottweilers, Doberman Pinschers, American Pit Bull Terriers, German Shepherds, and Labrador Retrievers.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The mechanism is not fully understood, but the pattern is consistent across multiple studies and decades of clinical observation. Owners of these breeds should complete the vaccine series on time without exception. They should also move faster than other owners the moment something looks off. Those are two separate actions, and both matter. Most owners of these breeds have never been told their dog carries elevated risk. That is an information gap that changes how fast a specific owner should move.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How the Factors Stack',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Age, breed, and vaccine history are fixed by the time symptoms appear. Timing is not. The reason awareness of these risk factors matters is that it changes behavior before the crisis, not during it. An owner who knows their breed is higher risk, knows the maternal-antibody gap leaves a window, and knows one shot is not enough is an owner who vaccinates fully and acts the moment something looks off.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Recovery Actually Looks Like',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Recovery after parvo is real and usually complete, but the gap between "survived" and "back to normal" surprises almost everyone.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'When a puppy is discharged, it has cleared the virus and turned the corner, but its body is still rebuilding. Owners expect to bring home the bouncy puppy they had before. What they actually bring home is a thinner, tired, subdued version that sleeps a lot and moves carefully. That is normal. Most visible recovery happens over one to two weeks, with energy and weight returning gradually.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Feeding Goes Slow, By Design',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The instinct after a near-death scare is to feed the puppy generously to build it back up. That is exactly wrong. A gut still healing cannot handle normal-sized meals or rich food. Most parvo survivors go home on a bland, easily digestible diet fed in small, frequent portions. Pushing too much food too fast triggers vomiting or diarrhea and sets the recovery back. The puppy returns to its normal diet gradually, on the vet\'s timeline.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Some loose stool in the first week of recovery is expected. The gut lining does not snap back overnight. What is not expected, and warrants an immediate call back to the vet, is renewed vomiting, refusal to eat, returning lethargy, or blood.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Contagion Surprise',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The puppy is home, recovering, clearly getting better, and is still actively shedding parvovirus in its stool for several weeks after recovery. That means the dog can still infect other dogs, and the environment around it stays contaminated. Owners who assume "survived means safe to socialize" can unknowingly expose other dogs or bring an unvaccinated puppy into a contaminated space.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Environmental Surprise',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Parvovirus survives in soil and on surfaces for up to a year. Ordinary household cleaners do not kill it. The yard where the puppy was sick, the crate, the bedding, and the food bowls all remain reservoirs. Surviving the disease does not decontaminate the space the dog lives in. Disinfection requires agents that actually work against parvo: diluted bleach on bleach-safe surfaces, Virkon-S for broader surface use, or other veterinary-grade disinfectants like accelerated hydrogen peroxide for areas where bleach is not practical. The yard itself needs to be treated as contaminated for months, not days. This is the single most overlooked piece of the recovery picture, and skipping it is how the same household loses a second dog.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Good Surprise',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'For all the caution in the early weeks, the long-term picture is overwhelmingly positive. A puppy that survives parvo typically develops strong, long-lasting immunity to that strain. These are not fragile dogs marked for life. The vast majority go on to live completely normal, healthy, full lives. The crate-bound, exhausted little animal of week one becomes, a month or two later, indistinguishable from any other healthy dog. Owners brace for a permanently delicate pet and instead get their puppy back in full.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why ParvoMaps Exists',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Parvo is beatable. The infrastructure to beat it is already in place: vaccines that prevent it, veterinary care that supports survival, and survival rates that favor the dog when treatment starts early. The missing piece has always been information arriving in time to be useful.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'There is no public canine disease tracker. For human illness, the infrastructure is everywhere. People can look up flu activity in their county, check what is circulating before a trip, see an outbreak reported in their city. That early-warning capability is treated as basic public health.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Dogs have nothing comparable. A puppy can die of parvo on one street, and the family three blocks over, walking their unvaccinated puppy through the same patch of grass, has no way to know the virus is there. Parvo survives in soil for up to a year. The contamination outlives the dog that left it, and there is no map, no alert, no shared record that the danger ever existed. Veterinary clinics know what they are seeing locally, but that knowledge stays siloed inside individual practices. None of it reaches the person who needs it most: the owner standing in their yard wondering whether the lethargic puppy in front of them is just tired or is the first sign of something that moves in hours.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          { text: 'ParvoMaps', href: '/' },
+          ' was built to close that gap. The premise is simple. The fastest, most current source of outbreak information is not a government agency or a national database. It is the community itself: the owners, vets, and shelters who just encountered a case and have no place to put what they know. Give them a place to report it, anonymously and in seconds, and scattered knowledge becomes a shared map. One owner\'s worst day becomes the warning that protects the next dog.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'A confirmed case in a ZIP code stops being a private tragedy and becomes a visible signal that shifts every nearby owner\'s threshold from wait-and-see to act-now. That shift, same-day action instead of a night of waiting, is often the entire difference between a puppy that makes it and one that does not.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'There was no public canine disease tracker. So the gap got filled. Not with a cure, because parvo does not need a new cure. It needs owners who know to act. ParvoMaps is the missing piece of infrastructure: a way for a community of dog owners to watch out for each other\'s dogs, in real time, before the next puppy gets sick.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Bottom Line',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Most puppies survive parvo. The odds are real, the treatment works, and the dogs that make it go on to live full, normal lives. What determines the outcome is not luck, not money, not how much someone loves their dog. It is timing, and timing is information arriving early enough to act on.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Vaccinate on schedule. Know your breed\'s risk. Learn what early parvo looks like before it looks like anything, starting with our guide on ',
+          { text: 'how to know if your dog has parvo', href: '/blog/how-do-i-know-if-my-dog-has-parvo' },
+          '. ',
+          { text: 'Check ParvoMaps', href: '/' },
+          ' if something seems off and you want to know what is moving through your area, and read more about ',
+          { text: 'parvovirus itself', href: '/diseases/parvo' },
+          '.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'And if your puppy is sick right now: go. The puppy is more saveable in this moment than it will be in an hour. The fear is telling you the worst is certain. It is not. What is certain is that the next thing you do matters more than anything that has happened so far.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'What are the survival odds for a puppy with parvo?',
+        answer:
+          'With prompt veterinary care, survival rates are between 85 and 95 percent. The biggest factor in survival is how early treatment starts and getting the puppy through the first 48 to 72 hours, which is when most deaths occur. A puppy that clears that window with IV support and a recovering white blood cell count has usually turned the corner.',
+      },
+      {
+        question: 'How does treatment cure parvo?',
+        answer:
+          'There is no drug that kills parvovirus. Treatment is supportive: IV fluids replace what the body loses, antibiotics prevent bacteria from leaking through the damaged gut wall and causing sepsis, and anti-nausea medication keeps the puppy comfortable enough to rest and eat. The puppy\'s own immune system clears the virus and its body regenerates the gut lining. The medicine keeps the dog alive long enough to win the fight itself.',
+      },
+      {
+        question: 'Why are some breeds more at risk from parvo?',
+        answer:
+          'Rottweilers, Doberman Pinschers, American Pit Bull Terriers, German Shepherds, and Labrador Retrievers have documented higher severity and mortality from parvo, independent of age and vaccine status. The mechanism is not fully understood, but the pattern is consistent across studies. Owners of these breeds should complete the vaccine series on time and act faster the moment something looks off.',
+      },
+      {
+        question: 'Is a puppy still contagious after surviving parvo?',
+        answer:
+          'Yes. A recovering puppy keeps shedding parvovirus in its stool for several weeks after it appears better, so it can still infect other dogs. Parvovirus also survives in soil and on surfaces for up to a year, and ordinary household cleaners do not kill it. The yard, crate, bedding, and bowls must be disinfected with parvo-effective agents like diluted bleach, Virkon-S, or accelerated hydrogen peroxide, and the yard should be treated as contaminated for months.',
+      },
+    ],
+  },
+  {
     slug: 'cost-of-treating-parvo-in-dogs',
     title: "What's the Cost of Treating Parvo in Dogs?",
     description:
