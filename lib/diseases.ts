@@ -51,6 +51,13 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
     transmission: 'Respiratory droplets, direct contact, and contaminated surfaces or hands.',
     prevention: 'Canine influenza vaccine; isolate sick dogs for up to 4 weeks.',
   },
+  strepzoo: {
+    name: 'Strep Zoo', category: 'infectious', pinTtlDays: 90, severity: 'high', aka: 'Streptococcus zooepidemicus, Strep zoo',
+    blurb: 'A bacterial infection that can cause sudden, severe hemorrhagic pneumonia in dogs. Usually seen in crowded settings like shelters, it can kill within 24–48 hours, so suspected cases are an emergency.',
+    symptoms: ['Sudden high fever', 'Coughing', 'Rapid or labored breathing', 'Bloody nasal discharge or coughing up blood', 'Extreme lethargy or collapse', 'Rapid deterioration'],
+    transmission: 'Spread through respiratory secretions and close contact in crowded settings such as shelters and boarding; often follows another respiratory infection.',
+    prevention: 'Reduce crowding and stress, isolate coughing dogs quickly, and disinfect shared spaces. There is no widely used vaccine — early veterinary care is critical.',
+  },
   giardia: {
     name: 'Giardia', category: 'infectious', pinTtlDays: 90, severity: 'low',
     blurb: 'An intestinal parasite that causes persistent digestive upset, especially in puppies and dogs in group settings.',

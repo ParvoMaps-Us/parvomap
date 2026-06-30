@@ -25,6 +25,7 @@
   --d-kennel:     #3b82f6;
   --d-leptospira: #f97316;
   --d-influenza:  #ec4899;
+  --d-strepzoo:   #d946ef;
   --d-giardia:    #14b8a6;
   --d-ringworm:   #eab308;
   --d-brucella:   #6b7280;
@@ -473,6 +474,7 @@ nav a:hover { color: var(--text); }
 .pin[data-disease="kennel"]     { background: var(--d-kennel); }
 .pin[data-disease="leptospira"] { background: var(--d-leptospira); }
 .pin[data-disease="influenza"]  { background: var(--d-influenza); }
+.pin[data-disease="strepzoo"]   { background: var(--d-strepzoo); }
 .pin[data-disease="giardia"]    { background: var(--d-giardia); }
 .pin[data-disease="ringworm"]   { background: var(--d-ringworm); }
 .pin[data-disease="brucella"]   { background: var(--d-brucella); }

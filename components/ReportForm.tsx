@@ -11,6 +11,7 @@ const DISEASES = [
   { key: 'kennel', label: 'Kennel Cough', color: 'var(--d-kennel)' },
   { key: 'leptospira', label: 'Leptospirosis', color: 'var(--d-leptospira)' },
   { key: 'influenza', label: 'Dog Flu', color: 'var(--d-influenza)' },
+  { key: 'strepzoo', label: 'Strep Zoo', color: 'var(--d-strepzoo)' },
   { key: 'giardia', label: 'Giardia', color: 'var(--d-giardia)' },
   { key: 'ringworm', label: 'Ringworm', color: 'var(--d-ringworm)' },
   { key: 'brucella', label: 'Brucellosis', color: 'var(--d-brucella)' },
