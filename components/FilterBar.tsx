@@ -8,6 +8,7 @@ const INFECTIOUS = [
   { key: 'kennel', label: 'Kennel cough', color: 'var(--d-kennel)', count: 3 },
   { key: 'leptospira', label: 'Leptospirosis', color: 'var(--d-leptospira)', count: 2 },
   { key: 'influenza', label: 'Dog Flu', color: 'var(--d-influenza)', count: 2 },
+  { key: 'strepzoo', label: 'Strep Zoo', color: 'var(--d-strepzoo)', count: 0 },
   { key: 'giardia', label: 'Giardia', color: 'var(--d-giardia)', count: 2 },
   { key: 'ringworm', label: 'Ringworm', color: 'var(--d-ringworm)', count: 1 },
   { key: 'brucella', label: 'Brucellosis', color: 'var(--d-brucella)', count: 1 },

@@ -9,6 +9,7 @@ const DISEASE_COLORS: Record<string, string> = {
   kennel: '#eab308',
   leptospira: '#84cc16',
   influenza: '#06b6d4',
+  strepzoo: '#d946ef',
   giardia: '#8b5cf6',
   ringworm: '#ec4899',
   brucella: '#f43f5e',
