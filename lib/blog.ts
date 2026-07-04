@@ -79,8 +79,8 @@ const POSTS: BlogPost[] = [
     category: 'Prevention & Risk',
     datePublished: '2026-07-03',
     author: 'ParvoMaps',
-    coverImage: '/article-images/puppy-laying-in-crate.webp',
-    coverAlt: 'An adult dog resting at home while recovering from parvovirus',
+    coverImage: '/article-images/dog-parvo-early.webp',
+    coverAlt: 'A lethargic dog showing early signs of parvo',
     readingMinutes: 8,
     body: [
       {
