@@ -21,11 +21,37 @@ export interface BlogFaq {
   answer: string
 }
 
+/** Topic clusters used to group posts on the /blog index. Add a new value here
+ *  (and to BLOG_CATEGORIES below) before using it on a post. */
+export type BlogCategory =
+  | 'Symptoms & Diagnosis'
+  | 'Treatment & Recovery'
+  | 'Prevention & Risk'
+
+/** Categories in display order, each with a one-line intro for its section
+ *  header on the index. A category with no posts is skipped when rendering. */
+export const BLOG_CATEGORIES: { name: BlogCategory; description: string }[] = [
+  {
+    name: 'Symptoms & Diagnosis',
+    description: 'Spotting parvo early and knowing what a diagnosis involves.',
+  },
+  {
+    name: 'Treatment & Recovery',
+    description: 'What treatment costs, what it does, and what recovery looks like.',
+  },
+  {
+    name: 'Prevention & Risk',
+    description: 'Vaccines, risk factors, and keeping every dog protected.',
+  },
+]
+
 export interface BlogPost {
   /** lowercase, hyphenated, keyword-rich */
   slug: string
   title: string
   description: string
+  /** Topic cluster this post is grouped under on the index. */
+  category: BlogCategory
   /** ISO date, e.g. "2026-06-23" */
   datePublished: string
   dateModified?: string
@@ -46,10 +72,203 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'can-adult-dogs-get-parvo',
+    title: 'Can Adult Dogs Get Parvo, or Is It Just Puppies?',
+    description:
+      'Yes, adult dogs can get parvo. Why adult cases get missed, what raises the risk, and the booster schedule that keeps older dogs protected.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-03',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/puppy-laying-in-crate.png',
+    coverAlt: 'An adult dog resting at home while recovering from parvovirus',
+    readingMinutes: 8,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'Parvo gets talked about as a puppy disease, and for good reason. Puppies are where it hits hardest and most often. But the honest answer to this question is yes, adult dogs can get ',
+          { text: 'parvo', href: '/diseases/parvo' },
+          ' too, and the fact that most owners do not know this is exactly why some adult cases get missed until it is serious.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why Parvo Is Thought of as a Puppy-Only Disease',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Puppies between roughly 6 weeks and 6 months old are the highest-risk group by a wide margin. Their immune systems are still developing, they have not completed their vaccine series yet, and their bodies have almost no reserve to draw on if they get sick. That combination is why the overwhelming majority of severe parvo cases, and nearly all the fatal ones, happen in young puppies.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'This is also why almost everything written about parvo focuses on puppies. It is not wrong. It is just incomplete.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Adult Dogs Are Not Immune',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Any unvaccinated or incompletely vaccinated dog can get parvo, regardless of age. A three-year-old dog who never received the full puppy vaccine series, or whose owner let boosters lapse, carries real risk. So does an adult dog with a weakened immune system from another illness, cancer treatment, or long-term steroid use.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Even fully vaccinated adult dogs can occasionally get what is called a breakthrough infection. No vaccine is 100 percent effective in 100 percent of dogs, and parvo is no exception. These cases are uncommon and the vaccine remains the single most effective tool against the disease, but "vaccinated" does not mean "impossible."',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Senior dogs carry a similar risk profile to other unvaccinated adults. If an older dog never had the puppy series, or if their immune system has weakened with age or illness, they are just as exposed as any other unprotected dog.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why Adult Cases Get Missed More Often',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Here is the part that matters most for owners. When an adult or senior dog gets parvo, the symptoms are often milder than what is seen in puppies, because a more mature immune system can put up more of a fight. Lethargy, appetite loss, vomiting, and diarrhea in an older dog get chalked up to something else almost every time: a stomach bug, something they ate, just getting old.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'That assumption is understandable, but it is the same trap that costs puppies their best treatment window. An unvaccinated adult dog with vomiting, diarrhea, and lethargy deserves a parvo test just as much as a puppy does, especially if there is any gap in their vaccine history or any known exposure to a sick dog or a contaminated environment. If you are trying to tell the difference between an upset stomach and something worse, our guide on ',
+          { text: 'how to know if your dog has parvo', href: '/blog/how-do-i-know-if-my-dog-has-parvo' },
+          ' walks through the early signs.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Adult dogs with milder symptoms can also still shed the virus and infect other dogs, including puppies in the same household, without ever looking seriously ill themselves.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Puts an Adult Dog at Higher Risk',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'A few factors stack the odds against an adult dog if they are exposed.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'No vaccine history or an incomplete puppy series. Vaccine boosters that have lapsed past the recommended schedule. A compromised immune system from illness, medication, or age.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Breeds with documented higher susceptibility, including Rottweilers, Doberman Pinschers, American Pit Bull Terriers, Labrador Retrievers, and English Springer Spaniels.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'And recent exposure to an infected dog, a contaminated yard, or shared spaces like dog parks and boarding facilities. None of these guarantee a bad outcome, but they are the pattern worth knowing if you have an adult dog with an uncertain vaccine history.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Vaccine Schedule Adult Dogs Still Need',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The puppy series is only the start. After the initial series finishes around 16 weeks, dogs need a booster at one year old, followed by boosters roughly every three years for the rest of their life. Skipping these boosters is one of the more common reasons an adult dog ends up unprotected without the owner realizing it.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If you have adopted an adult dog and do not have clear vaccine records, that is worth a conversation with your vet. Catching an adult dog up on a lapsed or unknown vaccine history is a straightforward fix for what is otherwise a real and preventable risk.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why This Matters Beyond the Individual Dog',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'An adult dog with a mild, easy-to-miss case of parvo can still contaminate a yard for months. The virus survives in soil and on surfaces for a long time, regardless of the age of the dog that shed it there. That means an under-recognized case in an older dog can quietly become the reason a puppy in the same household, or the next puppy brought into that yard, gets seriously sick later. If that happens, our guide on ',
+          { text: 'whether a puppy can survive parvovirus', href: '/blog/can-my-puppy-survive-parvovirus' },
+          ' covers what treatment and recovery actually look like.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'This is part of why checking ',
+          { text: 'ParvoMaps', href: '/' },
+          ' is useful even for owners of adult dogs. A confirmed case reported nearby does not only matter to puppy owners. If your adult dog\'s vaccine history is uncertain and there has been a recent report in your area, that is a reason to get their status confirmed rather than assume age alone protects them. You can ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so a new nearby case reaches you before your dog ever shows a symptom.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Bottom Line',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Parvo is not exclusively a puppy disease. It is overwhelmingly a disease of unprotected dogs, and most of those happen to be puppies because that is the age window with the biggest protection gap. But any dog without full, current vaccination carries real risk, at any age.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The safest assumption is not "my dog is too old for this." It is "my dog is protected because their vaccines are current," which is a fact you can actually confirm. If something seems off and you want to know what is moving through your area, ',
+          { text: 'check the live map', href: '/' },
+          ' and read more about ',
+          { text: 'parvovirus itself', href: '/diseases/parvo' },
+          '.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Can adult dogs get parvo?',
+        answer:
+          'Yes. Any unvaccinated or incompletely vaccinated dog can get parvo regardless of age, including adults and seniors whose puppy series was never finished or whose boosters have lapsed. Even fully vaccinated adult dogs can occasionally get a breakthrough infection, because no vaccine is 100 percent effective in every dog. Parvo is best understood as a disease of unprotected dogs, not strictly a puppy disease.',
+      },
+      {
+        question: 'Why do adult parvo cases get missed?',
+        answer:
+          'A more mature immune system often produces milder symptoms, so lethargy, appetite loss, vomiting, and diarrhea in an adult dog get blamed on a stomach bug, something they ate, or old age. That delay is the same trap that costs puppies their best treatment window. An unvaccinated adult dog with those symptoms deserves a parvo test, especially with any gap in vaccine history or known exposure to a sick dog or contaminated environment.',
+      },
+      {
+        question: 'Do adult dogs need parvo booster shots?',
+        answer:
+          'Yes. After the puppy series finishes around 16 weeks, dogs need a booster at one year old, then boosters roughly every three years for life. Lapsed boosters are a common reason an adult dog ends up unprotected without the owner realizing it. If you adopted an adult dog without clear vaccine records, ask your vet about catching them up.',
+      },
+      {
+        question: 'Can a vaccinated dog still get parvo?',
+        answer:
+          'It is uncommon, but yes. No vaccine is 100 percent effective in 100 percent of dogs, so a fully vaccinated dog can occasionally have a breakthrough infection. The vaccine remains the single most effective tool against parvo, but a vaccinated dog showing classic symptoms should still be taken seriously rather than dismissed.',
+      },
+    ],
+  },
+  {
     slug: 'can-my-puppy-survive-parvovirus',
     title: 'Can My Puppy Survive Parvovirus?',
     description:
       'Most puppies survive parvo with prompt care. What survival actually depends on, what recovery looks like, and how breed, age, and vaccine status move the odds.',
+    category: 'Treatment & Recovery',
     datePublished: '2026-06-25',
     author: 'ParvoMaps',
     coverImage: '/article-images/puppy-laying-in-crate.png',
@@ -392,6 +611,7 @@ const POSTS: BlogPost[] = [
     title: "What's the Cost of Treating Parvo in Dogs?",
     description:
       'Why parvo bills range from $400 to $5,000, what each line item actually pays for, and the options that exist when full hospitalization is out of reach.',
+    category: 'Treatment & Recovery',
     datePublished: '2026-06-24',
     author: 'ParvoMaps',
     coverImage: '/article-images/parvo-invoice.png',
@@ -735,6 +955,7 @@ const POSTS: BlogPost[] = [
     title: 'How Do I Know If My Dog Has Parvo?',
     description:
       'What parvo actually looks like in real life, how it is diagnosed, the honest survival odds, and why acting the same day is the single biggest variable.',
+    category: 'Symptoms & Diagnosis',
     datePublished: '2026-06-23',
     author: 'ParvoMaps',
     coverImage: '/article-images/puppy-testing-positive-for-parvo.png',
