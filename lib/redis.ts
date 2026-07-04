@@ -187,6 +187,20 @@ export async function getReports({ limit = 500 }: { limit?: number } = {}): Prom
   }
 }
 
+/** Strip internal-only moderation fields from a verified report before it is
+ *  exposed to the public web. `country` (submitter-IP geolocation), `notes`, and
+ *  `source` are moderation signals, not public data — the /api/reports feed omits
+ *  them, and so must any server component that serializes reports into the client
+ *  payload (every prop handed to a Client Component ships to the browser). The
+ *  map + ticker never read these fields. */
+export function toPublicReport(r: Report): Report {
+  const pub = { ...r }
+  delete pub.country
+  delete pub.notes
+  delete pub.source
+  return pub
+}
+
 /** Fetch verified reports alongside their exact stored string (needed to zrem
  *  a specific member). Used by the cleanup cron and the lost-dog remove route. */
 export async function getVerifiedRaw(limit = 5000): Promise<{ raw: string; report: Report }[]> {

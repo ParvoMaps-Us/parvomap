@@ -8,7 +8,7 @@ import ReportForm from '@/components/ReportForm'
 import Footer from '@/components/Footer'
 import VerifiedBanner from '@/components/VerifiedBanner'
 import WelcomePopup from '@/components/WelcomePopup'
-import { getReports, getStats } from '@/lib/redis'
+import { getReports, getStats, toPublicReport } from '@/lib/redis'
 
 export default async function HomePage({
   searchParams,
@@ -26,6 +26,10 @@ export default async function HomePage({
     console.error('Redis not available:', e)
   }
 
+  // Strip internal moderation fields (country/notes/source) before these reports
+  // are serialized into the client payload for every anonymous visitor.
+  const publicReports = reports.map(toPublicReport)
+
   return (
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
@@ -35,11 +39,11 @@ export default async function HomePage({
       <WelcomePopup />
       {verified && <VerifiedBanner status={verified} />}
       {removed && <VerifiedBanner status={removed} param="removed" />}
-      {reports.length > 0 && <Ticker reports={reports} />}
+      {publicReports.length > 0 && <Ticker reports={publicReports} />}
       <Header />
       <StatsBar {...stats} />
       <FilterBar />
-      <Map reports={reports} />
+      <Map reports={publicReports} />
       <main id="main-content">
         {stats.last48 > 0 && (
           <div className="alert-strip">

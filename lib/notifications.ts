@@ -76,7 +76,7 @@ export async function sendVerificationEmail(
     <h1 style="font-size:28px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#f0f0f0;margin:0 0 8px;">Verify Your Report</h1>
 
     <p style="color:#888;font-size:14px;margin:0 0 24px;line-height:1.6;">
-      Your ${subjectThing} report near <strong style="color:#f0f0f0">${areaLabel(report)}</strong> has been received.
+      Your ${esc(subjectThing)} report near <strong style="color:#f0f0f0">${esc(areaLabel(report))}</strong> has been received.
       Your pin is currently showing as unverified on the map.
     </p>
 
@@ -137,7 +137,7 @@ export async function sendVerificationConfirmation(
     <h1 style="font-size:28px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#f0f0f0;margin:0 0 16px;">Your Pin Is Live</h1>
 
     <p style="color:#888;font-size:14px;margin:0 0 16px;line-height:1.6;">
-      Your ${subjectThing} report near <strong style="color:#f0f0f0">${areaLabel(report)}</strong> is now verified and showing on the map in full color.
+      Your ${esc(subjectThing)} report near <strong style="color:#f0f0f0">${esc(areaLabel(report))}</strong> is now verified and showing on the map in full color.
     </p>
 
     ${report.kind === 'lost' ? `
@@ -312,6 +312,43 @@ export async function sendAlertMagicLink(email: string, manageUrl: string): Prom
     </a>
     <p style="color:#555;font-size:12px;margin:24px 0 0;line-height:1.6;">
       This link expires in 24 hours. If you did not request it, you can ignore this email.
+    </p>
+    <div style="border-top:1px solid #222;margin:32px 0;"></div>
+    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease Tracker · parvomaps.us</p>
+  </div>
+</body>
+</html>`,
+  })
+}
+
+// ─── BILLING PORTAL LINK ──────────────────────────────────────────────────────
+// Emailed rather than returned to the caller: the portal grants full billing
+// access (invoices, payment method, cancellation), so we deliver it only to the
+// mailbox that owns the subscription — never to whoever typed an email into the
+// form. Closes the IDOR + subscriber-enumeration vectors on /api/portal.
+
+export async function sendBillingPortalLink(email: string, portalUrl: string): Promise<void> {
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject: 'Manage your ParvoMaps billing',
+    html: `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    <div style="margin-bottom:32px;">
+      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
+    </div>
+    <h1 style="font-size:24px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#f0f0f0;margin:0 0 16px;">Manage Your Billing</h1>
+    <p style="color:#888;font-size:14px;margin:0 0 28px;line-height:1.6;">
+      Click below to open your secure billing portal, where you can update your payment method, view invoices, or cancel.
+    </p>
+    <a href="${portalUrl}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;padding:14px 32px;margin-bottom:24px;">
+      Open Billing Portal →
+    </a>
+    <p style="color:#555;font-size:12px;margin:24px 0 0;line-height:1.6;">
+      This link is single-use and expires shortly. If you did not request it, you can ignore this email — no changes were made.
     </p>
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
     <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease Tracker · parvomaps.us</p>

@@ -1,15 +1,19 @@
 import { NextRequest } from 'next/server'
 import { getStripe } from '@/lib/stripe'
 import { findSubscriberCustomerId } from '@/lib/alerts'
+import { sendBillingPortalLink } from '@/lib/notifications'
 import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
+import { maskEmail } from '@/lib/log'
 
-// Opens the Stripe Customer Portal so a member can update payment, view invoices,
-// or cancel. We look up their Stripe customer id by email, then mint a portal
-// session. (The portal must be enabled once in Stripe → Settings → Billing →
-// Customer portal.)
+// Emails a member a link to the Stripe Customer Portal (update payment, view
+// invoices, cancel). We deliberately do NOT return the portal URL to the caller:
+// that would let anyone who knows/guesses a subscriber's email open that
+// person's billing portal (IDOR), and the success/failure difference would leak
+// who is a subscriber (enumeration). Instead we verify email ownership by
+// sending the link to the mailbox, and always respond identically.
+// (The portal must be enabled once in Stripe → Settings → Billing → Customer portal.)
 export async function POST(req: NextRequest) {
-  // The "no subscription found" error reveals whether an email is a subscriber;
-  // throttle to make enumeration impractical.
+  // Sends an email per request → email-bomb + enumeration surface. Cap per IP.
   const rl = await checkRateLimit(req, 'portal', 5, '1 m')
   if (!rl.ok) {
     return rateLimitResponse(rl.retryAfterSeconds)
@@ -32,26 +36,34 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: 'Enter a valid email.' }, { status: 400 })
   }
 
-  const customerId = await findSubscriberCustomerId(email)
-  if (!customerId) {
-    return Response.json(
-      { error: 'No subscription found for that email. Use the email you checked out with.' },
-      { status: 404 },
-    )
-  }
-
-  const origin = req.headers.get('origin') ?? 'https://www.parvomaps.us'
-
+  // Only mint + send a portal link if the email actually owns a subscription —
+  // but respond the same way regardless so the endpoint can't be used to probe
+  // who is a subscriber.
   try {
-    const session = await stripe.billingPortal.sessions.create({
-      customer:   customerId,
-      return_url: `${origin}/account`,
-    })
-    return Response.json({ url: session.url })
+    const customerId = await findSubscriberCustomerId(email)
+    if (customerId) {
+      const session = await stripe.billingPortal.sessions.create({
+        customer:   customerId,
+        // Fixed trusted return host — never the client-controlled Origin header.
+        return_url: 'https://www.parvomaps.us/account',
+      })
+      try {
+        await sendBillingPortalLink(email, session.url)
+      } catch (e) {
+        console.error('Billing portal email failed:', e)
+      }
+    } else {
+      console.log('Billing portal requested by non-subscriber:', maskEmail(email))
+    }
   } catch (e) {
     console.error('Portal session error:', e)
-    return Response.json({ error: 'Could not open billing portal. Please try again.' }, { status: 500 })
   }
+
+  // Generic response regardless of subscription status.
+  return Response.json({
+    ok: true,
+    message: 'If that email has a subscription, a link to manage billing is on its way.',
+  })
 }
 
 export async function GET() {

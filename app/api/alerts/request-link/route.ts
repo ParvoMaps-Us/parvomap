@@ -53,7 +53,14 @@ export async function POST(req: NextRequest) {
     // the endpoint can't be used to probe who has an account.
     if (await isActiveSubscriber(email)) {
       const { exp, token } = makeMagicToken(email)
-      const origin = req.headers.get('origin') ?? 'https://www.parvomaps.us'
+      // Build the link from a TRUSTED host, never the client-controlled Origin
+      // header: a spoofed Origin would email the real subscriber a valid link
+      // pointing at an attacker's host, exfiltrating the token on click. Tokens
+      // are host-independent, so the canonical public host always works. Dev
+      // keeps using the request origin for localhost convenience.
+      const origin = process.env.NODE_ENV === 'production'
+        ? 'https://www.parvomaps.us'
+        : (req.headers.get('origin') ?? 'https://www.parvomaps.us')
       const url = `${origin}/alerts/manage?e=${encodeURIComponent(email)}&exp=${exp}&t=${token}`
       try {
         await sendAlertMagicLink(email, url)
