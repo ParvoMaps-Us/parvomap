@@ -72,6 +72,118 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'how-long-is-kennel-cough-contagious',
+    title: 'How Long Is Kennel Cough Contagious?',
+    description:
+      'How long kennel cough stays contagious depends on the pathogen. The general timeline, the boarding rule of thumb, why it spreads so easily, and when to see a vet.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-04',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/kennel-cough-contagious.webp',
+    coverAlt: 'A dog with a honking cough being kept away from other dogs',
+    readingMinutes: 6,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          "If your dog has that unmistakable honking cough and you are trying to figure out when it is safe to be around other dogs again, the honest answer depends on which pathogen is behind it, and that is part of what makes ",
+          { text: 'kennel cough', href: '/diseases/kennel' },
+          ' tricky to plan around.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The General Timeline',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Kennel cough, more accurately called canine infectious tracheobronchitis, is not caused by a single germ. It is a syndrome caused by a combination of viruses and bacteria, most commonly Bordetella bronchiseptica along with canine parainfluenza virus and adenovirus. Most cases resolve on their own within 10 to 20 days.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Contagiousness does not line up perfectly with symptoms, though. Dogs infected with Bordetella specifically can remain contagious for up to 14 days after their coughing has fully stopped. Some dogs, depending on the exact pathogen involved, can shed and spread the infection for several weeks or even months in less common cases.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Boarding and Daycare Rule of Thumb',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Most boarding facilities and daycares use a general guideline of 7 days symptom-free before a dog is cleared to return. That is a reasonable middle ground, but it is a guideline, not a guarantee, since some dogs keep shedding pathogens beyond that window. If your dog had a more severe or prolonged case, ask your vet directly whether more time is warranted before reintroducing them to group settings.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why It Spreads So Easily',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Part of what makes kennel cough so persistent in group environments is that the pathogens involved can survive on surfaces for weeks, sometimes longer, in an environment that is not properly cleaned. A quick spray and wipe is not enough. Effective disinfection requires several minutes of contact time with a product that actually kills the specific pathogens involved, which is why outbreaks move so efficiently through kennels, shelters, and dog parks.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Does the Vaccine Prevent It?',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The kennel cough vaccine typically protects against Bordetella specifically. Since kennel cough can be caused by more than a dozen different viruses and bacteria in combination, a vaccinated dog can still catch a version of it caused by a different pathogen the vaccine does not cover. This is why some vaccinated dogs still come down with a cough after daycare or boarding, and it does not mean the vaccine failed. It means a different piece of the kennel cough puzzle got through.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: "When It's More Than Just Kennel Cough",
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Kennel cough is rarely dangerous on its own, but it can escalate into pneumonia in puppies, senior dogs, or dogs with weakened immune systems. If the cough is paired with lethargy, appetite loss, fever, or labored breathing, that is no longer a simple kennel cough case and needs a same-day vet visit.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If you are weighing whether it is safe to bring your dog to a park or daycare where a case has been reported, ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks kennel cough reports alongside other contagious conditions, so you can ',
+          { text: 'see if something has been circulating', href: '/diseases/kennel' },
+          ' in your area before you go. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so a nearby case reaches you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'How long is kennel cough contagious?',
+        answer:
+          'It depends on the pathogen. Most cases resolve within 10 to 20 days, but dogs infected with Bordetella can stay contagious for up to 14 days after coughing stops, and some dogs shed the infection for several weeks or even months in less common cases. Contagiousness does not line up perfectly with visible symptoms.',
+      },
+      {
+        question: 'How long should a dog stay home from daycare or boarding with kennel cough?',
+        answer:
+          'Most facilities use a rule of thumb of 7 days symptom-free before a dog returns. That is a reasonable middle ground but not a guarantee, since some dogs keep shedding beyond that window. After a severe or prolonged case, ask your vet whether more time is warranted before group settings.',
+      },
+      {
+        question: 'Can a vaccinated dog still get kennel cough?',
+        answer:
+          'Yes. The vaccine typically protects against Bordetella specifically, but kennel cough can be caused by more than a dozen viruses and bacteria in combination. A vaccinated dog can still catch a version caused by a pathogen the vaccine does not cover. That is not vaccine failure; it means a different piece of the puzzle got through.',
+      },
+      {
+        question: 'When is kennel cough serious enough to see a vet?',
+        answer:
+          'Kennel cough is rarely dangerous on its own, but it can progress to pneumonia in puppies, senior dogs, and immunocompromised dogs. If the cough comes with lethargy, appetite loss, fever, or labored breathing, treat it as urgent and get a same-day vet visit.',
+      },
+    ],
+  },
+  {
     slug: 'parvo-vs-distemper-symptoms',
     title: "What's the Difference Between Parvo and Distemper Symptoms?",
     description:
