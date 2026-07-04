@@ -79,8 +79,8 @@ const POSTS: BlogPost[] = [
     category: 'Prevention & Risk',
     datePublished: '2026-07-03',
     author: 'ParvoMaps',
-    coverImage: '/article-images/puppy-laying-in-crate.png',
-    coverAlt: 'An adult dog resting at home while recovering from parvovirus',
+    coverImage: '/article-images/dog-parvo-early.webp',
+    coverAlt: 'A lethargic dog showing early signs of parvo',
     readingMinutes: 8,
     body: [
       {
@@ -271,7 +271,7 @@ const POSTS: BlogPost[] = [
     category: 'Treatment & Recovery',
     datePublished: '2026-06-25',
     author: 'ParvoMaps',
-    coverImage: '/article-images/puppy-laying-in-crate.png',
+    coverImage: '/article-images/puppy-laying-in-crate.webp',
     coverAlt: 'A puppy resting in a crate while recovering from parvovirus',
     readingMinutes: 12,
     body: [
@@ -614,7 +614,7 @@ const POSTS: BlogPost[] = [
     category: 'Treatment & Recovery',
     datePublished: '2026-06-24',
     author: 'ParvoMaps',
-    coverImage: '/article-images/parvo-invoice.png',
+    coverImage: '/article-images/parvo-invoice.webp',
     coverAlt: 'An itemized veterinary invoice for parvo treatment',
     readingMinutes: 11,
     body: [
@@ -958,7 +958,7 @@ const POSTS: BlogPost[] = [
     category: 'Symptoms & Diagnosis',
     datePublished: '2026-06-23',
     author: 'ParvoMaps',
-    coverImage: '/article-images/puppy-testing-positive-for-parvo.png',
+    coverImage: '/article-images/puppy-testing-positive-for-parvo.webp',
     coverAlt: 'A puppy at the vet testing positive for parvovirus',
     readingMinutes: 9,
     body: [
