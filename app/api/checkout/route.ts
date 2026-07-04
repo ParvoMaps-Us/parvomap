@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { getStripe, priceIdFor, PLANS, type PlanKey } from '@/lib/stripe'
-import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
+import { checkRateLimit, checkGlobalRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 // Same canonical-host CORS dance as /api/report: the pricing page may post from
 // the apex or the www host, and a cross-origin 308 redirect would silently drop
@@ -29,11 +29,21 @@ export async function OPTIONS(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const cors = corsHeaders(req.headers.get('origin'))
 
-  // Each call creates a Stripe Checkout Session; keep scripted abuse from
-  // piling up sessions. 10/min is far above a human clicking the pricing page.
-  const rl = await checkRateLimit(req, 'checkout', 10, '1 m')
+  // Card-testing defense (layer 1 — Stripe Radar is the authoritative layer).
+  // Each call creates a Stripe Checkout Session; a flood of them feeding stolen
+  // cards into the hosted page is what trips Stripe's fraud review. Two caps:
+  //   • Per-IP: 5/min is far above a human clicking the pricing page.
+  //   • Global: a circuit breaker that still bites when the attacker rotates IPs.
+  //     Real aggregate checkout volume here is a handful/day, so 20/min only
+  //     trips under an actual flood. When it does, everyone briefly gets 429 —
+  //     preferable to Stripe freezing the account.
+  const rl = await checkRateLimit(req, 'checkout', 5, '1 m')
   if (!rl.ok) {
     return rateLimitResponse(rl.retryAfterSeconds, cors)
+  }
+  const gl = await checkGlobalRateLimit('checkout-global', 20, '1 m')
+  if (!gl.ok) {
+    return rateLimitResponse(gl.retryAfterSeconds, cors)
   }
 
   const stripe = getStripe()

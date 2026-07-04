@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { createHash, timingSafeEqual } from 'crypto'
 import { cookies } from 'next/headers'
 import { verifyMagicToken, readClinicSession, CLINIC_SESSION_COOKIE } from '@/lib/magic-link'
 import { isProClinic } from '@/lib/alerts'
@@ -31,9 +32,18 @@ function toCsv(rows: Report[]): string {
 
 /** Authorize via (in priority order): a shared CLINIC_API_KEY (programmatic),
  *  the clinic session cookie (in-dashboard download), or a magic-link token. */
+/** Constant-time compare of the shared API key. Hashing both sides first gives
+ *  timingSafeEqual equal-length buffers and hides the real key's length. */
+function apiKeyMatches(supplied: string | null): boolean {
+  const expected = process.env.CLINIC_API_KEY
+  if (!expected || !supplied) return false
+  const a = createHash('sha256').update(supplied).digest()
+  const b = createHash('sha256').update(expected).digest()
+  return timingSafeEqual(a, b)
+}
+
 async function authorize(p: URLSearchParams): Promise<boolean> {
-  const key = process.env.CLINIC_API_KEY
-  if (key && p.get('key') === key) return true
+  if (apiKeyMatches(p.get('key'))) return true
 
   const cookieStore = await cookies()
   const sessionEmail = readClinicSession(cookieStore.get(CLINIC_SESSION_COOKIE)?.value)

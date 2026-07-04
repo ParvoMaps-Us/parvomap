@@ -73,6 +73,34 @@ export async function checkRateLimit(
   }
 }
 
+/** Check a GLOBAL rate limit — a single shared bucket for a named action, not
+ *  keyed by IP. This is a circuit breaker for distributed / IP-rotating abuse
+ *  (e.g. card-testing bots hitting checkout from many IPs): once total traffic
+ *  to the action exceeds `limit` within `window`, every caller gets 429 until
+ *  the window resets. Set the cap well above real aggregate volume so it only
+ *  trips under a flood. Trade-off: during an active attack legitimate users are
+ *  throttled too — an acceptable price to avoid a Stripe fraud freeze, and we
+ *  log when it trips so the spike is visible. Fails open like the per-IP limiter. */
+export async function checkGlobalRateLimit(
+  name: string,
+  limit: number,
+  window: `${number} ${'s' | 'm' | 'h' | 'd'}`
+): Promise<RateLimitResult> {
+  const limiter = getLimiter(name, limit, window)
+  if (!limiter) return { ok: true, retryAfterSeconds: 0 }
+  try {
+    const { success, reset } = await limiter.limit(`global:${name}`)
+    if (!success) console.warn(`Global rate limit tripped (${name}) — possible flood/abuse`)
+    return {
+      ok: success,
+      retryAfterSeconds: Math.max(1, Math.ceil((reset - Date.now()) / 1000)),
+    }
+  } catch (e) {
+    console.error(`Global rate limit check failed (${name}):`, e)
+    return { ok: true, retryAfterSeconds: 0 }
+  }
+}
+
 /** Standard 429 response */
 export function rateLimitResponse(
   retryAfterSeconds: number,

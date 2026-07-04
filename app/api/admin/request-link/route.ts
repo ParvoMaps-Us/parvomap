@@ -34,9 +34,12 @@ export async function POST(req: NextRequest) {
   const passOk = checkAdminPassword(password)
   if (isAdminEmail(email) && passOk) {
     const { exp, token } = makeAdminToken(email)
-    // Build the link from the request origin so it works on localhost and prod
-    // alike. Fall back to the canonical host if the header is somehow absent.
-    const origin = req.headers.get('origin') ?? req.nextUrl.origin ?? 'https://www.parvomaps.us'
+    // Use the request's OWN origin (Host-derived), not the client-settable
+    // Origin header: a spoofed Origin would email the admin a link pointing at
+    // an attacker's host. Admin lives on the deployment host (blocked on the
+    // public domain), and Vercel routing constrains the Host to this project's
+    // domains, so nextUrl.origin is the correct trusted value here.
+    const origin = req.nextUrl.origin
     const url = `${origin}/api/admin/login?e=${encodeURIComponent(email)}&exp=${exp}&t=${token}`
     try {
       await sendAdminMagicLink(email, url)

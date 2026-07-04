@@ -52,7 +52,14 @@ export async function POST(req: NextRequest) {
     // way so the endpoint can't be used to probe who has which plan.
     if (await isProClinic(email)) {
       const { exp, token } = makeMagicToken(email)
-      const origin = req.headers.get('origin') ?? 'https://www.parvomaps.us'
+      // Build the link from a TRUSTED host, never the client-controlled Origin
+      // header: a spoofed Origin would email the real clinic a valid link
+      // pointing at an attacker's host, exfiltrating the session token (which
+      // grants dashboard + case-data export) on click. Tokens are
+      // host-independent, so the canonical public host always works.
+      const origin = process.env.NODE_ENV === 'production'
+        ? 'https://www.parvomaps.us'
+        : (req.headers.get('origin') ?? 'https://www.parvomaps.us')
       const url = `${origin}/api/clinic/login?e=${encodeURIComponent(email)}&exp=${exp}&t=${token}`
       try {
         await sendClinicMagicLink(email, url)
