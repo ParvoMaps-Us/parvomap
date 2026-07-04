@@ -72,6 +72,134 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'parvo-vs-distemper-symptoms',
+    title: "What's the Difference Between Parvo and Distemper Symptoms?",
+    description:
+      'Parvo and distemper look alike early but attack different systems. How to tell the symptoms apart, why the first move is the same, and what prevents both.',
+    category: 'Symptoms & Diagnosis',
+    datePublished: '2026-07-03',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/parvo-vs-distemper.webp',
+    coverAlt: 'A sick dog being examined at the vet for parvo or distemper',
+    readingMinutes: 6,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'Parvo and distemper get confused constantly, and it makes sense why. Both are serious, both hit young unvaccinated dogs hardest, and both start with symptoms that look a lot like a generic stomach bug. But they are different viruses attacking different parts of the body, and knowing the distinction matters for how urgently you act and what your vet tests for.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Parvo Looks Like',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          { text: 'Parvovirus', href: '/diseases/parvo' },
+          ' goes after the gut first. The signature symptoms are severe vomiting and profuse, often bloody diarrhea with a distinctive foul odor. Appetite loss and lethargy show up early, followed quickly by dehydration as fluids pour out through vomiting and diarrhea. Parvo is diagnosed with a fecal swab test that most clinics run in-house in about ten minutes.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Parvo stays contained to the gastrointestinal system and, in very young puppies, can affect the heart. It does not typically cause neurological symptoms like seizures or tremors. If you want the full picture of how it presents, our guide on ',
+          { text: 'how to know if your dog has parvo', href: '/blog/how-do-i-know-if-my-dog-has-parvo' },
+          ' walks through the early signs.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Distemper Looks Like',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          { text: 'Distemper', href: '/diseases/distemper' },
+          ' is a different animal entirely, in more ways than one. It starts similarly, with fever, lethargy, appetite loss, and sometimes vomiting or diarrhea, which is exactly why the two get mixed up in the early stages. But distemper does not stop at the gut. It moves through the respiratory system, causing coughing and nasal or eye discharge, then can progress into the nervous system, causing muscle twitching, seizures, and uncoordinated movement.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Distemper is caused by a virus related to measles and spreads through airborne droplets and direct contact, not just fecal exposure like parvo. It also affects wildlife including raccoons, foxes, and skunks, which means a dog can be exposed without ever encountering another sick dog directly.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Key Differences to Watch For',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The clearest distinguishing signs come later in the disease course, but a few patterns help separate them early.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Parvo centers on the gut: bloody diarrhea and repeated vomiting are the hallmark. Distemper centers on multiple systems: respiratory symptoms like coughing and eye discharge often show up alongside or before GI symptoms.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Neurological symptoms, including twitching, seizures, and muscle spasms sometimes described as looking like chewing gum, point toward distemper, not parvo. And distemper can come from wildlife exposure alone, while parvo requires exposure to contaminated feces or a contaminated environment.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: "Why the Distinction Matters Less Than You'd Think in the Moment",
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Here is the practical truth. If your dog is showing any combination of lethargy, appetite loss, vomiting, or diarrhea, the correct move is the same regardless of which virus it turns out to be: get to a vet today, not tomorrow. Vets can test for both, and treatment for both is supportive care rather than a virus-specific cure. The urgency does not change based on which one it is. What changes is what your vet watches for next, and whether other dogs or wildlife in the area might be at risk too.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Both diseases are preventable with the same core vaccine series, usually combined into one shot often labeled DAPP or DA2PP. Staying current on that vaccine protects against both at once.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If there is a confirmed case of either reported near you, ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks both parvo and distemper separately, since they spread differently and carry different risks. Checking ',
+          { text: 'the live map', href: '/' },
+          ' before a walk in a new area, especially one with wildlife activity, is a low-effort way to catch a warning most owners never get. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' for your area.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'What is the main difference between parvo and distemper symptoms?',
+        answer:
+          'Parvo centers on the gut: severe vomiting and profuse, often bloody diarrhea are the hallmark. Distemper attacks multiple systems, so it adds respiratory signs like coughing and nasal or eye discharge, and can progress to neurological symptoms such as twitching, seizures, and uncoordinated movement. Both can start with fever, lethargy, and appetite loss, which is why they get confused early.',
+      },
+      {
+        question: 'Do parvo and distemper spread the same way?',
+        answer:
+          'No. Parvo spreads through contaminated feces and environments, so it requires exposure to the virus a sick dog shed. Distemper spreads through airborne droplets and direct contact, and it also infects wildlife like raccoons, foxes, and skunks, meaning a dog can catch it without ever meeting another sick dog.',
+      },
+      {
+        question: 'Does the same vaccine prevent both parvo and distemper?',
+        answer:
+          'Yes. Both are covered by the same core vaccine series, usually combined into one shot labeled DAPP or DA2PP. Staying current on that vaccine protects against both at once.',
+      },
+      {
+        question: 'If I cannot tell whether it is parvo or distemper, what should I do?',
+        answer:
+          'Treat it as urgent either way. Any combination of lethargy, appetite loss, vomiting, or diarrhea in a young or unvaccinated dog warrants a same-day vet visit. Vets can test for both, and treatment for both is supportive care, so the urgency does not change based on which virus it turns out to be.',
+      },
+    ],
+  },
+  {
     slug: 'can-adult-dogs-get-parvo',
     title: 'Can Adult Dogs Get Parvo, or Is It Just Puppies?',
     description:
