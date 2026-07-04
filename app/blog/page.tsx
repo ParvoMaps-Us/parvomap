@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { BLOG_POSTS } from '@/lib/blog'
+import { BLOG_POSTS, BLOG_CATEGORIES, type BlogPost } from '@/lib/blog'
 import { buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = buildMetadata({
@@ -25,7 +25,37 @@ function fmtDate(iso: string): string {
   return new Date(iso + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 }
 
+/** A single post card. Reused across every category section. */
+function PostCard({ post }: { post: BlogPost }) {
+  return (
+    <Link href={`/blog/${post.slug}`} style={card}>
+      <div style={{ position: 'relative', width: '100%', aspectRatio: '1200 / 630', background: 'var(--bg-surface)' }}>
+        <Image
+          src={post.coverImage}
+          alt={post.coverAlt}
+          fill
+          sizes="(max-width: 700px) 100vw, 420px"
+          style={{ objectFit: 'cover' }}
+        />
+      </div>
+      <div style={{ padding: 16 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 6px', lineHeight: 1.35 }}>{post.title}</h3>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, margin: '0 0 10px' }}>{post.description}</p>
+        <div style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>
+          {fmtDate(post.datePublished)} · {post.readingMinutes} min read
+        </div>
+      </div>
+    </Link>
+  )
+}
+
 export default function BlogIndexPage() {
+  // Group posts by category, preserving the newest-first order of BLOG_POSTS.
+  const sections = BLOG_CATEGORIES.map(cat => ({
+    ...cat,
+    posts: BLOG_POSTS.filter(p => p.category === cat.name),
+  })).filter(s => s.posts.length > 0)
+
   return (
     <main style={wrap}>
       <div style={{ marginBottom: 16 }}>
@@ -39,31 +69,20 @@ export default function BlogIndexPage() {
         <Link href="/outbreaks" style={{ color: 'var(--green)' }}>live outbreaks by state</Link>.
       </p>
 
-      {BLOG_POSTS.length === 0 ? (
+      {sections.length === 0 ? (
         <p style={{ fontSize: 14, color: 'var(--text-dim)' }}>No posts yet. Check back soon.</p>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 18 }}>
-          {BLOG_POSTS.map(post => (
-            <Link key={post.slug} href={`/blog/${post.slug}`} style={card}>
-              <div style={{ position: 'relative', width: '100%', aspectRatio: '1200 / 630', background: 'var(--bg-surface)' }}>
-                <Image
-                  src={post.coverImage}
-                  alt={post.coverAlt}
-                  fill
-                  sizes="(max-width: 700px) 100vw, 420px"
-                  style={{ objectFit: 'cover' }}
-                />
-              </div>
-              <div style={{ padding: 16 }}>
-                <h2 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 6px', lineHeight: 1.35 }}>{post.title}</h2>
-                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, margin: '0 0 10px' }}>{post.description}</p>
-                <div style={{ fontSize: 11.5, color: 'var(--text-dim)' }}>
-                  {fmtDate(post.datePublished)} · {post.readingMinutes} min read
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+        sections.map(section => (
+          <section key={section.name} style={{ marginBottom: 40 }}>
+            <h2 style={{ fontSize: 19, fontWeight: 800, margin: '0 0 4px' }}>{section.name}</h2>
+            <p style={{ fontSize: 13.5, color: 'var(--text-dim)', lineHeight: 1.6, margin: '0 0 16px' }}>{section.description}</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 18 }}>
+              {section.posts.map(post => (
+                <PostCard key={post.slug} post={post} />
+              ))}
+            </div>
+          </section>
+        ))
       )}
     </main>
   )

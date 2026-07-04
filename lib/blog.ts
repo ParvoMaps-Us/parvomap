@@ -21,11 +21,37 @@ export interface BlogFaq {
   answer: string
 }
 
+/** Topic clusters used to group posts on the /blog index. Add a new value here
+ *  (and to BLOG_CATEGORIES below) before using it on a post. */
+export type BlogCategory =
+  | 'Symptoms & Diagnosis'
+  | 'Treatment & Recovery'
+  | 'Prevention & Risk'
+
+/** Categories in display order, each with a one-line intro for its section
+ *  header on the index. A category with no posts is skipped when rendering. */
+export const BLOG_CATEGORIES: { name: BlogCategory; description: string }[] = [
+  {
+    name: 'Symptoms & Diagnosis',
+    description: 'Spotting parvo early and knowing what a diagnosis involves.',
+  },
+  {
+    name: 'Treatment & Recovery',
+    description: 'What treatment costs, what it does, and what recovery looks like.',
+  },
+  {
+    name: 'Prevention & Risk',
+    description: 'Vaccines, risk factors, and keeping every dog protected.',
+  },
+]
+
 export interface BlogPost {
   /** lowercase, hyphenated, keyword-rich */
   slug: string
   title: string
   description: string
+  /** Topic cluster this post is grouped under on the index. */
+  category: BlogCategory
   /** ISO date, e.g. "2026-06-23" */
   datePublished: string
   dateModified?: string
@@ -50,6 +76,7 @@ const POSTS: BlogPost[] = [
     title: 'Can Adult Dogs Get Parvo, or Is It Just Puppies?',
     description:
       'Yes, adult dogs can get parvo. Why adult cases get missed, what raises the risk, and the booster schedule that keeps older dogs protected.',
+    category: 'Prevention & Risk',
     datePublished: '2026-07-03',
     author: 'ParvoMaps',
     coverImage: '/article-images/puppy-laying-in-crate.png',
@@ -241,6 +268,7 @@ const POSTS: BlogPost[] = [
     title: 'Can My Puppy Survive Parvovirus?',
     description:
       'Most puppies survive parvo with prompt care. What survival actually depends on, what recovery looks like, and how breed, age, and vaccine status move the odds.',
+    category: 'Treatment & Recovery',
     datePublished: '2026-06-25',
     author: 'ParvoMaps',
     coverImage: '/article-images/puppy-laying-in-crate.png',
@@ -583,6 +611,7 @@ const POSTS: BlogPost[] = [
     title: "What's the Cost of Treating Parvo in Dogs?",
     description:
       'Why parvo bills range from $400 to $5,000, what each line item actually pays for, and the options that exist when full hospitalization is out of reach.',
+    category: 'Treatment & Recovery',
     datePublished: '2026-06-24',
     author: 'ParvoMaps',
     coverImage: '/article-images/parvo-invoice.png',
@@ -926,6 +955,7 @@ const POSTS: BlogPost[] = [
     title: 'How Do I Know If My Dog Has Parvo?',
     description:
       'What parvo actually looks like in real life, how it is diagnosed, the honest survival odds, and why acting the same day is the single biggest variable.',
+    category: 'Symptoms & Diagnosis',
     datePublished: '2026-06-23',
     author: 'ParvoMaps',
     coverImage: '/article-images/puppy-testing-positive-for-parvo.png',
