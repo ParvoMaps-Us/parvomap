@@ -72,6 +72,130 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'early-signs-of-lepto-in-dogs',
+    title: 'What Are the Early Signs of Lepto in Dogs?',
+    description:
+      'The early signs of leptospirosis look like a dozen milder problems. What to watch for, why exposure history is the key, and why acting early prevents organ damage.',
+    category: 'Symptoms & Diagnosis',
+    datePublished: '2026-07-04',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/lepto-early-signs.webp',
+    coverAlt: 'A dog drinking from a puddle, a common source of leptospirosis',
+    readingMinutes: 6,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          { text: 'Leptospirosis', href: '/diseases/leptospira' },
+          ' is one of the sneakier diseases dog owners deal with, because the early signs look almost identical to a dozen less serious problems. Catching it early matters enormously, since this is a disease where delay can mean permanent kidney or liver damage.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Early, Easy-to-Miss Signs',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The most common early indicators are loss of appetite, lethargy, and fever. Some dogs also show a change in how much they are drinking and urinating, either noticeably more or noticeably less than usual. Vomiting and diarrhea often show up around the same time.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'One pattern that throws owners off is a fever that spikes, then seems to break and improve, then returns. That temporary dip can create false reassurance that the dog is getting better on their own, when the infection is actually still active underneath.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'None of these signs are unique to lepto on their own. That is exactly the problem. A dog that is just "a little off" with reduced appetite and some lethargy could have lepto, or could have a dozen more benign things going on. The distinguishing factor is not the symptom itself, it is the exposure history.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'When Lepto Should Be on Your Radar',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Leptospirosis spreads through contact with urine from infected animals, most often wildlife like rats, raccoons, skunks, and deer, and it thrives in standing or slow-moving water. Dogs get infected by drinking from puddles, ponds, or slow streams, or through mucous membranes or skin cuts coming into contact with contaminated soil or water.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If your dog has recently been around standing water, spent time in a rural or wooded area, or lives somewhere with active wildlife traffic, even just in the backyard, and starts showing any combination of the early signs above, that combination is worth a same-day call to your vet. Leptospirosis affects dogs of any age, breed, or lifestyle. It is not limited to rural or outdoor-heavy dogs, since even a fenced urban backyard can be contaminated by a rodent or raccoon passing through.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Happens as It Progresses',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Left unaddressed, lepto typically moves toward kidney involvement, showing up as back pain, changes in urination, and worsening dehydration. It can also affect the liver, sometimes causing yellowing of the gums, skin, or eyes. Some dogs develop bleeding disorders that show up as nosebleeds, bruising, or blood in the stool. Respiratory symptoms and even sudden behavior changes can appear in severe cases.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why Early Action Matters So Much Here',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'When leptospirosis is caught and treated early with antibiotics, most commonly doxycycline, the chance of full recovery is good. Even with prompt, thorough treatment, though, a portion of infected dogs do not survive, which is exactly why vague early symptoms should not get written off as "let\'s wait and see."',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'This disease is also zoonotic, meaning it can spread from dogs to people through contact with urine. If your dog is diagnosed, that is a conversation to have with your own doctor too, not just your vet.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The leptospirosis vaccine protects against the most common strains and is now considered a core vaccine for most dogs. It does not cover every strain that exists, so even a vaccinated dog showing these signs after a likely exposure deserves a vet visit rather than automatic reassurance.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks ',
+          { text: 'leptospirosis reports', href: '/diseases/leptospira' },
+          ' alongside other outbreak categories, which is useful specifically because lepto exposure is tied so closely to environment. Knowing whether cases have been reported near a lake, trail, or park you frequent can change how quickly you act if your dog starts looking off after a visit there. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' for your area.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'What are the early signs of leptospirosis in dogs?',
+        answer:
+          'The most common early signs are loss of appetite, lethargy, and fever, often with increased or decreased drinking and urination, plus vomiting and diarrhea. A telltale pattern is a fever that spikes, seems to break, then returns. None of these are unique to lepto on their own, so recent exposure to standing water or wildlife is the key distinguishing factor.',
+      },
+      {
+        question: 'How do dogs catch leptospirosis?',
+        answer:
+          'Lepto spreads through contact with urine from infected animals, most often wildlife like rats, raccoons, skunks, and deer, and it thrives in standing or slow-moving water. Dogs get infected by drinking from puddles, ponds, or slow streams, or through mucous membranes and skin cuts contacting contaminated soil or water. Even a fenced urban backyard can be contaminated by a rodent or raccoon passing through.',
+      },
+      {
+        question: 'Can a vaccinated dog still get lepto?',
+        answer:
+          'Yes. The leptospirosis vaccine is now considered a core vaccine and protects against the most common strains, but it does not cover every strain. A vaccinated dog showing the early signs after a likely exposure still deserves a vet visit rather than automatic reassurance.',
+      },
+      {
+        question: 'Is leptospirosis contagious to humans?',
+        answer:
+          'Yes, lepto is zoonotic and can spread from dogs to people through contact with infected urine. If your dog is diagnosed, mention it to your own doctor as well as your vet, and take care handling urine and contaminated areas during recovery.',
+      },
+    ],
+  },
+  {
     slug: 'how-long-is-kennel-cough-contagious',
     title: 'How Long Is Kennel Cough Contagious?',
     description:
