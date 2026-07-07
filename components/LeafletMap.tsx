@@ -1,7 +1,17 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import type { Report } from '@/lib/redis'
+import { DISEASE_MAP } from '@/lib/diseases'
 import 'leaflet/dist/leaflet.css'
+
+const DAY_MS = 86_400_000
+
+/** A pin is "historical" once it's older than its disease's TTL (past-TTL pins
+ *  render dimmed and are hidden when the Historical toggle is off). */
+function isHistorical(r: Report): boolean {
+  const ttlDays = DISEASE_MAP[r.disease]?.pinTtlDays ?? 90
+  return Date.now() - r.timestamp > ttlDays * DAY_MS
+}
 
 interface Props {
   reports: Report[]
@@ -72,6 +82,10 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
   const dropModeRef = useRef(false)
   const dropMarkerRef = useRef<any>(null)
   const [dropMode, setDropMode] = useState(false)
+  // Current filter-bar selection. A ref (not state) so the map's one-time effect
+  // reads live values without re-initializing; the FilterBar broadcasts changes
+  // via the 'parvomap:filter' window event.
+  const filterRef = useRef({ disease: 'all', showHistorical: true, showUnverified: true })
 
   // Toggle "drop a pin" mode: next map click drops a draggable pin and prefills
   // the report form with its location.
@@ -357,6 +371,18 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     // individual pins it's made of. Re-rendered on every zoom.
     const BIOHAZARD_THRESHOLD = 10
 
+    // Does a report pass the current filter-bar selection?
+    const matchesFilter = (r: Report): boolean => {
+      const f = filterRef.current
+      // Disease chip: 'all' shows everything; otherwise only the chosen disease.
+      // (Lost-dog pins have their own disease value and hide under any specific
+      // disease selection, which is the desired behavior.)
+      if (f.disease !== 'all' && r.disease !== f.disease) return false
+      if (!f.showHistorical && r.kind !== 'lost' && isHistorical(r)) return false
+      if (!f.showUnverified && r.verified === false) return false
+      return true
+    }
+
     const renderMarkers = () => {
       markerLayer.clearLayers()
       const zoom = map.getZoom()
@@ -364,6 +390,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       const cells = new Map<string, Report[]>()
       reports.forEach(r => {
         if (r.lat == null || r.lng == null) return
+        if (!matchesFilter(r)) return
         // Lost-dog pins are always shown individually — they never merge into a
         // disease "outbreak hotspot" cluster.
         if (r.kind === 'lost') { addReportMarker(r); return }
@@ -380,6 +407,14 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     renderMarkers()
     map.on('zoomend', renderMarkers)
+
+    // Re-render when the filter bar broadcasts a new selection.
+    const onFilter = (e: Event) => {
+      const detail = (e as CustomEvent).detail
+      if (detail) filterRef.current = { ...filterRef.current, ...detail }
+      renderMarkers()
+    }
+    window.addEventListener('parvomap:filter', onFilter)
 
     // ─── Click-to-drop-a-pin ───
     mapRef.current = map
@@ -435,6 +470,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     })
 
     return () => {
+      window.removeEventListener('parvomap:filter', onFilter)
       map.remove()
       mapRef.current = null
       dropMarkerRef.current = null

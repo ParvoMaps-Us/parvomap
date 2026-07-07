@@ -28,7 +28,14 @@ export default function Ticker({ reports }: TickerProps) {
   return (
     <div className="ticker-wrap">
       <div className="ticker-label">Live Reports</div>
-      <div className="ticker-track">
+      {/* Duration scales with item count so scroll SPEED stays constant — a fixed
+          duration makes the track whip past once there are many reports. ~3.5s
+          per item matches the original comfortable pace; floor keeps short
+          lists from crawling. */}
+      <div
+        className="ticker-track"
+        style={{ animationDuration: `${Math.max(60, reports.length * 3.5)}s` }}
+      >
         {allItems.map((r, i) =>
           r.kind === 'lost' ? (
             <span key={i}>
