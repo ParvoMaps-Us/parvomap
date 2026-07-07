@@ -19,13 +19,6 @@ interface Props {
   recencyClass: (timestamp: number) => string
 }
 
-// Non-individual reporter types get a distinct emoji marker; individuals stay dots.
-const REPORTER_EMOJI: Record<string, string> = {
-  vet:      '🏥',
-  facility: '🏢',
-  news:     '📰',
-}
-
 /** Escape user-supplied text before injecting into popup HTML (XSS-safe). */
 function escapeHtml(s: string): string {
   return s
@@ -113,6 +106,10 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     const startZoom = isMobile ? 3 : 4
 
     const map = L.map(containerRef.current, {
+      // Render vector layers (the disease dots) on a canvas instead of one DOM
+      // node per pin — canvas handles hundreds/thousands of points smoothly
+      // where DOM markers (esp. with glow) jank on mobile.
+      preferCanvas: true,
       center: startCenter,
       zoom: startZoom,
       minZoom: 2,
@@ -191,6 +188,8 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     // Markers live in a layer group so we can clear and re-cluster on zoom.
     const markerLayer = L.layerGroup().addTo(map)
+    // Shared canvas renderer for the disease dots (one canvas, not 150 DOM nodes).
+    const canvasRenderer = L.canvas({ padding: 0.5 })
 
     // Double-click a marker → fast fly-zoom in (also declusters a hotspot).
     const flyZoom = (lat: number, lng: number) =>
@@ -253,36 +252,6 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       const rc = recencyClass(report.timestamp)
       const glowColor = rc === 'red' ? '#ef4444' : rc === 'amber' ? '#f59e0b' : '#00ff88'
 
-      // Lost dogs get a paw marker; vet/facility/news get their own emoji;
-      // individual disease reporters stay as dots.
-      const emoji = report.kind === 'lost'
-        ? '🐶'
-        : report.reporterType ? REPORTER_EMOJI[report.reporterType] : undefined
-      const icon = emoji
-        ? L.divIcon({
-            className: '',
-            html: `<div style="
-              width:22px;height:22px;display:flex;align-items:center;justify-content:center;
-              font-size:15px;line-height:1;
-              text-shadow:0 0 4px ${glowColor}, 0 0 8px ${glowColor};
-              cursor:pointer;
-            ">${emoji}</div>`,
-            iconSize: [22, 22],
-            iconAnchor: [11, 11],
-          })
-        : L.divIcon({
-            className: '',
-            html: `<div style="
-              width:12px;height:12px;border-radius:50%;
-              background:${color};
-              border:2px solid ${glowColor};
-              box-shadow:0 0 6px ${glowColor}aa;
-              cursor:pointer;
-            "></div>`,
-            iconSize: [12, 12],
-            iconAnchor: [6, 6],
-          })
-
       const age = Date.now() - report.timestamp
       const ageLabel = age < 60 * 60 * 1000
         ? `${Math.round(age / 60000)}m ago`
@@ -313,9 +282,35 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         </div>
       `)
 
-      const marker = L.marker([report.lat, report.lng], { icon })
-        .bindPopup(popup)
-        .addTo(markerLayer)
+      let marker: any
+      if (report.kind === 'lost') {
+        // Lost dogs stay a DOM paw marker (few of them, and the emoji reads).
+        const icon = L.divIcon({
+          className: '',
+          html: `<div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;text-shadow:0 0 4px ${glowColor},0 0 8px ${glowColor};cursor:pointer;">🐶</div>`,
+          iconSize: [22, 22],
+          iconAnchor: [11, 11],
+        })
+        marker = L.marker([report.lat, report.lng], { icon }).bindPopup(popup).addTo(markerLayer)
+      } else {
+        // Cheap glow halo behind the dot (non-interactive so clicks hit the core).
+        L.circleMarker([report.lat, report.lng], {
+          renderer: canvasRenderer,
+          radius: 8,
+          stroke: false,
+          fillColor: glowColor,
+          fillOpacity: 0.25,
+          interactive: false,
+        }).addTo(markerLayer)
+        marker = L.circleMarker([report.lat, report.lng], {
+          renderer: canvasRenderer,
+          radius: 5,
+          fillColor: color,
+          fillOpacity: 1,
+          color: glowColor,
+          weight: 2,
+        }).bindPopup(popup).addTo(markerLayer)
+      }
       wireMarker(marker, report.lat, report.lng, {
         locationDetail: report.locationDetail,
         lat: report.lat,
