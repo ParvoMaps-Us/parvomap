@@ -597,9 +597,9 @@ nav a:hover { color: var(--text); }
   padding: 0 20px;
   display: flex;
   align-items: center;
-  overflow-x: auto;
+  /* Locked: no horizontal swipe/scroll (chips past the edge are clipped). */
+  overflow-x: hidden;
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-label {

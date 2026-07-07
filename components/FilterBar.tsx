@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import type { Report } from '@/lib/redis'
 
 // Disease chips per category. Counts are computed live from the reports on the
@@ -54,10 +54,23 @@ const firstGroupLabelStyle: React.CSSProperties = {
   paddingLeft: '14px',
 }
 
+// Group label inside the dropdown (no border/fixed-height — it flows vertically).
+const menuGroupLabelStyle: React.CSSProperties = {
+  fontFamily: "'IBM Plex Mono', monospace",
+  fontSize: '8px',
+  letterSpacing: '0.14em',
+  color: '#888',
+  textTransform: 'uppercase',
+  margin: '2px 0 8px',
+  userSelect: 'none',
+}
+
 export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
   const [active, setActive] = useState('all')
   const [showHistorical, setShowHistorical] = useState(true)
   const [showUnverified, setShowUnverified] = useState(true)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const wrapRef = useRef<HTMLDivElement>(null)
 
   // Live per-disease counts from the actual reports on the map.
   const counts = useMemo(() => {
@@ -80,22 +93,29 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
     )
   }, [active, showHistorical, showUnverified])
 
+  // Close the dropdown on outside click or Escape.
   useEffect(() => {
-    const bar = document.getElementById('filter-bar')
-    if (!bar) return
-    const timer = setTimeout(() => {
-      bar.scrollTo({ left: 100, behavior: 'smooth' })
-      setTimeout(() => bar.scrollTo({ left: 0, behavior: 'smooth' }), 700)
-    }, 2500)
-    return () => clearTimeout(timer)
-  }, [])
+    if (!menuOpen) return
+    const onDown = (e: PointerEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setMenuOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false) }
+    document.addEventListener('pointerdown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [menuOpen])
+
+  const select = (key: string) => { setActive(key); setMenuOpen(false) }
 
   const renderChip = (d: { key: string; label: string; color: string }) => (
     <button
       key={d.key}
       className={`filter-btn ${active === d.key ? 'active' : ''}`}
       style={{ '--d-color': d.color } as React.CSSProperties}
-      onClick={() => setActive(d.key)}
+      onClick={() => select(d.key)}
     >
       {d.key !== 'all' && <span className="filter-swatch" style={{ background: d.color }} />}
       {d.label}
@@ -103,11 +123,31 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
     </button>
   )
 
+  const menuGroup = (label: string, items: { key: string; label: string; color: string }[]) => (
+    <div style={{ marginBottom: 12 }}>
+      <div style={menuGroupLabelStyle}>{label}</div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{items.map(renderChip)}</div>
+    </div>
+  )
+
   return (
-    <div className="filter-bar-wrap">
+    <div className="filter-bar-wrap" ref={wrapRef}>
       <nav className="filter-bar" id="filter-bar" aria-label="Filter map by disease"
-        style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
-        <div className="filter-label">Filter</div>
+        style={{ overflowX: 'hidden', scrollbarWidth: 'none' }}>
+        {/* FILTER is a dropdown toggle — opens the full menu (every disease is
+            reachable there even though the inline chips are clipped when locked). */}
+        <button
+          className={`filter-label filter-menu-toggle ${menuOpen ? 'active' : ''}`}
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(o => !o)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer',
+            background: 'transparent', border: 'none',
+          }}
+        >
+          Filter <span style={{ fontSize: 8, transform: menuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▼</span>
+        </button>
         <button
           className={`filter-all-btn ${showHistorical ? 'active' : ''}`}
           style={{ marginRight: 4, borderColor: '#333' }}
@@ -132,15 +172,32 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
         <div style={groupLabelStyle} className="filter-group-label-el">ENVIRONMENTAL</div>
         {ENVIRONMENTAL.map(renderChip)}
       </nav>
-      <div style={{
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        bottom: 0,
-        width: '80px',
-        background: 'linear-gradient(to right, transparent, #000)',
-        pointerEvents: 'none',
-      }} />
+
+      {menuOpen && (
+        <div
+          role="menu"
+          aria-label="Filter map by disease"
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 8,
+            width: 'min(420px, calc(100vw - 16px))',
+            maxHeight: '70vh',
+            overflowY: 'auto',
+            background: '#0a0a0a',
+            border: '1px solid #333',
+            borderTop: 'none',
+            borderRadius: '0 0 8px 8px',
+            padding: '14px 16px 16px',
+            boxShadow: '0 12px 28px rgba(0,0,0,0.6)',
+            zIndex: 1600,
+          }}
+        >
+          {menuGroup('Infectious', INFECTIOUS)}
+          {menuGroup('Tick-borne', TICK)}
+          {menuGroup('Environmental', ENVIRONMENTAL)}
+        </div>
+      )}
     </div>
   )
 }

@@ -264,7 +264,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             html: `<div style="
               width:22px;height:22px;display:flex;align-items:center;justify-content:center;
               font-size:15px;line-height:1;
-              filter:drop-shadow(0 0 4px ${glowColor});
+              ${isMobile ? '' : `filter:drop-shadow(0 0 4px ${glowColor});`}
               cursor:pointer;
             ">${emoji}</div>`,
             iconSize: [22, 22],
@@ -276,7 +276,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
               width:12px;height:12px;border-radius:50%;
               background:${color};
               border:2px solid ${glowColor};
-              box-shadow:0 0 6px ${glowColor}88;
+              ${isMobile ? '' : `box-shadow:0 0 6px ${glowColor}88;`}
               cursor:pointer;
             "></div>`,
             iconSize: [12, 12],
