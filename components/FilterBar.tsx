@@ -80,16 +80,6 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
     )
   }, [active, showHistorical, showUnverified])
 
-  useEffect(() => {
-    const bar = document.getElementById('filter-bar')
-    if (!bar) return
-    const timer = setTimeout(() => {
-      bar.scrollTo({ left: 100, behavior: 'smooth' })
-      setTimeout(() => bar.scrollTo({ left: 0, behavior: 'smooth' }), 700)
-    }, 2500)
-    return () => clearTimeout(timer)
-  }, [])
-
   const renderChip = (d: { key: string; label: string; color: string }) => (
     <button
       key={d.key}
@@ -106,7 +96,7 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
   return (
     <div className="filter-bar-wrap">
       <nav className="filter-bar" id="filter-bar" aria-label="Filter map by disease"
-        style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
+        style={{ overflowX: 'hidden', scrollbarWidth: 'none' }}>
         <div className="filter-label">Filter</div>
         <button
           className={`filter-all-btn ${showHistorical ? 'active' : ''}`}
