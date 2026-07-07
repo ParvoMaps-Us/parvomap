@@ -22,8 +22,12 @@ export default function Ticker({ reports }: TickerProps) {
     return `${Math.round(age / 86400000)}d ago`
   }
 
+  // Show only the most recent N (reports arrive newest-first). A full 100+ item
+  // ticker builds a ~60,000px-wide always-animating layer that janks the map on
+  // mobile; 30 keeps it "live" while staying cheap to composite.
+  const visible = reports.slice(0, 30)
   // Double items for seamless scroll loop
-  const allItems = [...reports, ...reports]
+  const allItems = [...visible, ...visible]
 
   return (
     <div className="ticker-wrap">
@@ -34,7 +38,7 @@ export default function Ticker({ reports }: TickerProps) {
           lists from crawling. */}
       <div
         className="ticker-track"
-        style={{ animationDuration: `${Math.max(60, reports.length * 3.5)}s` }}
+        style={{ animationDuration: `${Math.max(60, visible.length * 3.5)}s` }}
       >
         {allItems.map((r, i) =>
           r.kind === 'lost' ? (
