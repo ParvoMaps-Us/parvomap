@@ -1,32 +1,35 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import type { Report } from '@/lib/redis'
 
+// Disease chips per category. Counts are computed live from the reports on the
+// map (see `counts` below) — never hardcoded, so they can't drift.
 const INFECTIOUS = [
-  { key: 'all', label: 'All', color: '#f0f0f0', count: 29 },
-  { key: 'parvo', label: 'Parvovirus', color: 'var(--d-parvo)', count: 3 },
-  { key: 'distemper', label: 'Distemper', color: 'var(--d-distemper)', count: 3 },
-  { key: 'kennel', label: 'Kennel cough', color: 'var(--d-kennel)', count: 3 },
-  { key: 'leptospira', label: 'Leptospirosis', color: 'var(--d-leptospira)', count: 2 },
-  { key: 'influenza', label: 'Dog Flu', color: 'var(--d-influenza)', count: 2 },
-  { key: 'strepzoo', label: 'Strep Zoo', color: 'var(--d-strepzoo)', count: 0 },
-  { key: 'giardia', label: 'Giardia', color: 'var(--d-giardia)', count: 2 },
-  { key: 'ringworm', label: 'Ringworm', color: 'var(--d-ringworm)', count: 1 },
-  { key: 'brucella', label: 'Brucellosis', color: 'var(--d-brucella)', count: 1 },
-  { key: 'screwworm', label: 'New World Screwworm', color: 'var(--d-screwworm)', count: 1 },
-  { key: 'rabies', label: 'Rabies', color: 'var(--d-rabies)', count: 1 },
-  { key: 'fleas', label: 'Fleas', color: 'var(--d-fleas)', count: 1 },
+  { key: 'all', label: 'All', color: '#f0f0f0' },
+  { key: 'parvo', label: 'Parvovirus', color: 'var(--d-parvo)' },
+  { key: 'distemper', label: 'Distemper', color: 'var(--d-distemper)' },
+  { key: 'kennel', label: 'Kennel cough', color: 'var(--d-kennel)' },
+  { key: 'leptospira', label: 'Leptospirosis', color: 'var(--d-leptospira)' },
+  { key: 'influenza', label: 'Dog Flu', color: 'var(--d-influenza)' },
+  { key: 'strepzoo', label: 'Strep Zoo', color: 'var(--d-strepzoo)' },
+  { key: 'giardia', label: 'Giardia', color: 'var(--d-giardia)' },
+  { key: 'ringworm', label: 'Ringworm', color: 'var(--d-ringworm)' },
+  { key: 'brucella', label: 'Brucellosis', color: 'var(--d-brucella)' },
+  { key: 'screwworm', label: 'New World Screwworm', color: 'var(--d-screwworm)' },
+  { key: 'rabies', label: 'Rabies', color: 'var(--d-rabies)' },
+  { key: 'fleas', label: 'Fleas', color: 'var(--d-fleas)' },
 ]
 
 const ENVIRONMENTAL = [
-  { key: 'cyano', label: 'Blue-green algae', color: 'var(--d-cyano)', count: 4 },
+  { key: 'cyano', label: 'Blue-green algae', color: 'var(--d-cyano)' },
 ]
 
 const TICK = [
-  { key: 'lyme', label: 'Lyme Disease', color: 'var(--d-lyme)', count: 3 },
-  { key: 'rmsf', label: 'RMSF', color: 'var(--d-rmsf)', count: 2 },
-  { key: 'anaplasma', label: 'Anaplasmosis', color: 'var(--d-anaplasma)', count: 1 },
-  { key: 'ehrlichia', label: 'Ehrlichiosis', color: 'var(--d-ehrlichia)', count: 1 },
-  { key: 'tickspot', label: 'Tick Sighting', color: 'var(--d-tickspot)', count: 3 },
+  { key: 'lyme', label: 'Lyme Disease', color: 'var(--d-lyme)' },
+  { key: 'rmsf', label: 'RMSF', color: 'var(--d-rmsf)' },
+  { key: 'anaplasma', label: 'Anaplasmosis', color: 'var(--d-anaplasma)' },
+  { key: 'ehrlichia', label: 'Ehrlichiosis', color: 'var(--d-ehrlichia)' },
+  { key: 'tickspot', label: 'Tick Sighting', color: 'var(--d-tickspot)' },
 ]
 
 const groupLabelStyle: React.CSSProperties = {
@@ -51,10 +54,31 @@ const firstGroupLabelStyle: React.CSSProperties = {
   paddingLeft: '14px',
 }
 
-export default function FilterBar() {
+export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
   const [active, setActive] = useState('all')
   const [showHistorical, setShowHistorical] = useState(true)
   const [showUnverified, setShowUnverified] = useState(true)
+
+  // Live per-disease counts from the actual reports on the map.
+  const counts = useMemo(() => {
+    const c: Record<string, number> = {}
+    for (const r of reports) {
+      if (r.kind === 'lost') continue
+      c[r.disease] = (c[r.disease] ?? 0) + 1
+    }
+    return c
+  }, [reports])
+  const countFor = (key: string) => (key === 'all' ? reports.filter(r => r.kind !== 'lost').length : counts[key] ?? 0)
+
+  // Broadcast the current filter to the map (which listens for this event and
+  // re-renders its pins). Fires on mount and on every change.
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('parvomap:filter', {
+        detail: { disease: active, showHistorical, showUnverified },
+      }),
+    )
+  }, [active, showHistorical, showUnverified])
 
   useEffect(() => {
     const bar = document.getElementById('filter-bar')
@@ -65,6 +89,19 @@ export default function FilterBar() {
     }, 2500)
     return () => clearTimeout(timer)
   }, [])
+
+  const renderChip = (d: { key: string; label: string; color: string }) => (
+    <button
+      key={d.key}
+      className={`filter-btn ${active === d.key ? 'active' : ''}`}
+      style={{ '--d-color': d.color } as React.CSSProperties}
+      onClick={() => setActive(d.key)}
+    >
+      {d.key !== 'all' && <span className="filter-swatch" style={{ background: d.color }} />}
+      {d.label}
+      <span className="filter-count">{countFor(d.key)}</span>
+    </button>
+  )
 
   return (
     <div className="filter-bar-wrap">
@@ -87,46 +124,13 @@ export default function FilterBar() {
         </button>
 
         <div style={firstGroupLabelStyle} className="filter-group-label-el">INFECTIOUS</div>
-        {INFECTIOUS.map(d => (
-          <button
-            key={d.key}
-            className={`filter-btn ${active === d.key ? 'active' : ''}`}
-            style={{ '--d-color': d.color } as React.CSSProperties}
-            onClick={() => setActive(d.key)}
-          >
-            {d.key !== 'all' && <span className="filter-swatch" style={{ background: d.color }} />}
-            {d.label}
-            <span className="filter-count">{d.count}</span>
-          </button>
-        ))}
+        {INFECTIOUS.map(renderChip)}
 
         <div style={groupLabelStyle} className="filter-group-label-el">TICK-BORNE</div>
-        {TICK.map(d => (
-          <button
-            key={d.key}
-            className={`filter-btn ${active === d.key ? 'active' : ''}`}
-            style={{ '--d-color': d.color } as React.CSSProperties}
-            onClick={() => setActive(d.key)}
-          >
-            <span className="filter-swatch" style={{ background: d.color }} />
-            {d.label}
-            <span className="filter-count">{d.count}</span>
-          </button>
-        ))}
+        {TICK.map(renderChip)}
 
         <div style={groupLabelStyle} className="filter-group-label-el">ENVIRONMENTAL</div>
-        {ENVIRONMENTAL.map(d => (
-          <button
-            key={d.key}
-            className={`filter-btn ${active === d.key ? 'active' : ''}`}
-            style={{ '--d-color': d.color } as React.CSSProperties}
-            onClick={() => setActive(d.key)}
-          >
-            <span className="filter-swatch" style={{ background: d.color }} />
-            {d.label}
-            <span className="filter-count">{d.count}</span>
-          </button>
-        ))}
+        {ENVIRONMENTAL.map(renderChip)}
       </nav>
       <div style={{
         position: 'absolute',

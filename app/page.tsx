@@ -42,7 +42,7 @@ export default async function HomePage({
       {publicReports.length > 0 && <Ticker reports={publicReports} />}
       <Header />
       <StatsBar {...stats} />
-      <FilterBar />
+      <FilterBar reports={publicReports} />
       <Map reports={publicReports} />
       <main id="main-content">
         {stats.last48 > 0 && (
