@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { BLOG_POSTS, getPostBySlug, type InlineSpan } from '@/lib/blog'
 import { buildMetadata } from '@/lib/seo'
+import BlogAnalytics from '@/components/BlogAnalytics'
 
 const SITE = 'https://www.parvomaps.us'
 
@@ -96,6 +97,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     <main style={wrap}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <BlogAnalytics slug={slug} title={post.title} />
 
       <div style={{ marginBottom: 16 }}>
         <Link href="/blog" style={{ fontSize: 13, color: 'var(--text-dim)', textDecoration: 'none' }}>← All posts</Link>

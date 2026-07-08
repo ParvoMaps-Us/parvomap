@@ -597,9 +597,11 @@ nav a:hover { color: var(--text); }
   padding: 0 20px;
   display: flex;
   align-items: center;
-  /* Locked: no horizontal swipe/scroll (chips past the edge are clipped). */
-  overflow-x: hidden;
+  /* Horizontally scrollable on narrow screens; the FILTER dropdown gives the
+     full list too, but the inline bar shouldn't be a dead-end. */
+  overflow-x: auto;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-label {
@@ -686,6 +688,35 @@ nav a:hover { color: var(--text); }
   transition: color 0.15s, border-color 0.15s;
 }
 .filter-all-btn:hover, .filter-all-btn.active { color: var(--text); border-color: var(--text-muted); }
+/* "More" dropdown toggle — pinned to the right edge so it's always reachable
+   while the inline chips scroll behind it. */
+.filter-menu-toggle {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-left: 1px solid var(--border-dim);
+  color: #cfcfcf;
+  cursor: pointer;
+  padding: 0 14px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: sticky;
+  right: 0;
+  background: #000;
+  box-shadow: -10px 0 10px -4px #000;
+  z-index: 2;
+  transition: color 0.15s, background 0.15s;
+}
+.filter-menu-toggle:hover, .filter-menu-toggle.active { color: #ffffff; background: #141414; }
+@media (max-width: 768px) {
+  .filter-menu-toggle { font-size: 8px; padding: 0 10px; height: 36px; }
+}
 
 /* ─── MAIN ─── */
 main { max-width: 900px; margin: 0 auto; padding: 0 32px; }

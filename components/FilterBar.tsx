@@ -32,29 +32,25 @@ const TICK = [
   { key: 'tickspot', label: 'Tick Sighting', color: 'var(--d-tickspot)' },
 ]
 
-const groupLabelStyle: React.CSSProperties = {
-  fontFamily: "'IBM Plex Mono', monospace",
-  fontSize: '8px',
-  letterSpacing: '0.14em',
-  color: '#999999',
-  textTransform: 'uppercase',
-  padding: '0 10px 0 16px',
-  whiteSpace: 'nowrap',
-  flexShrink: 0,
-  borderLeft: '1px solid #333333',
-  height: '38px',
-  display: 'flex',
-  alignItems: 'center',
-  userSelect: 'none',
+type Chip = { key: string; label: string; color: string }
+
+// Flat lookup of every real disease (excludes the 'all' sentinel). Used to pick
+// the highest-volume chips for the inline row and to resolve the active one.
+const ALL_DISEASES: Chip[] = [...INFECTIOUS.filter(d => d.key !== 'all'), ...TICK, ...ENVIRONMENTAL]
+const DISEASE_BY_KEY: Record<string, Chip> = Object.fromEntries(ALL_DISEASES.map(d => [d.key, d]))
+
+// How many live-volume chips to surface inline before the rest fall under More.
+const INLINE_COUNT = 3
+
+// Short labels for the cramped inline row (the dropdown uses full names).
+const SHORT_LABEL: Record<string, string> = {
+  parvo: 'Parvo', distemper: 'Distemper', kennel: 'Kennel', leptospira: 'Lepto',
+  influenza: 'Flu', strepzoo: 'Strep', giardia: 'Giardia', ringworm: 'Ringworm',
+  brucella: 'Brucella', screwworm: 'Screwworm', rabies: 'Rabies', fleas: 'Fleas',
+  cyano: 'Cyano', lyme: 'Lyme', rmsf: 'RMSF', anaplasma: 'Anaplasma',
+  ehrlichia: 'Ehrlichia', tickspot: 'Ticks',
 }
 
-const firstGroupLabelStyle: React.CSSProperties = {
-  ...groupLabelStyle,
-  borderLeft: 'none',
-  paddingLeft: '14px',
-}
-
-// Group label inside the dropdown (no border/fixed-height — it flows vertically).
 const menuGroupLabelStyle: React.CSSProperties = {
   fontFamily: "'IBM Plex Mono', monospace",
   fontSize: '8px',
@@ -81,7 +77,20 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
     }
     return c
   }, [reports])
-  const countFor = (key: string) => (key === 'all' ? reports.filter(r => r.kind !== 'lost').length : counts[key] ?? 0)
+  const totalCount = useMemo(() => reports.filter(r => r.kind !== 'lost').length, [reports])
+  const countFor = (key: string) => (key === 'all' ? totalCount : counts[key] ?? 0)
+
+  // The inline chips: the highest-volume diseases right now, so the visible
+  // filters are always the active outbreaks. The long tail lives under More.
+  const inlineChips = useMemo(
+    () =>
+      ALL_DISEASES.map(d => ({ ...d, n: counts[d.key] ?? 0 }))
+        .filter(d => d.n > 0)
+        .sort((a, b) => b.n - a.n)
+        .slice(0, INLINE_COUNT),
+    [counts],
+  )
+  const inlineKeys = useMemo(() => new Set(['all', ...inlineChips.map(d => d.key)]), [inlineChips])
 
   // Broadcast the current filter to the map (which listens for this event and
   // re-renders its pins). Fires on mount and on every change.
@@ -110,7 +119,7 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
 
   const select = (key: string) => { setActive(key); setMenuOpen(false) }
 
-  const renderChip = (d: { key: string; label: string; color: string }) => (
+  const renderChip = (d: Chip, short = false) => (
     <button
       key={d.key}
       className={`filter-btn ${active === d.key ? 'active' : ''}`}
@@ -118,59 +127,39 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
       onClick={() => select(d.key)}
     >
       {d.key !== 'all' && <span className="filter-swatch" style={{ background: d.color }} />}
-      {d.label}
+      {short ? SHORT_LABEL[d.key] ?? d.label : d.label}
       <span className="filter-count">{countFor(d.key)}</span>
     </button>
   )
 
-  const menuGroup = (label: string, items: { key: string; label: string; color: string }[]) => (
+  const menuGroup = (label: string, items: Chip[]) => (
     <div style={{ marginBottom: 12 }}>
       <div style={menuGroupLabelStyle}>{label}</div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{items.map(renderChip)}</div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>{items.map(d => renderChip(d))}</div>
     </div>
   )
+
+  // If the active disease isn't one of the inline chips (picked from More), pin
+  // it inline too so the current filter is always visible.
+  const activeOverflow = active !== 'all' && !inlineKeys.has(active) ? DISEASE_BY_KEY[active] : undefined
 
   return (
     <div className="filter-bar-wrap" ref={wrapRef}>
       <nav className="filter-bar" id="filter-bar" aria-label="Filter map by disease"
-        style={{ overflowX: 'hidden', scrollbarWidth: 'none' }}>
-        {/* FILTER is a dropdown toggle — opens the full menu (every disease is
-            reachable there even though the inline chips are clipped when locked). */}
+        style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
+        <div className="filter-label">Filter</div>
+        {renderChip({ key: 'all', label: 'All', color: '#f0f0f0' }, true)}
+        {inlineChips.map(d => renderChip(d, true))}
+        {activeOverflow && renderChip(activeOverflow, true)}
         <button
-          className={`filter-label filter-menu-toggle ${menuOpen ? 'active' : ''}`}
+          className={`filter-menu-toggle ${menuOpen ? 'active' : ''}`}
           aria-haspopup="menu"
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(o => !o)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer',
-            background: 'transparent', border: 'none',
-          }}
         >
-          Filter <span style={{ fontSize: 8, transform: menuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▼</span>
+          More
+          <span style={{ fontSize: 8, display: 'inline-block', transform: menuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▼</span>
         </button>
-        <button
-          className={`filter-all-btn ${showHistorical ? 'active' : ''}`}
-          style={{ marginRight: 4, borderColor: '#333' }}
-          onClick={() => setShowHistorical(h => !h)}
-        >
-          Historical: {showHistorical ? 'ON' : 'OFF'}
-        </button>
-        <button
-          className={`filter-all-btn ${showUnverified ? 'active' : ''}`}
-          style={{ marginRight: 12, borderColor: '#333' }}
-          onClick={() => setShowUnverified(u => !u)}
-        >
-          Unverified: {showUnverified ? 'ON' : 'OFF'}
-        </button>
-
-        <div style={firstGroupLabelStyle} className="filter-group-label-el">INFECTIOUS</div>
-        {INFECTIOUS.map(renderChip)}
-
-        <div style={groupLabelStyle} className="filter-group-label-el">TICK-BORNE</div>
-        {TICK.map(renderChip)}
-
-        <div style={groupLabelStyle} className="filter-group-label-el">ENVIRONMENTAL</div>
-        {ENVIRONMENTAL.map(renderChip)}
       </nav>
 
       {menuOpen && (
@@ -193,6 +182,22 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
             zIndex: 1600,
           }}
         >
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+            <button
+              className={`filter-all-btn ${showHistorical ? 'active' : ''}`}
+              style={{ borderColor: '#333' }}
+              onClick={() => setShowHistorical(h => !h)}
+            >
+              Historical: {showHistorical ? 'ON' : 'OFF'}
+            </button>
+            <button
+              className={`filter-all-btn ${showUnverified ? 'active' : ''}`}
+              style={{ borderColor: '#333' }}
+              onClick={() => setShowUnverified(u => !u)}
+            >
+              Unverified: {showUnverified ? 'ON' : 'OFF'}
+            </button>
+          </div>
           {menuGroup('Infectious', INFECTIOUS)}
           {menuGroup('Tick-borne', TICK)}
           {menuGroup('Environmental', ENVIRONMENTAL)}
