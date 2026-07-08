@@ -146,7 +146,7 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
   return (
     <div className="filter-bar-wrap" ref={wrapRef}>
       <nav className="filter-bar" id="filter-bar" aria-label="Filter map by disease"
-        style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
+        style={{ overflowX: 'hidden', scrollbarWidth: 'none' }}>
         <div className="filter-label">Filter</div>
         {renderChip({ key: 'all', label: 'All', color: '#f0f0f0' }, true)}
         {inlineChips.map(d => renderChip(d, true))}
