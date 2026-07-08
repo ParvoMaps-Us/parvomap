@@ -580,11 +580,13 @@ nav a:hover { color: var(--text); }
 .legend-dot.gray  { background: #555; }
 
 /* ─── FILTER BAR ─── */
-/* Scrolls with the page (not sticky). `relative` keeps it as the positioning
-   context for the "More" dropdown; z-index keeps that dropdown above the map. */
+/* Vertically pinned: stays put at the top of the viewport while the map/page
+   scrolls (top: 0 because the header above it is not sticky). The inner nav
+   still scrolls horizontally; the "More" dropdown anchors to this wrapper. */
 .filter-bar-wrap {
-  position: relative;
-  z-index: 1500; /* the More dropdown sits above Leaflet's map panes */
+  position: sticky;
+  top: 0;
+  z-index: 1500; /* stays above Leaflet's map panes while pinned */
   background: #000;
 }
 .filter-bar {
@@ -593,10 +595,10 @@ nav a:hover { color: var(--text); }
   padding: 0 20px;
   display: flex;
   align-items: center;
-  /* Locked: no horizontal swipe/scroll. The top chips + sticky "More" (which
-     opens the full list) stay visible, so nothing important is lost. */
-  overflow-x: hidden;
+  /* Horizontally scrollable; the sticky "More" stays pinned on the right. */
+  overflow-x: auto;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-label {
