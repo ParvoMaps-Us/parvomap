@@ -593,11 +593,10 @@ nav a:hover { color: var(--text); }
   padding: 0 20px;
   display: flex;
   align-items: center;
-  /* Horizontally scrollable on narrow screens; the FILTER dropdown gives the
-     full list too, but the inline bar shouldn't be a dead-end. */
-  overflow-x: auto;
+  /* Locked: no horizontal swipe/scroll. The top chips + sticky "More" (which
+     opens the full list) stay visible, so nothing important is lost. */
+  overflow-x: hidden;
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-label {
