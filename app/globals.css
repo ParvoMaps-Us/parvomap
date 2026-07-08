@@ -197,8 +197,7 @@ html.user-tabbing .skip-link:focus { top: 8px; }
 
 /* ─── HEADER ─── */
 header {
-  position: sticky;
-  top: 0;
+  position: relative;
   /* Above Leaflet's map panes (~700) AND the map's own absolute overlays like
      the drop-a-pin button (z-index 1000), so the mobile dropdown stays on top. */
   z-index: 2000;
@@ -581,14 +580,11 @@ nav a:hover { color: var(--text); }
 .legend-dot.gray  { background: #555; }
 
 /* ─── FILTER BAR ─── */
-/* Pin the disease filter bar just below the sticky header (56px) so it stays
-   put while the map/page scrolls — and so horizontal-swiping the bar on mobile
-   doesn't carry it off-screen. The WRAPPER is sticky (not the inner overflow
-   scroller, whose short box would release sticky immediately). */
+/* Scrolls with the page (not sticky). `relative` keeps it as the positioning
+   context for the "More" dropdown; z-index keeps that dropdown above the map. */
 .filter-bar-wrap {
-  position: sticky;
-  top: 56px;
-  z-index: 1500; /* above Leaflet map (~700) + map overlays (1000), below header (2000) */
+  position: relative;
+  z-index: 1500; /* the More dropdown sits above Leaflet's map panes */
   background: #000;
 }
 .filter-bar {
@@ -1211,7 +1207,7 @@ html body .leaflet-bar a:last-child {
   }
 
   /* Filter bar */
-  .filter-bar-wrap { top: 48px; } /* mobile header is 48px */
+  /* filter bar scrolls with the page (not sticky) — no top offset */
   .filter-bar {
     height: 36px !important;
     padding: 0 4px !important;
