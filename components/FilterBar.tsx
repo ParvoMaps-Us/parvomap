@@ -133,7 +133,7 @@ export default function FilterBar({ reports = [] }: { reports?: Report[] }) {
   return (
     <div className="filter-bar-wrap" ref={wrapRef}>
       <nav className="filter-bar" id="filter-bar" aria-label="Filter map by disease"
-        style={{ overflowX: 'hidden', scrollbarWidth: 'none' }}>
+        style={{ overflowX: 'auto', scrollbarWidth: 'none' }}>
         {/* FILTER is a dropdown toggle — opens the full menu (every disease is
             reachable there even though the inline chips are clipped when locked). */}
         <button

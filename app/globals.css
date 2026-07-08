@@ -597,9 +597,11 @@ nav a:hover { color: var(--text); }
   padding: 0 20px;
   display: flex;
   align-items: center;
-  /* Locked: no horizontal swipe/scroll (chips past the edge are clipped). */
-  overflow-x: hidden;
+  /* Horizontally scrollable on narrow screens; the FILTER dropdown gives the
+     full list too, but the inline bar shouldn't be a dead-end. */
+  overflow-x: auto;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-label {
