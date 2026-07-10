@@ -44,3 +44,10 @@ next-env.d.ts
 # local DB snapshots (contain real data — never commit; repo is public)
 migration-snapshot-*.json
 *.snapshot.json
+
+# article images: only the converted .webp is tracked. Source PNG/JPG uploads
+# (multi-MB originals) stay local — convert with scripts/img-to-webp.mjs and
+# commit the .webp only. This guard stops raw uploads bloating the repo.
+/public/article-images/*.png
+/public/article-images/*.jpg
+/public/article-images/*.jpeg
