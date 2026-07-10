@@ -72,6 +72,134 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'kennel-cough-vs-dog-flu',
+    title: "What's the Difference Between Kennel Cough and Dog Flu?",
+    description:
+      'Kennel cough and dog flu both cause coughing after daycare or boarding, but dog flu hits harder. How to tell them apart, what to do, and the vaccines for each.',
+    category: 'Symptoms & Diagnosis',
+    datePublished: '2026-07-10',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/kennel-cough-vs-dog-flu.webp',
+    coverAlt: 'A coughing dog kept away from others while sick with kennel cough or dog flu',
+    readingMinutes: 6,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'If your dog has a sudden cough after daycare, boarding, or the dog park, this is one of the most common questions owners end up asking, and the honest answer is that the two conditions overlap enough that even vets sometimes need testing to tell them apart with certainty.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Kennel Cough Is',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          { text: 'Kennel cough', href: '/diseases/kennel' },
+          ', more formally canine infectious tracheobronchitis, is not one single germ. It is an umbrella term for a group of viruses and bacteria that cause similar symptoms, most commonly the bacteria Bordetella bronchiseptica along with canine parainfluenza virus and adenovirus. The hallmark symptom is a dry, hacking cough often described as sounding like a goose honk. Most cases are mild and resolve within 10 to 20 days without needing much beyond supportive care.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'For more on how long a dog stays contagious and when it is safe to return to group settings, see our guide on ',
+          { text: 'how long kennel cough is contagious', href: '/blog/how-long-is-kennel-cough-contagious' },
+          '.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Dog Flu Is',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          { text: 'Canine influenza', href: '/diseases/influenza' },
+          ' is a specific viral infection, caused by either the H3N8 or H3N2 strain, and it tends to hit harder. Because dogs have little to no natural immunity to these relatively newer viruses, nearly all exposed dogs become infected, and roughly 80 percent go on to show visible symptoms while the rest remain contagious without looking sick.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How to Tell Them Apart',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'This is genuinely difficult, because both conditions share overlapping symptoms: coughing, nasal discharge, and sometimes fever. A few patterns lean one way or the other.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Kennel cough tends to produce a milder illness with a dog that otherwise acts fairly normal, still eating and playing between coughing fits. Dog flu more often comes with additional symptoms beyond the cough: fever, lethargy, reduced appetite, and a cough that can last longer, often 10 to 21 days.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Dog flu carries a higher chance of progressing to pneumonia and, though rare, can be fatal, while uncomplicated kennel cough almost never is. Vets often describe severe canine influenza as looking like "a really bad case of kennel cough," which captures how much overlap there is on the surface.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Because the symptoms genuinely mimic each other, a definitive diagnosis usually requires lab testing, such as PCR or antigen tests, rather than relying on how the cough sounds or looks.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What to Do Either Way',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Regardless of which one your dog has, the same basic steps apply: isolate them from other dogs, avoid daycare, boarding, and dog parks until they are cleared, and watch closely for signs of worsening, especially labored breathing, high fever, or lethargy, which push the situation toward needing more aggressive treatment.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Vaccines exist for both. The kennel cough vaccine targets Bordetella specifically, and separate vaccines cover the H3N8 and H3N2 flu strains. If your dog is regularly around other dogs at daycare, boarding, or dog parks, both vaccines are worth discussing with your vet, since having one does not protect against the other.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If there has been a reported cluster of respiratory illness at a specific facility or park near you, ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks kennel cough and dog flu reports, which can help you decide whether it is worth avoiding a location for a while before your dog\'s next visit. And if your dog has been sick, ',
+          { text: 'reporting your own case', href: '/' },
+          ' helps the map grow and protect other dog owners. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' for your area.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'What is the difference between kennel cough and dog flu?',
+        answer:
+          'Both cause coughing after daycare, boarding, or the dog park, but kennel cough is usually milder, with a dog that still eats and plays between honking coughing fits. Dog flu (canine influenza, H3N8 or H3N2) tends to hit harder, adding fever, lethargy, and reduced appetite, a longer cough of 10 to 21 days, and a higher chance of progressing to pneumonia. The symptoms overlap so much that lab testing is often needed to be sure.',
+      },
+      {
+        question: 'How do vets tell kennel cough and dog flu apart?',
+        answer:
+          'Because the symptoms genuinely mimic each other, a definitive diagnosis usually requires lab testing such as PCR or antigen tests, not just how the cough sounds. Vets often describe severe canine influenza as looking like a really bad case of kennel cough, which is why testing matters when a dog is sicker than expected.',
+      },
+      {
+        question: 'What should I do if my dog has a cough after daycare or boarding?',
+        answer:
+          'Either way, isolate your dog from other dogs and skip daycare, boarding, and dog parks until they are cleared. Watch closely for worsening signs, especially labored breathing, high fever, or lethargy, which mean it is time for more aggressive veterinary treatment rather than waiting it out.',
+      },
+      {
+        question: 'Is there a vaccine for kennel cough and dog flu?',
+        answer:
+          'Yes, but they are separate. The kennel cough vaccine targets Bordetella specifically, while separate vaccines cover the H3N8 and H3N2 canine influenza strains. Having one does not protect against the other, so if your dog is regularly around other dogs, both are worth discussing with your vet.',
+      },
+    ],
+  },
+  {
     slug: 'dog-diarrhea-giardia',
     title: 'My Dog Has Diarrhea, Is It Giardia or Something Else?',
     description:
