@@ -72,6 +72,140 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'dog-diarrhea-giardia',
+    title: 'My Dog Has Diarrhea, Is It Giardia or Something Else?',
+    description:
+      'Giardia is a common, easily missed cause of dog diarrhea. What giardia diarrhea looks like, how it differs from other causes, and how it is tested and treated.',
+    category: 'Symptoms & Diagnosis',
+    datePublished: '2026-07-10',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/giardia-diarrhea.webp',
+    coverAlt: 'A dog being examined at the vet for giardia, a common cause of diarrhea',
+    readingMinutes: 6,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'Diarrhea is one of the most common reasons dog owners end up searching the internet at 11pm, and ',
+          { text: 'giardia', href: '/diseases/giardia' },
+          ' is one of the most common causes that gets overlooked because the symptoms overlap with so many other things.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Giardia Actually Is',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Giardia is a microscopic parasite that lives in the intestines and gets picked up by drinking or coming into contact with water, soil, or food contaminated with the parasite's cysts. It is genuinely common. Estimates suggest around 15 percent of dogs carry it at some point, and many never show symptoms at all.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Giardia Diarrhea Looks Like',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'When giardia does cause symptoms, the classic presentation is soft, watery, foul-smelling diarrhea that sometimes has a greenish tinge and may contain mucus. Dogs pass several loose stools a day rather than just one or two. Vomiting can happen alongside it in some dogs, along with bloating, gas, and gradual weight loss if it goes untreated.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Puppies, senior dogs, and dogs with weakened immune systems tend to show more severe and more obvious symptoms. A healthy adult dog can sometimes carry giardia with barely noticeable symptoms, while a puppy with the same infection might show clear, persistent diarrhea.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How It Is Different From Other Causes of Diarrhea',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'This is the hard part, because giardia diarrhea does not look dramatically different from diarrhea caused by a dietary change, stress, mild food poisoning, or other intestinal parasites. There is no single symptom that says "this is definitely giardia" without testing.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'A few things nudge the odds toward giardia specifically: diarrhea that persists for more than a day or two rather than resolving on its own, a foul or unusually strong odor, and any known exposure to shared water sources, dog parks, or other dogs with diarrhea. If your dog drinks from puddles, communal water bowls, or natural water sources, that raises the likelihood.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How Vets Diagnose It',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Diagnosis requires a fecal test, since giardia cysts are shed intermittently, meaning a single test can sometimes miss it even when the parasite is present. Vets sometimes run a specific antigen test in addition to a standard fecal exam for this reason, or repeat testing if giardia is strongly suspected but the first test comes back negative.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Treatment and Recovery',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Giardia is treated with antiparasitic medication, most commonly fenbendazole or metronidazole, sometimes both together for stubborn cases. Most dogs improve within five to eight days of starting treatment. Vets typically recommend retesting 24 to 48 hours after treatment ends to confirm the parasite is actually cleared, since reinfection is common if cysts remain in the yard or home environment.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Reinfection is a real risk specifically because giardia cysts can survive in the environment for months. Cleaning up feces promptly, washing bedding in hot water, and bathing your dog periodically during treatment all reduce the odds of your dog picking it back up right after clearing it.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'When It Is More Than a Nuisance',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Giardia is not usually considered a medical emergency on its own, but puppies and dogs with severe, persistent diarrhea should get emergency attention to prevent dehydration. It is also worth knowing that giardia can spread to humans, particularly children, elderly family members, or anyone immunocompromised, so hand washing and environmental cleanup matter for the whole household, not just the dog.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "If your dog's diarrhea does not resolve within a day or two, or comes with blood, repeated vomiting, or lethargy, that is the point where it is worth ruling out something more serious, starting with our guide on ",
+          { text: 'how to know if your dog has parvo', href: '/blog/how-do-i-know-if-my-dog-has-parvo' },
+          '. ',
+          { text: 'Check ParvoMaps', href: '/' },
+          ' if you are unsure whether something more concerning has been reported near you, since severe GI symptoms overlap across several diseases and exposure history is often the clearest clue. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' for your area.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'What does giardia diarrhea look like in dogs?',
+        answer:
+          'The classic presentation is soft, watery, foul-smelling diarrhea that sometimes has a greenish tinge and may contain mucus, with several loose stools a day. Some dogs also have vomiting, bloating, gas, and gradual weight loss if untreated. Puppies, seniors, and immunocompromised dogs usually show more obvious symptoms than healthy adults.',
+      },
+      {
+        question: 'How is giardia diagnosed in dogs?',
+        answer:
+          'It requires a fecal test. Because giardia cysts are shed intermittently, a single test can miss it even when the parasite is present, so vets often add a specific antigen test to the standard fecal exam or repeat testing if giardia is strongly suspected but the first result is negative.',
+      },
+      {
+        question: 'How is giardia treated and how long does recovery take?',
+        answer:
+          'Giardia is treated with antiparasitic medication, most commonly fenbendazole or metronidazole, sometimes both for stubborn cases. Most dogs improve within five to eight days. Vets usually retest 24 to 48 hours after treatment ends, since reinfection is common if cysts remain in the environment. Prompt feces cleanup, hot-water washing of bedding, and periodic bathing during treatment lower that risk.',
+      },
+      {
+        question: 'Can giardia spread from dogs to humans?',
+        answer:
+          'Yes, giardia can spread to people, particularly children, elderly family members, and anyone immunocompromised. Hand washing and environmental cleanup matter for the whole household during and after treatment, not just for the dog.',
+      },
+    ],
+  },
+  {
     slug: 'dog-swam-in-lake-blue-green-algae',
     title: 'My Dog Swam in a Lake and Is Acting Weird, Is It Algae Poisoning?',
     description:
