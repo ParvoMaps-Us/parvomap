@@ -72,6 +72,130 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'how-long-tick-attached-to-transmit-lyme',
+    title: 'How Long Does a Tick Have to Be Attached to Transmit Lyme Disease?',
+    description:
+      'Most ticks need 24 to 48 hours attached to transmit Lyme disease, often closer to 36 to 48. Why early removal matters most, plus symptoms, removal, and prevention.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-05',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/tick-lyme-transmission.webp',
+    coverAlt: 'A tick attached to a dog being removed with fine-tipped tweezers',
+    readingMinutes: 6,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          "If you just pulled a tick off your dog and you are trying to figure out whether you caught it in time, here is the most useful number to know: in most cases, a tick needs to be attached for roughly 24 to 48 hours before it can transmit ",
+          { text: 'Lyme disease', href: '/diseases/lyme' },
+          ', and transmission most commonly happens closer to the 36 to 48 hour mark.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why the Timing Matters So Much',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "This window exists because the Lyme bacteria, Borrelia burgdorferi, lives in the tick's gut and needs time to migrate to the tick's saliva before it can pass into your dog's bloodstream. That migration takes time, which is exactly why early removal is the single most effective thing an owner can do.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If you find and remove a tick within roughly 24 hours of attachment, the risk of transmission drops significantly. This is also why daily tick checks matter so much for dogs that spend time outdoors, especially in tall grass, brush, marshes, or wooded areas where these ticks are most commonly picked up.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'A Caveat Worth Knowing',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "The 24 to 48 hour window is the standard, well-established guideline, and it remains the most useful number to plan around. That said, some newer research has raised questions about whether transmission can occasionally happen faster than previously thought, particularly with smaller, harder-to-spot nymph-stage ticks. The practical takeaway is not to panic over exact hours. It is that removing a tick as soon as you find it is always the right move, and that even a fast removal does not guarantee zero risk, especially with the tiny nymph ticks that are easy to miss entirely.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Symptoms Actually Look Like',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Even after a transmission event happens, symptoms do not show up right away. Signs of Lyme disease in dogs typically take anywhere from a few weeks to a few months to appear, which means a tick bite today might not translate into visible illness until well after the bite itself is forgotten.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'When symptoms do appear, the most common signs are lameness that can shift from leg to leg, swollen joints, fever, lethargy, and reduced appetite. Left unaddressed, Lyme disease can also affect the kidneys in more serious cases.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What to Do Right After Finding a Tick',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Remove it with fine-tipped tweezers, grasping as close to the skin as possible, and pull upward with steady, even pressure. Do not twist. The goal is to remove the entire tick including the mouthparts. Avoid crushing it, since contact with tick fluids carries its own small risk.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'After removal, keep an eye on the bite site and on your dog\'s overall behavior for the following weeks. A Lyme test can detect antibodies within three to five weeks of a bite, even before symptoms show up, so if you know your dog picked up a tick in a high-risk area, that is worth mentioning at their next vet visit even if nothing looks wrong yet.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Reducing the Odds in the First Place',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Tick prevention medication, checking your dog daily after time in wooded or grassy areas, and avoiding known tick-heavy trails during peak season are the most effective layers of protection. The Lyme vaccine is available and worth discussing with your vet if you live in or travel to a higher-risk region, including the Northeast, Upper Midwest, and parts of the Pacific Coast, though risk has been expanding beyond those traditional zones in recent years.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If you want to know whether Lyme cases have been reported near a trail or park before you go, ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks ',
+          { text: 'Lyme disease', href: '/diseases/lyme' },
+          ' alongside other regional outbreak data, which can help you decide whether extra tick precautions are worth taking that day. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' for your area.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'How long does a tick have to be attached to transmit Lyme disease to a dog?',
+        answer:
+          'In most cases a tick needs to be attached for roughly 24 to 48 hours, with transmission most common closer to the 36 to 48 hour mark. The Lyme bacteria (Borrelia burgdorferi) lives in the tick\'s gut and needs time to migrate to its saliva before it can pass into the dog. Removing a tick within about 24 hours drops the risk significantly, though tiny nymph ticks can occasionally transmit faster and are easy to miss.',
+      },
+      {
+        question: 'How soon do Lyme disease symptoms appear in dogs?',
+        answer:
+          'Symptoms usually take a few weeks to a few months to appear, so a bite today may not cause visible illness until well after it is forgotten. The most common signs are shifting-leg lameness, swollen joints, fever, lethargy, and reduced appetite. A Lyme test can detect antibodies within three to five weeks of a bite, even before symptoms show.',
+      },
+      {
+        question: 'What is the right way to remove a tick from a dog?',
+        answer:
+          'Use fine-tipped tweezers, grasp as close to the skin as possible, and pull upward with steady, even pressure. Do not twist, and aim to remove the entire tick including the mouthparts. Avoid crushing it, since contact with tick fluids carries its own small risk, then watch the bite site and your dog for the following weeks.',
+      },
+      {
+        question: 'Is there a Lyme vaccine for dogs?',
+        answer:
+          'Yes. A canine Lyme vaccine is available and worth discussing with your vet, especially if you live in or travel to higher-risk regions like the Northeast, Upper Midwest, or parts of the Pacific Coast. It works best alongside tick prevention medication and daily tick checks, since risk has been expanding beyond those traditional zones.',
+      },
+    ],
+  },
+  {
     slug: 'early-signs-of-lepto-in-dogs',
     title: 'What Are the Early Signs of Lepto in Dogs?',
     description:
