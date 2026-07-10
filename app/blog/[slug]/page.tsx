@@ -108,7 +108,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {fmtDate(post.datePublished)} · {post.readingMinutes} min read · By {post.author}
       </div>
 
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '1200 / 630', borderRadius: 8, overflow: 'hidden', background: 'var(--bg-surface)', marginBottom: 28 }}>
+      {/* zIndex lifts the photo above the site-wide scanline overlay (body::before, z 9999) so covers render clean. */}
+      <div style={{ position: 'relative', width: '100%', aspectRatio: '1200 / 630', borderRadius: 8, overflow: 'hidden', background: 'var(--bg-surface)', marginBottom: 28, zIndex: 10000 }}>
         <Image
           src={post.coverImage}
           alt={post.coverAlt}
@@ -134,7 +135,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           // image block
           return (
             <figure key={i} style={{ margin: '24px 0' }}>
-              <div style={{ position: 'relative', width: '100%', aspectRatio: '1200 / 630', borderRadius: 8, overflow: 'hidden', background: 'var(--bg-surface)' }}>
+              <div style={{ position: 'relative', width: '100%', aspectRatio: '1200 / 630', borderRadius: 8, overflow: 'hidden', background: 'var(--bg-surface)', zIndex: 10000 }}>
                 <Image src={block.src} alt={block.alt} fill sizes="(max-width: 760px) 100vw, 720px" style={{ objectFit: 'cover' }} />
               </div>
               {block.caption && (

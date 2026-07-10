@@ -29,7 +29,8 @@ function fmtDate(iso: string): string {
 function PostCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog/${post.slug}`} style={card}>
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '1200 / 630', background: 'var(--bg-surface)' }}>
+      {/* zIndex lifts the photo above the site-wide scanline overlay (body::before, z 9999) so covers render clean. */}
+      <div style={{ position: 'relative', width: '100%', aspectRatio: '1200 / 630', background: 'var(--bg-surface)', zIndex: 10000 }}>
         <Image
           src={post.coverImage}
           alt={post.coverAlt}
