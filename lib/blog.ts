@@ -24,7 +24,7 @@ export interface BlogFaq {
 /** Topic clusters used to group posts on the /blog index. Add a new value here
  *  (and to BLOG_CATEGORIES below) before using it on a post. */
 export type BlogCategory =
-  | 'Symptoms & Diagnosis'
+  | 'Symptoms'
   | 'Treatment & Recovery'
   | 'Prevention & Risk'
 
@@ -32,8 +32,8 @@ export type BlogCategory =
  *  header on the index. A category with no posts is skipped when rendering. */
 export const BLOG_CATEGORIES: { name: BlogCategory; description: string }[] = [
   {
-    name: 'Symptoms & Diagnosis',
-    description: 'Spotting parvo early and knowing what a diagnosis involves.',
+    name: 'Symptoms',
+    description: 'Spotting the early signs of illness and knowing when something is off.',
   },
   {
     name: 'Treatment & Recovery',
@@ -76,7 +76,7 @@ const POSTS: BlogPost[] = [
     title: "What's the Difference Between Kennel Cough and Dog Flu?",
     description:
       'Kennel cough and dog flu both cause coughing after daycare or boarding, but dog flu hits harder. How to tell them apart, what to do, and the vaccines for each.',
-    category: 'Symptoms & Diagnosis',
+    category: 'Symptoms',
     datePublished: '2026-07-10',
     author: 'ParvoMaps',
     coverImage: '/article-images/kennel-cough-vs-dog-flu.webp',
@@ -204,7 +204,7 @@ const POSTS: BlogPost[] = [
     title: 'My Dog Has Diarrhea, Is It Giardia or Something Else?',
     description:
       'Giardia is a common, easily missed cause of dog diarrhea. What giardia diarrhea looks like, how it differs from other causes, and how it is tested and treated.',
-    category: 'Symptoms & Diagnosis',
+    category: 'Symptoms',
     datePublished: '2026-07-10',
     author: 'ParvoMaps',
     coverImage: '/article-images/giardia-diarrhea.webp',
@@ -338,7 +338,7 @@ const POSTS: BlogPost[] = [
     title: 'My Dog Swam in a Lake and Is Acting Weird, Is It Algae Poisoning?',
     description:
       'Blue-green algae poisoning can kill a dog within an hour of a swim. How fast symptoms appear, what to watch for, and why rinsing and calling your vet cannot wait.',
-    category: 'Symptoms & Diagnosis',
+    category: 'Symptoms',
     datePublished: '2026-07-10',
     author: 'ParvoMaps',
     coverImage: '/article-images/blue-green-algae.webp',
@@ -588,7 +588,7 @@ const POSTS: BlogPost[] = [
     title: 'What Are the Early Signs of Lepto in Dogs?',
     description:
       'The early signs of leptospirosis look like a dozen milder problems. What to watch for, why exposure history is the key, and why acting early prevents organ damage.',
-    category: 'Symptoms & Diagnosis',
+    category: 'Symptoms',
     datePublished: '2026-07-04',
     author: 'ParvoMaps',
     coverImage: '/article-images/lepto-early-signs.webp',
@@ -824,7 +824,7 @@ const POSTS: BlogPost[] = [
     title: "What's the Difference Between Parvo and Distemper Symptoms?",
     description:
       'Parvo and distemper look alike early but attack different systems. How to tell the symptoms apart, why the first move is the same, and what prevents both.',
-    category: 'Symptoms & Diagnosis',
+    category: 'Symptoms',
     datePublished: '2026-07-03',
     author: 'ParvoMaps',
     coverImage: '/article-images/parvo-vs-distemper.webp',
@@ -1831,7 +1831,7 @@ const POSTS: BlogPost[] = [
     title: 'How Do I Know If My Dog Has Parvo?',
     description:
       'What parvo actually looks like in real life, how it is diagnosed, the honest survival odds, and why acting the same day is the single biggest variable.',
-    category: 'Symptoms & Diagnosis',
+    category: 'Symptoms',
     datePublished: '2026-06-23',
     author: 'ParvoMaps',
     coverImage: '/article-images/puppy-testing-positive-for-parvo.webp',
