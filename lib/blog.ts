@@ -72,6 +72,122 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'dog-heartworm-on-monthly-prevention',
+    title: 'Can My Dog Get Heartworm Even on Monthly Prevention?',
+    description:
+      'Yes, breakthrough heartworm infections happen more than owners realize. Why prevention fails, how the reach-back effect works, and why annual testing is the backstop.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-10',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/heartworm-prevention.webp',
+    coverAlt: 'A dog receiving its monthly heartworm prevention medication',
+    readingMinutes: 6,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'Yes, and it happens more often than most owners realize. Monthly heartworm prevention is highly effective, but "highly effective" is not the same as "impossible to fail," and understanding why matters if you want your prevention plan to actually work.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why Breakthrough Infections Happen',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Heartworm preventives do not work the way people often assume. They are not a shield that blocks infection continuously. Instead, monthly medication retroactively kills any heartworm larvae that entered your dog's system in roughly the prior 30 to 45 days, before those larvae mature into a stage the medication can no longer eliminate. This is why timing matters so much.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'A handful of real gaps can let infection slip through. A missed or late dose, even by a few days, can leave a window where larvae mature past the point prevention can kill them. A dog can vomit up an oral dose without the owner noticing. Topical preventives can be applied incorrectly, or a dog swimming or bathing too soon after application can reduce absorption. And no single dose is ever 100 percent effective in 100 percent of dogs, which is exactly why annual testing exists as a backstop.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Reach-Back Effect',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'One detail worth knowing: if a dog misses several months of prevention and then resumes, restarting the medication still offers meaningful protection against larvae that entered during the earlier part of the gap, though it is not a guarantee against all of them. This is why vets say resuming prevention after a lapse is always better than giving up on it, but it still comes with a recommendation to test.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why Annual Testing Exists At All',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Since no preventive is completely failproof, and heartworm shows little to no early symptoms, annual testing is the safety net that catches the rare breakthrough case before it becomes serious. It takes about six to seven months after infection for a dog to test positive, since the parasite needs that long to mature into a detectable stage, which is part of why annual testing rather than testing only when symptoms appear is the standard recommendation.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Symptoms Eventually Look Like',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Early heartworm infection often shows no visible signs at all. As the worm burden increases, symptoms that do appear include a mild persistent cough, reluctance to exercise or fatigue after mild activity, and eventually weight loss. In advanced cases, heartworms can cause visible difficulty breathing and signs of heart failure.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why Missing a Dose Matters More Than It Seems',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "A single missed dose does not guarantee infection, but it does open a real window, and mosquitoes only need one successful bite to start the process. Given that heartworms can live five to seven years once established in a dog's heart and lungs, and treatment involves a lengthy, expensive, and physically taxing process for the dog, consistent monthly timing is worth treating as non-negotiable rather than approximate.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If you missed a dose or are unsure whether your dog was exposed during a lapse, the right move is a call to your vet about testing, not just resuming the medication and hoping the timing worked out.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Heartworm is spread by mosquitoes rather than dog-to-dog contact, so it is not one of the outbreak categories mapped on ',
+          { text: 'ParvoMaps', href: '/' },
+          '. But the same habit that protects against it, staying consistent and paying attention, is what protects against the contagious diseases that are tracked. You can ',
+          { text: 'browse the diseases we map', href: '/diseases' },
+          ' and ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so a nearby case reaches you early.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Can a dog on monthly heartworm prevention still get heartworm?',
+        answer:
+          'Yes. Monthly prevention is highly effective but not foolproof. Breakthrough infections happen through missed or late doses, a dog vomiting up an oral dose unnoticed, topical products applied incorrectly or washed off too soon, and the fact that no single dose is 100 percent effective in every dog. That is why annual testing exists as a backstop.',
+      },
+      {
+        question: 'How do heartworm preventives actually work?',
+        answer:
+          "Preventives are not a continuous shield. Each monthly dose retroactively kills heartworm larvae that entered your dog in roughly the prior 30 to 45 days, before they mature into a stage the medication can no longer kill. That is why exact timing matters, and why a dose that is even a few days late can leave a window for larvae to mature past the point prevention works.",
+      },
+      {
+        question: 'Why do dogs need an annual heartworm test?',
+        answer:
+          'Because no preventive is completely failproof and early heartworm shows little to no symptoms, annual testing catches the rare breakthrough before it becomes serious. It takes about six to seven months after infection for a dog to test positive, since the parasite needs that long to mature into a detectable stage, so testing on a yearly schedule rather than waiting for symptoms is the standard recommendation.',
+      },
+      {
+        question: 'What are the symptoms of heartworm in dogs?',
+        answer:
+          'Early infection usually shows no signs. As the worm burden grows, dogs may develop a mild persistent cough, reluctance to exercise or fatigue after light activity, and eventually weight loss. Advanced cases can cause visible difficulty breathing and signs of heart failure. Because symptoms appear late, prevention and annual testing matter more than watching for signs.',
+      },
+    ],
+  },
+  {
     slug: 'kennel-cough-vs-dog-flu',
     title: "What's the Difference Between Kennel Cough and Dog Flu?",
     description:
