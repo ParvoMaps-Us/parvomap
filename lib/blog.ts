@@ -72,6 +72,132 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'dog-swam-in-lake-blue-green-algae',
+    title: 'My Dog Swam in a Lake and Is Acting Weird, Is It Algae Poisoning?',
+    description:
+      'Blue-green algae poisoning can kill a dog within an hour of a swim. How fast symptoms appear, what to watch for, and why rinsing and calling your vet cannot wait.',
+    category: 'Symptoms & Diagnosis',
+    datePublished: '2026-07-10',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/blue-green-algae.webp',
+    coverAlt: 'A lake with a blue-green algae bloom where a dog was swimming',
+    readingMinutes: 6,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'If your dog was just in a lake or pond and is suddenly vomiting, stumbling, drooling excessively, or acting disoriented, treat this as a potential emergency right now. ',
+          { text: 'Blue-green algae poisoning', href: '/diseases/cyano' },
+          ' moves faster than almost anything else, and there is no antidote once symptoms take hold.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Blue-Green Algae Actually Is',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Despite the name, blue-green algae is not algae at all. It is a bacteria called cyanobacteria that grows in warm, nutrient-rich, often stagnant water like lakes, ponds, and slow rivers, especially during hot summer months. Blooms can appear blue, green, brown, or red, sometimes looking like spilled paint or pea soup floating on the surface. Not every bloom is toxic, but there is no reliable way to tell just by looking, so the safest approach is to treat any visible bloom as dangerous.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How Fast Symptoms Appear',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'This is the detail that matters most. Symptoms of blue-green algae poisoning can show up anywhere from 15 minutes to a few hours after exposure, and in severe cases, dogs have died within an hour of swimming in contaminated water. This is dramatically faster than almost any other disease, which is why "wait and see" is especially dangerous here.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What the Symptoms Actually Look Like',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Watch for vomiting, diarrhea, excessive drooling, weakness, disorientation, difficulty standing, tremors, seizures, and labored breathing. The two main toxin types cause different symptom patterns. One attacks the liver and can cause jaundice, dark urine, and abdominal pain as it progresses. The other attacks the nervous system and can cause seizures, muscle tremors, and paralysis. Both can lead to shock, respiratory failure, and death within hours to days if untreated.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What to Do Right Now if You Suspect Exposure',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Rinse your dog thoroughly with clean, fresh water immediately to remove any algae from their fur, since dogs often ingest more toxin later by licking themselves clean. Do not wait to see if symptoms develop. Call your vet or an emergency animal hospital immediately and let them know you suspect algae exposure so they can prepare.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'There is no antidote for the toxins involved. If your dog is caught early enough and is still stable, a vet may be able to induce vomiting, perform gastric lavage, or administer activated charcoal to reduce how much toxin gets absorbed. Once a dog becomes symptomatic from the liver or nervous system toxins, prognosis becomes poor to grave even with aggressive treatment, which is exactly why speed before symptoms appear matters so much.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why This Disease Deserves Extra Caution',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Unlike ',
+          { text: 'parvo', href: '/diseases/parvo' },
+          ' or ',
+          { text: 'lepto', href: '/diseases/leptospira' },
+          ', there is no supportive care that just buys time while the body fights it off. The damage from these toxins can be severe and fast, and some dogs who survive initial exposure still go on to develop chronic liver problems afterward.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How to Avoid This Entirely',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Avoid letting your dog swim in or drink from water that looks stagnant, discolored, scummy, or has a foul smell, especially during warm months. Bring clean water for your dog on hikes and outings so they are not tempted to drink from natural sources. If your dog does swim in water you are unsure about, rinse them off immediately afterward rather than waiting until you get home.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Because this moves so much faster than other outbreak categories, checking ',
+          { text: 'ParvoMaps', href: '/' },
+          ' before choosing a swimming spot is one of the more genuinely useful precautions available. A ',
+          { text: 'reported case at a specific lake or pond', href: '/diseases/cyano' },
+          ' is the kind of warning that can be the entire difference between a fun afternoon and an emergency vet visit. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' for your area.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'How quickly does blue-green algae poisoning affect dogs?',
+        answer:
+          'Very quickly. Symptoms can appear anywhere from 15 minutes to a few hours after exposure, and in severe cases dogs have died within an hour of swimming in contaminated water. This is far faster than most other dog diseases, which is why waiting to see if symptoms develop is especially dangerous.',
+      },
+      {
+        question: 'What are the symptoms of algae poisoning in dogs?',
+        answer:
+          'Watch for vomiting, diarrhea, excessive drooling, weakness, disorientation, difficulty standing, tremors, seizures, and labored breathing. Liver-type toxins can also cause jaundice, dark urine, and abdominal pain; nervous-system toxins can cause seizures, muscle tremors, and paralysis. Both can progress to shock, respiratory failure, and death within hours to days.',
+      },
+      {
+        question: 'What should I do if my dog swam in water that might have algae?',
+        answer:
+          'Rinse your dog thoroughly with clean, fresh water right away so they do not swallow more toxin licking themselves clean, and call your vet or an emergency animal hospital immediately, telling them you suspect algae exposure. Do not wait for symptoms. If caught early and still stable, a vet may induce vomiting or give activated charcoal to limit toxin absorption.',
+      },
+      {
+        question: 'Is there a cure for blue-green algae poisoning?',
+        answer:
+          'No. There is no antidote for the cyanobacteria toxins. Treatment is limited to reducing absorption early (inducing vomiting, gastric lavage, activated charcoal) and supportive care. Once a dog is symptomatic from the liver or nervous-system toxins the prognosis is poor to grave, so prevention and acting before symptoms appear matter most.',
+      },
+    ],
+  },
+  {
     slug: 'how-long-tick-attached-to-transmit-lyme',
     title: 'How Long Does a Tick Have to Be Attached to Transmit Lyme Disease?',
     description:
