@@ -43,6 +43,69 @@ async function sendEmail(opts: Parameters<typeof resend.emails.send>[0]) {
   return data
 }
 
+// ─── MORNING BRIEF ─────────────────────────────────────────────────────────────
+
+export interface MorningBrief {
+  /** e.g. "Monday, July 14" */
+  dateLabel: string
+  /** Formatted weather line, or null if unavailable. */
+  weather: string | null
+  /** Top headlines (already trimmed to a few). */
+  headlines: string[]
+  /** City label shown in the email, e.g. "Salt Lake City". */
+  place: string
+}
+
+/** Sends the daily morning-brief email. Reuses the verified alerts@ sender. */
+export async function sendMorningBrief(to: string, brief: MorningBrief): Promise<void> {
+  const headlineItems = brief.headlines.length
+    ? brief.headlines
+        .map(
+          h =>
+            `<li style="margin:0 0 10px;color:#f0f0f0;font-size:15px;line-height:1.5;">${esc(h)}</li>`
+        )
+        .join('')
+    : `<li style="margin:0;color:#888;font-size:15px;">No headlines available today.</li>`
+
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to,
+    subject: `Morning brief — ${brief.dateLabel}`,
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+</head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+
+    <div style="margin-bottom:24px;">
+      <span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">MORNING</span><span style="font-size:24px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;"> BRIEF</span>
+    </div>
+
+    <p style="color:#888;font-size:14px;margin:0 0 24px;text-transform:uppercase;letter-spacing:0.06em;">${esc(brief.dateLabel)}</p>
+
+    <div style="margin:0 0 28px;padding:20px;background:#141414;border-radius:10px;">
+      <div style="color:#00ff88;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 8px;">Weather · ${esc(brief.place)}</div>
+      <div style="color:#f0f0f0;font-size:16px;line-height:1.5;">${esc(brief.weather ?? 'Weather unavailable right now.')}</div>
+    </div>
+
+    <div style="margin:0 0 28px;">
+      <div style="color:#00ff88;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 12px;">Top Headlines</div>
+      <ul style="margin:0;padding:0 0 0 18px;">${headlineItems}</ul>
+    </div>
+
+    <p style="color:#555;font-size:12px;margin:24px 0 0;line-height:1.6;">
+      Sent by your ParvoMaps morning-brief cron. Change the time or content in vercel.json / app/api/cron/morning-brief.
+    </p>
+
+  </div>
+</body>
+</html>`,
+  })
+}
+
 // ─── VERIFICATION EMAIL ───────────────────────────────────────────────────────
 
 export async function sendVerificationEmail(
