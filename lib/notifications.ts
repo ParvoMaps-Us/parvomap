@@ -50,22 +50,40 @@ export interface MorningBrief {
   dateLabel: string
   /** Formatted weather line, or null if unavailable. */
   weather: string | null
-  /** Top headlines (already trimmed to a few). */
+  /** Top general headlines (already trimmed to a few). */
   headlines: string[]
+  /** Top AI/tech headlines (already trimmed to a few). */
+  aiHeadlines: string[]
+  /** New-user counts from GA4, or null when analytics isn't configured. */
+  analytics: { yesterday: number; last7: number } | null
   /** City label shown in the email, e.g. "Salt Lake City". */
   place: string
 }
 
 /** Sends the daily morning-brief email. Reuses the verified alerts@ sender. */
 export async function sendMorningBrief(to: string, brief: MorningBrief): Promise<void> {
-  const headlineItems = brief.headlines.length
-    ? brief.headlines
-        .map(
-          h =>
-            `<li style="margin:0 0 10px;color:#f0f0f0;font-size:15px;line-height:1.5;">${esc(h)}</li>`
-        )
-        .join('')
-    : `<li style="margin:0;color:#888;font-size:15px;">No headlines available today.</li>`
+  const listItems = (items: string[]) =>
+    items.length
+      ? items
+          .map(
+            h =>
+              `<li style="margin:0 0 10px;color:#f0f0f0;font-size:15px;line-height:1.5;">${esc(h)}</li>`
+          )
+          .join('')
+      : `<li style="margin:0;color:#888;font-size:15px;">Nothing available today.</li>`
+
+  const headlineItems = listItems(brief.headlines)
+  const aiItems = listItems(brief.aiHeadlines)
+
+  const analyticsBlock = brief.analytics
+    ? `
+    <div style="margin:0 0 28px;padding:20px;background:#141414;border-radius:10px;">
+      <div style="color:#00ff88;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 8px;">ParvoMaps · New Users</div>
+      <div style="color:#f0f0f0;font-size:16px;line-height:1.5;">
+        <strong>${brief.analytics.yesterday}</strong> yesterday · <strong>${brief.analytics.last7}</strong> in the last 7 days
+      </div>
+    </div>`
+    : ''
 
   await sendEmail({
     from:    FROM_ALERTS,
@@ -91,9 +109,16 @@ export async function sendMorningBrief(to: string, brief: MorningBrief): Promise
       <div style="color:#f0f0f0;font-size:16px;line-height:1.5;">${esc(brief.weather ?? 'Weather unavailable right now.')}</div>
     </div>
 
+    ${analyticsBlock}
+
     <div style="margin:0 0 28px;">
       <div style="color:#00ff88;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 12px;">Top Headlines</div>
       <ul style="margin:0;padding:0 0 0 18px;">${headlineItems}</ul>
+    </div>
+
+    <div style="margin:0 0 28px;">
+      <div style="color:#00ff88;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 12px;">AI News</div>
+      <ul style="margin:0;padding:0 0 0 18px;">${aiItems}</ul>
     </div>
 
     <p style="color:#555;font-size:12px;margin:24px 0 0;line-height:1.6;">

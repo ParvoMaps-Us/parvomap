@@ -1,4 +1,5 @@
 import { sendMorningBrief, type MorningBrief } from '@/lib/notifications'
+import { getGaNewUsers } from '@/lib/ga'
 
 /**
  * Cron job — builds a daily "morning brief" (weather + top headlines) and emails
@@ -15,7 +16,7 @@ import { sendMorningBrief, type MorningBrief } from '@/lib/notifications'
  * Scheduled in vercel.json. NOTE: Vercel cron times are UTC.
  */
 
-const RECIPIENT = process.env.BRIEF_EMAIL || '10.4dookie@gmail.com'
+const RECIPIENT = process.env.BRIEF_EMAIL || 'izictsmith8@gmail.com'
 const LAT = process.env.BRIEF_LAT || '40.2969'   // Orem, UT
 const LON = process.env.BRIEF_LON || '-111.6946'
 const PLACE = process.env.BRIEF_PLACE || 'Orem'
@@ -58,18 +59,19 @@ async function getWeather(): Promise<string | null> {
   }
 }
 
-async function getHeadlines(): Promise<string[]> {
+// Fetch + parse titles from any Google News RSS URL. Keyless.
+async function getRssTitles(url: string, limit = 5): Promise<string[]> {
   try {
-    const res = await fetch(
-      'https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en',
-      { cache: 'no-store', headers: { 'User-Agent': 'Mozilla/5.0 (morning-brief cron)' } }
-    )
+    const res = await fetch(url, {
+      cache: 'no-store',
+      headers: { 'User-Agent': 'Mozilla/5.0 (morning-brief cron)' },
+    })
     if (!res.ok) return []
     const xml = await res.text()
     const titles: string[] = []
     const re = /<item>[\s\S]*?<title>([\s\S]*?)<\/title>/g
     let m: RegExpExecArray | null
-    while ((m = re.exec(xml)) && titles.length < 5) {
+    while ((m = re.exec(xml)) && titles.length < limit) {
       const t = m[1]
         .replace(/<!\[CDATA\[|\]\]>/g, '')
         .replace(/&amp;/g, '&')
@@ -81,6 +83,12 @@ async function getHeadlines(): Promise<string[]> {
     return []
   }
 }
+
+const GENERAL_NEWS = 'https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en'
+const AI_NEWS =
+  'https://news.google.com/rss/search?q=' +
+  encodeURIComponent('artificial intelligence OR "AI" when:1d') +
+  '&hl=en-US&gl=US&ceid=US:en'
 
 export async function GET(req: Request) {
   // Bearer-token guard — same pattern as the other crons.
@@ -96,9 +104,16 @@ export async function GET(req: Request) {
     weekday: 'long', month: 'long', day: 'numeric', timeZone: TIMEZONE,
   }).format(new Date())
 
-  const [weather, headlines] = await Promise.all([getWeather(), getHeadlines()])
+  const [weather, headlines, aiHeadlines, analytics] = await Promise.all([
+    getWeather(),
+    getRssTitles(GENERAL_NEWS),
+    getRssTitles(AI_NEWS),
+    getGaNewUsers(),
+  ])
 
-  const brief: MorningBrief = { dateLabel, weather, headlines, place: PLACE }
+  const brief: MorningBrief = {
+    dateLabel, weather, headlines, aiHeadlines, analytics, place: PLACE,
+  }
 
   try {
     await sendMorningBrief(RECIPIENT, brief)
@@ -107,5 +122,11 @@ export async function GET(req: Request) {
     return Response.json({ ok: false, error: String(e) }, { status: 500 })
   }
 
-  return Response.json({ ok: true, weather: Boolean(weather), headlines: headlines.length })
+  return Response.json({
+    ok: true,
+    weather: Boolean(weather),
+    headlines: headlines.length,
+    aiHeadlines: aiHeadlines.length,
+    analytics: Boolean(analytics),
+  })
 }
