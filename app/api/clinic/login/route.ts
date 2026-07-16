@@ -21,7 +21,7 @@ function confirmPage(email: string, exp: number, token: string): Response {
 <body style="margin:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
   <div style="max-width:460px;margin:0 auto;padding:64px 24px;text-align:center;">
     <div style="margin-bottom:28px;">
-      <span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
+      <span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#46f0a2;">PARVO</span><span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
     </div>
     <h1 style="font-size:22px;font-weight:700;margin:0 0 12px;">Sign in to your dashboard</h1>
     <p style="color:#888;font-size:14px;line-height:1.6;margin:0 0 28px;">Click below to open your Pro Clinic dashboard. This link is single-use.</p>
@@ -29,7 +29,7 @@ function confirmPage(email: string, exp: number, token: string): Response {
       <input type="hidden" name="e" value="${escAttr(email)}">
       <input type="hidden" name="exp" value="${escAttr(String(exp))}">
       <input type="hidden" name="t" value="${escAttr(token)}">
-      <button type="submit" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border:none;cursor:pointer;padding:14px 32px;">Continue →</button>
+      <button type="submit" style="display:inline-block;background:#46f0a2;color:#000;font-size:14px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border:none;cursor:pointer;padding:14px 32px;">Continue →</button>
     </form>
   </div>
 </body>

@@ -465,7 +465,7 @@ export default function ReportForm() {
                 }}
               />
               {locationCoords && (
-                <div style={{ marginTop: 4, fontSize: 10, color: '#00ff88', fontFamily: 'var(--mono)' }}>
+                <div style={{ marginTop: 4, fontSize: 10, color: '#46f0a2', fontFamily: 'var(--mono)' }}>
                   ✓ Exact spot pinned
                 </div>
               )}
@@ -721,7 +721,7 @@ export default function ReportForm() {
               onSelect={place => { setLocationDetail(place.label); setLocationCoords({ lat: place.lat, lng: place.lng }) }}
             />
             {hasPreciseLocation
-              ? <div style={{ marginTop: 4, fontSize: 10, color: '#00ff88', fontFamily: 'var(--mono)' }}>✓ Exact spot pinned</div>
+              ? <div style={{ marginTop: 4, fontSize: 10, color: '#46f0a2', fontFamily: 'var(--mono)' }}>✓ Exact spot pinned</div>
               : <div style={{ marginTop: 4, fontSize: 10, color: '#888', fontFamily: 'var(--mono)' }}>Pick a result to pin the exact spot on the map.</div>}
             {gpsButton}
           </div>
