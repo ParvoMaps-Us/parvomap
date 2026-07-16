@@ -94,7 +94,7 @@ function LoginForm() {
           fontWeight: 700,
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
-          background: 'var(--green, #00ff88)',
+          background: 'var(--green, #46f0a2)',
           color: '#000',
           border: 'none',
           borderRadius: 6,

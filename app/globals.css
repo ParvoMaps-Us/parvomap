@@ -3,14 +3,14 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:           #0a0a0a;
-  --bg-surface:   #111111;
-  --bg-card:      #161616;
-  --border:       #2a2a2a;
-  --border-dim:   #222222;
-  --green:        #00ff88;
-  --green-dim:    #00cc6a;
-  --green-glow:   rgba(0,255,136,0.12);
+  --bg:           #06090d;
+  --bg-surface:   #0d151c;
+  --bg-card:      #111c24;
+  --border:       rgba(210,235,240,0.10);
+  --border-dim:   rgba(210,235,240,0.06);
+  --green:        #46f0a2;
+  --green-dim:    #2bc783;
+  --green-glow:   rgba(70,240,162,0.12);
   --amber:        #f59e0b;
   --amber-dim:    rgba(245,158,11,0.15);
   --red:          #ef4444;
@@ -44,13 +44,25 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--bg);
+  /* Premium-glass atmosphere (matches the concept): layered blue-black darks,
+     never flat, with a matured-green signal glow and a cool blue depth glow —
+     all viewport-anchored so it reads as a lit surface behind the glass. */
+  background-color: #05080b;
+  background-image:
+    radial-gradient(1000px 560px at 12% -2%, rgba(70,240,162,0.07), transparent 55%),
+    radial-gradient(900px 640px at 95% 16%, rgba(89,168,255,0.05), transparent 55%),
+    linear-gradient(180deg, #071018 0%, #04070a 60%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--text);
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* `clip` (not `hidden`) prevents horizontal page overflow WITHOUT making body
+     a scroll container — `overflow-x: hidden` here breaks position: sticky for
+     descendants (e.g. the filter bar) on iOS Safari. */
+  overflow-x: clip;
 }
 
 body::before {
@@ -66,6 +78,38 @@ body::before {
   );
   pointer-events: none;
   z-index: 9999;
+}
+
+/* Ambient "outbreak lights" — soft glowing points of colour scattered behind
+   everything (the premium-glass concept's disease-light palette). Fixed and
+   behind page content (z-index:-1), so they read through the translucent glass.
+   Each point = a soft halo; a few tiny bright cores add sparkle. Gently breathes
+   (frozen under prefers-reduced-motion via the global rule). */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle 150px at 16% 24%, rgba(70,240,162,0.10), transparent 70%),
+    radial-gradient(circle 130px at 82% 30%, rgba(89,168,255,0.09), transparent 70%),
+    radial-gradient(circle 120px at 68% 62%, rgba(63,217,208,0.08), transparent 70%),
+    radial-gradient(circle 140px at 30% 74%, rgba(185,146,255,0.07), transparent 70%),
+    radial-gradient(circle 110px at 92% 78%, rgba(255,209,102,0.06), transparent 70%),
+    radial-gradient(circle 120px at 8% 58%, rgba(255,98,87,0.06), transparent 70%),
+    radial-gradient(circle 100px at 50% 14%, rgba(70,240,162,0.06), transparent 70%),
+    /* tiny bright cores */
+    radial-gradient(circle 2px at 16% 24%, rgba(120,255,200,0.85), transparent 60%),
+    radial-gradient(circle 2px at 82% 30%, rgba(150,200,255,0.8), transparent 60%),
+    radial-gradient(circle 1.5px at 68% 62%, rgba(140,240,232,0.8), transparent 60%),
+    radial-gradient(circle 1.5px at 30% 74%, rgba(210,190,255,0.75), transparent 60%),
+    radial-gradient(circle 1.5px at 92% 78%, rgba(255,225,150,0.7), transparent 60%);
+  animation: lights-breathe 9s ease-in-out infinite;
+}
+@keyframes lights-breathe {
+  0%, 100% { opacity: 0.72; }
+  50%      { opacity: 1; }
 }
 
 /* ─── SKIP LINK ─── */
@@ -197,18 +241,41 @@ html.user-tabbing .skip-link:focus { top: 8px; }
 
 /* ─── HEADER ─── */
 header {
-  position: relative;
+  /* Floats at the top of the viewport so the map/stats slide UNDER the frosted
+     bar — that's what makes the glass read. The filter bar pins just below it
+     (see .filter-bar-wrap top offset). */
+  position: sticky;
+  top: 0;
   /* Above Leaflet's map panes (~700) AND the map's own absolute overlays like
      the drop-a-pin button (z-index 1000), so the mobile dropdown stays on top. */
   z-index: 2000;
+  /* Solid fallback for browsers without backdrop-filter (see @supports below). */
   background: rgba(10,10,10,0.95);
-  backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   padding: 0 32px;
   height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+/* Frosted-glass header: a translucent tint over a stronger blur + saturate so
+   the textured backdrop reads through as a premium glass bar, finished with a
+   luminous top hairline and a soft drop shadow. Gated behind @supports so
+   non-supporting browsers keep the solid bar above. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  header {
+    /* Layered so it's visibly glass against the near-black page: a cool
+       translucent surface, a faint green sheen up top, a bright top highlight
+       and a glowing green bottom edge — reads as a lit glass bar rather than a
+       flat black one, and blurs live content when any passes behind it. */
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.012) 55%, transparent 100%),
+      rgba(9,14,20,0.62);
+    -webkit-backdrop-filter: saturate(1.5) blur(22px);
+    backdrop-filter: saturate(1.5) blur(22px);
+    border-bottom: 1px solid rgba(210,235,240,0.10);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+  }
 }
 .logo-group { display: flex; align-items: baseline; gap: 12px; }
 .logo {
@@ -408,7 +475,7 @@ nav a:hover { color: var(--text); }
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 40% 50%, rgba(0,255,136,0.03) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 40% 50%, rgba(70,240,162,0.03) 0%, transparent 70%),
     radial-gradient(ellipse 40% 40% at 75% 30%, rgba(239,68,68,0.04) 0%, transparent 60%);
 }
 .map-svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.18; }
@@ -535,13 +602,17 @@ nav a:hover { color: var(--text); }
   position: absolute;
   bottom: 16px;
   right: 20px;
-  background: rgba(10,10,10,0.85);
-  border: 1px solid #2a2a2a;
+  /* Frosted glass — floats over the live map, so the pins show through it. */
+  background: rgba(14,16,18,0.45);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 8px;
   padding: 10px 14px;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 10px 30px -16px rgba(0,0,0,0.9);
   max-height: calc(100% - 40px);
   overflow-y: auto;
 }
@@ -580,12 +651,12 @@ nav a:hover { color: var(--text); }
 .legend-dot.gray  { background: #555; }
 
 /* ─── FILTER BAR ─── */
-/* Vertically pinned: stays put at the top of the viewport while the map/page
-   scrolls (top: 0 because the header above it is not sticky). The inner nav
-   still scrolls horizontally; the "More" dropdown anchors to this wrapper. */
+/* Vertically pinned just below the sticky glass header (top: 56px = header
+   height) so the two stack instead of overlapping. The inner nav still scrolls
+   horizontally; the "More" dropdown anchors to this wrapper. */
 .filter-bar-wrap {
   position: sticky;
-  top: 0;
+  top: 56px;
   z-index: 1500; /* stays above Leaflet's map panes while pinned */
   background: #000;
 }
@@ -601,6 +672,32 @@ nav a:hover { color: var(--text); }
   -webkit-overflow-scrolling: touch;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
+
+/* Frosted-glass top stack — the ticker (moving report bar), the stats row
+   (135 / 11 / 2 / 38) and the filter bar carry the exact same glass as the
+   header so all four bars read at one uniform intensity. Placed AFTER the base
+   .stats-bar / .filter-bar-wrap rules so this override wins at equal
+   specificity. Solid #000 fallbacks stay on the base rules for browsers
+   without backdrop-filter. */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .ticker-wrap,
+  .stats-bar,
+  .filter-bar-wrap {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.012) 55%, transparent 100%),
+      rgba(9,14,20,0.62);
+    -webkit-backdrop-filter: saturate(1.5) blur(22px);
+    backdrop-filter: saturate(1.5) blur(22px);
+    border-bottom: 1px solid rgba(210,235,240,0.10);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+  }
+  /* The inner filter bar rides on the wrapper's glass — keep it transparent so
+     the frosted surface isn't doubled; the wrapper carries the hairline. */
+  .filter-bar {
+    background: transparent;
+    border-bottom: none;
+  }
+}
 .filter-label {
   font-family: var(--mono);
   font-size: 9px;
@@ -705,12 +802,38 @@ nav a:hover { color: var(--text); }
   flex-shrink: 0;
   position: sticky;
   right: 0;
-  background: #000;
-  box-shadow: -10px 0 10px -4px #000;
+  /* Matches the frosted glass of the filter bar it sits on. Solid fallback for
+     no-backdrop-filter browsers, glass in the @supports override below. */
+  background: #0d0f12;
+  box-shadow: -12px 0 14px -6px rgba(8,10,14,0.6);
   z-index: 2;
   transition: color 0.15s, background 0.15s;
 }
-.filter-menu-toggle:hover, .filter-menu-toggle.active { color: #ffffff; background: #141414; }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .filter-menu-toggle {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(70,240,162,0.045) 100%),
+      rgba(37,43,51,0.62);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    backdrop-filter: blur(20px) saturate(1.6);
+    border-left-color: rgba(70,240,162,0.20);
+  }
+}
+.filter-menu-toggle:hover, .filter-menu-toggle.active { color: #ffffff; background: rgba(58,66,76,0.7); }
+/* Higher-specificity glass for the More button — .filter-bar descendant (0,2,0)
+   so it wins over any lingering equal-specificity #000 rule in the cascade. */
+.filter-bar .filter-menu-toggle { background: #0d0f12; }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .filter-bar .filter-menu-toggle {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.012) 55%, transparent 100%),
+      rgba(9,14,20,0.72);
+    -webkit-backdrop-filter: saturate(1.5) blur(22px);
+    backdrop-filter: saturate(1.5) blur(22px);
+    border-left-color: rgba(210,235,240,0.14);
+  }
+}
+.filter-bar .filter-menu-toggle:hover, .filter-bar .filter-menu-toggle.active { background: rgba(58,66,76,0.7); }
 @media (max-width: 768px) {
   .filter-menu-toggle { font-size: 8px; padding: 0 10px; height: 36px; }
 }
@@ -767,8 +890,12 @@ label {
 label .req { color: var(--red); font-size: 10px; }
 label .opt { color: var(--text-dim); font-size: 8px; font-weight: 400; }
 input, select, textarea {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
+  /* Concept field well — deep blue-black inset over the page, cool-white hairline,
+     rounded, with a matured-green focus ring. Matches the #report-scoped fields so
+     alerts/account/clinic forms read identically. No per-element blur (they sit
+     over the solid page; blurring every input site-wide is a needless cost). */
+  background: rgba(4,8,11,0.55);
+  border: 1px solid rgba(210,235,240,0.16);
   color: var(--text);
   font-family: 'Inter', sans-serif;
   font-size: 13px;
@@ -776,12 +903,12 @@ input, select, textarea {
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
   -webkit-appearance: none;
-  border-radius: 0;
+  border-radius: 11px;
   width: 100%;
 }
 input:focus, select:focus, textarea:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 1px var(--green);
+  border-color: rgba(70,240,162,0.55);
+  box-shadow: 0 0 0 3px rgba(70,240,162,0.14);
 }
 input::placeholder, textarea::placeholder { color: var(--text-dim); }
 select option { background: var(--bg-surface); }
@@ -819,7 +946,7 @@ textarea { resize: vertical; min-height: 80px; }
   font-size: 16px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  background: #00ff88 !important;
+  background: #46f0a2 !important;
   color: #000000 !important;
   border: none;
   padding: 14px 32px;
@@ -832,7 +959,7 @@ textarea { resize: vertical; min-height: 80px; }
   margin-top: 8px;
   transition: background 0.15s, transform 0.1s;
 }
-.btn-submit:hover { background: #00cc6a !important; }
+.btn-submit:hover { background: #2bc783 !important; }
 .btn-submit:active { transform: scale(0.99); }
 .btn-submit:disabled {
   background: #1a1a1a !important;
@@ -847,8 +974,15 @@ textarea { resize: vertical; min-height: 80px; }
   font-size: 9px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: var(--bg-surface);
-  border: 1px solid #2a2a2a;
+  /* Frosted-glass card — same glass recipe as the top bars (lighter surface +
+     sheen gradient + green edge + top highlight) so it reads clearly as glass.
+     No per-element backdrop-filter: these sit over the solid page (nothing to
+     blur behind them) and blurring ~24 cards at once tanks performance. */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(70,240,162,0.045) 100%),
+    rgba(37,43,51,0.52);
+  border: 1px solid rgba(70,240,162,0.30);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
   color: #aaaaaa;
   cursor: pointer;
   padding: 8px 10px;
@@ -862,14 +996,18 @@ textarea { resize: vertical; min-height: 80px; }
 .disease-opt.active {
   border-color: var(--dc);
   color: #ffffff;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.10);
 }
 .disease-swatch { width: 8px; height: 8px; border-radius: 50%; background: var(--dc); flex-shrink: 0; }
 
 /* ─── SUCCESS BOX ─── */
 .success-box {
-  background: rgba(0,255,136,0.06);
-  border: 1px solid rgba(0,255,136,0.25);
+  background:
+    linear-gradient(180deg, rgba(70,240,162,0.08), transparent),
+    rgba(13,22,30,0.55);
+  border: 1px solid rgba(70,240,162,0.25);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
   padding: 24px 28px;
   margin-bottom: 20px;
 }
@@ -894,7 +1032,7 @@ textarea { resize: vertical; min-height: 80px; }
   padding: 16px;
   border: 1px solid var(--green);
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(0, 255, 136, 0.06), transparent);
+  background: linear-gradient(180deg, rgba(70, 240, 162, 0.06), transparent);
 }
 .success-upsell strong { font-size: 14px; color: var(--text); }
 .success-upsell span { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
@@ -919,7 +1057,9 @@ textarea { resize: vertical; min-height: 80px; }
 
 /* ─── ALERT STRIP ─── */
 .alert-strip {
-  background: rgba(239,68,68,0.08);
+  background:
+    linear-gradient(180deg, rgba(239,68,68,0.10), rgba(239,68,68,0.06)),
+    rgba(8,13,19,0.55);
   border-top: 1px solid rgba(239,68,68,0.2);
   border-bottom: 1px solid rgba(239,68,68,0.2);
   padding: 10px 32px;
@@ -943,7 +1083,13 @@ textarea { resize: vertical; min-height: 80px; }
 
 /* ─── FOOTER ─── */
 footer {
+  /* Dense glass footer — sits at the base of scrolling content, so content
+     passes behind it; give it a real backdrop blur + cool top hairline. */
+  background: rgba(8,13,19,0.86);
+  -webkit-backdrop-filter: saturate(150%) blur(22px);
+  backdrop-filter: saturate(150%) blur(22px);
   border-top: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
   padding: 32px;
   margin-top: 64px;
   display: grid;
@@ -985,7 +1131,7 @@ footer {
   gap: 6px;
   transition: color 0.15s;
 }
-.footer-feedback:hover { color: var(--accent, #00ff88); text-decoration: underline; }
+.footer-feedback:hover { color: var(--accent, #46f0a2); text-decoration: underline; }
 .footer-copy {
   font-family: var(--mono);
   font-size: 9px;
@@ -1041,7 +1187,7 @@ html body .leaflet-bar a {
 html body .leaflet-touch .leaflet-bar a:hover,
 html body .leaflet-control-zoom a:hover {
   background-color: #1a1a1a !important;
-  color: #00ff88 !important;
+  color: #46f0a2 !important;
 }
 html body .leaflet-touch .leaflet-bar a:first-child,
 html body .leaflet-bar a:first-child {
@@ -1118,6 +1264,10 @@ html body .leaflet-bar a:last-child {
   header {
     padding: 0 16px !important;
     height: 48px !important;
+  }
+  /* Pin the filter bar just below the shorter mobile header. */
+  .filter-bar-wrap {
+    top: 48px;
   }
   .logo {
     font-size: 22px !important;
@@ -1310,11 +1460,15 @@ html body .leaflet-bar a:last-child {
   position: relative;
   width: 100%;
   max-width: 460px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  /* Concept glass panel — translucent blue-black over the scrim, real backdrop
+     blur, cool hairline, large radius and a layered shadow. */
+  background: rgba(10,17,24,0.72);
+  -webkit-backdrop-filter: saturate(150%) blur(22px);
+  backdrop-filter: saturate(150%) blur(22px);
+  border: 1px solid rgba(210,235,240,0.10);
+  border-radius: 22px;
   padding: 32px 28px 24px;
-  box-shadow: 0 0 0 1px rgba(0, 255, 136, 0.08), 0 24px 60px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 24px 60px -24px rgba(0, 0, 0, 0.65);
   animation: welcome-rise 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .welcome-close {
@@ -1386,18 +1540,23 @@ html body .leaflet-bar a:last-child {
 .welcome-btn-primary {
   flex: 1;
   padding: 12px 16px;
-  background: var(--green);
-  color: #04130c;
+  background: linear-gradient(180deg,#5cf7b1,#2fd88f);
+  color: #052015;
   border: none;
-  border-radius: 4px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(70,240,162,0.4), 0 14px 34px -10px rgba(70,240,162,0.5);
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
 }
-.welcome-btn-primary:hover { background: var(--green-dim); }
+.welcome-btn-primary:hover {
+  background: linear-gradient(180deg,#6ffabd,#37e29a);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(70,240,162,0.55), 0 18px 40px -10px rgba(70,240,162,0.6);
+}
 .welcome-btn-ghost {
   flex: none;
   display: flex;
@@ -1406,7 +1565,7 @@ html body .leaflet-bar a:last-child {
   background: transparent;
   color: var(--text-muted);
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 12px;
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.04em;
@@ -1436,3 +1595,114 @@ html body .leaflet-bar a:last-child {
   .welcome-actions { flex-direction: column; }
   .welcome-btn-ghost { justify-content: center; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   REPORT A CASE — premium-glass concept emulation (scoped to #report only)
+   Blue-black glass panel + tiles, cool-white hairlines, matured-green (#46f0a2)
+   signal accent, rounded corners, gradient-green primary. Everything is scoped
+   under #report so no other page/form is affected.
+   ══════════════════════════════════════════════════════════════════════════ */
+#report {
+  --g-ink1:    rgba(10,17,24,.72);   /* primary glass panel */
+  --g-ink2:    rgba(13,22,30,.55);   /* lighter glass tile   */
+  --g-field:   rgba(4,8,11,.55);     /* input well           */
+  --g-hair:    rgba(210,235,240,.09);
+  --g-hair-hi: rgba(210,235,240,.16);
+  --g-edge:    rgba(255,255,255,.07);
+  --g-signal:  #46f0a2;
+  --g-t1:      #eaf2f2;
+  --g-t2:      #9fb0b5;
+  --g-t3:      #5f7077;
+}
+/* Section heading */
+#report .section-num   { color: var(--g-signal); letter-spacing: .12em; }
+#report .section-title { color: var(--g-t1); }
+#report .section-desc  { color: var(--g-t2); }
+#report .section-desc strong { color: var(--g-t1); }
+#report .section-desc em     { color: var(--g-signal); font-style: normal; }
+
+/* The whole form becomes one frosted glass panel */
+#report form {
+  background: var(--g-ink1);
+  -webkit-backdrop-filter: saturate(150%) blur(22px);
+  backdrop-filter: saturate(150%) blur(22px);
+  border: 1px solid var(--g-hair);
+  border-radius: 22px;
+  box-shadow: 0 24px 60px -24px rgba(0,0,0,.65), inset 0 1px 0 var(--g-edge);
+  padding: 32px;
+  margin-top: 6px;
+}
+@media (max-width: 640px) { #report form { padding: 22px 18px; border-radius: 18px; } }
+
+/* Labels */
+#report label { color: var(--g-t2); }
+#report .req  { color: #ff6257; }
+#report .opt  { color: var(--g-t3); }
+
+/* Option cards → glass-lite tiles (no per-tile blur; they ride on the panel) */
+#report .disease-opt {
+  background: var(--g-ink2);
+  border: 1px solid var(--g-hair-hi);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 var(--g-edge);
+  color: var(--g-t2);
+  padding: 11px 13px;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+#report .disease-opt:hover {
+  border-color: rgba(70,240,162,.40);
+  color: var(--g-t1);
+  background: rgba(70,240,162,.06);
+}
+#report .disease-opt.active {
+  border-color: var(--g-signal);
+  color: #fff;
+  background: rgba(70,240,162,.12);
+  box-shadow: 0 0 0 1px rgba(70,240,162,.35), inset 0 1px 0 var(--g-edge);
+}
+
+/* Fields → concept .field wells */
+#report input,
+#report select,
+#report textarea {
+  background: var(--g-field);
+  border: 1px solid var(--g-hair-hi);
+  border-radius: 11px;
+  color: var(--g-t1);
+  padding: 13px 15px;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+#report input::placeholder,
+#report textarea::placeholder { color: var(--g-t3); }
+#report input:focus,
+#report select:focus,
+#report textarea:focus {
+  border-color: rgba(70,240,162,.55);
+  box-shadow: 0 0 0 3px rgba(70,240,162,.14);
+}
+
+/* Primary submit → gradient-green */
+/* !important to beat the base .btn-submit { background/color !important } rule */
+#report .btn-submit {
+  background: linear-gradient(180deg,#5cf7b1,#2fd88f) !important;
+  color: #052015 !important;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(70,240,162,.40), 0 14px 34px -10px rgba(70,240,162,.5);
+  font-weight: 600;
+  transition: transform .15s, box-shadow .15s;
+}
+#report .btn-submit:hover {
+  background: linear-gradient(180deg,#6ffabd,#37e29a) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(70,240,162,.55), 0 18px 40px -10px rgba(70,240,162,.6);
+}
+#report .btn-submit:disabled {
+  background: rgba(13,22,30,.55) !important;
+  color: var(--g-t3) !important;
+  box-shadow: inset 0 1px 0 var(--g-edge);
+  opacity: 1;
+}
+#report .char-counter { color: var(--g-t3); }

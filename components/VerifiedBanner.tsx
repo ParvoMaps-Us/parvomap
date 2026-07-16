@@ -47,9 +47,11 @@ export default function VerifiedBanner({ status, param = 'verified' }: { status:
         fontFamily:     'var(--mono)',
         fontSize:       13,
         letterSpacing:  '0.04em',
-        color:          success ? '#00ff88' : '#ef4444',
-        background:     success ? 'rgba(0,255,136,0.08)' : 'rgba(239,68,68,0.08)',
-        borderBottom:   `1px solid ${success ? 'rgba(0,255,136,0.3)' : 'rgba(239,68,68,0.3)'}`,
+        color:          success ? '#46f0a2' : '#ef4444',
+        background:     success
+          ? 'linear-gradient(180deg, rgba(70,240,162,0.10), rgba(70,240,162,0.05)), rgba(8,13,19,0.55)'
+          : 'linear-gradient(180deg, rgba(239,68,68,0.10), rgba(239,68,68,0.05)), rgba(8,13,19,0.55)',
+        borderBottom:   `1px solid ${success ? 'rgba(70,240,162,0.3)' : 'rgba(239,68,68,0.3)'}`,
       }}
     >
       <span>{msg.text}</span>

@@ -19,8 +19,8 @@ export default async function FoundingBanner() {
         borderRadius: 10,
         padding: '22px 24px',
         marginBottom: 28,
-        background: 'linear-gradient(180deg, var(--green-dim, rgba(0,255,136,0.06)), transparent)',
-        boxShadow: '0 0 28px var(--green-glow, rgba(0,255,136,0.12))',
+        background: 'linear-gradient(180deg, var(--green-dim, rgba(70,240,162,0.06)), transparent)',
+        boxShadow: '0 0 28px var(--green-glow, rgba(70,240,162,0.12))',
         textAlign: 'center',
       }}
     >

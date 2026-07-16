@@ -50,7 +50,7 @@ function lostPopupHtml(report: Report, ageLabel: string): string {
       ${report.photoUrl && /^https?:\/\//i.test(report.photoUrl) ? `<img src="${escapeHtml(report.photoUrl)}" alt="${name}" style="width:100%;height:130px;object-fit:cover;border-radius:3px;margin-bottom:6px;border:1px solid #2a2a2a;" />` : ''}
       <div style="color:#fff;font-weight:700;font-size:13px;margin-bottom:2px;">${name}</div>
       ${descParts.length ? `<div style="color:#bbb;margin-bottom:4px;line-height:1.4;">${descParts.join(' · ')}</div>` : ''}
-      ${place ? `<div style="color:#00ff88;margin:4px 0;font-size:11px;line-height:1.4;">📍 ${escapeHtml(place)}</div>` : ''}
+      ${place ? `<div style="color:#46f0a2;margin:4px 0;font-size:11px;line-height:1.4;">📍 ${escapeHtml(place)}</div>` : ''}
       ${lastSeen ? `<div style="display:flex;justify-content:space-between;gap:16px;"><span style="color:#aaa;">Last seen</span><span style="color:#e0e0e0;">${lastSeen}</span></div>` : ''}
       <div style="display:flex;justify-content:space-between;gap:16px;"><span style="color:#aaa;">Reported</span><span style="color:#e0e0e0;">${ageLabel}</span></div>
       ${report.contact ? `<div style="margin-top:8px;padding-top:6px;border-top:1px solid #222;color:#60a5fa;font-size:11px;word-break:break-word;">📞 ${escapeHtml(report.contact)}</div>` : ''}
@@ -198,7 +198,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     // "⚠ Report this area" CTA appended to popups; clicking it prefills the
     // form's location and scrolls to the report section.
     const reportBtnHtml =
-      `<button class="report-area-btn" style="margin-top:10px;width:100%;background:#00ff88;color:#000;border:none;border-radius:3px;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">⚠ Report this area</button>`
+      `<button class="report-area-btn" style="margin-top:10px;width:100%;background:#46f0a2;color:#000;border:none;border-radius:3px;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">⚠ Report this area</button>`
 
     const wireMarker = (
       marker: any,
@@ -250,7 +250,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
       const color = pinColor(report)
       const rc = recencyClass(report.timestamp)
-      const glowColor = rc === 'red' ? '#ef4444' : rc === 'amber' ? '#f59e0b' : '#00ff88'
+      const glowColor = rc === 'red' ? '#ef4444' : rc === 'amber' ? '#f59e0b' : '#46f0a2'
 
       const age = Date.now() - report.timestamp
       const ageLabel = age < 60 * 60 * 1000
@@ -266,7 +266,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #2a2a2a;border-radius:4px;min-width:160px;">
           <div style="color:#fff;font-weight:700;margin-bottom:6px;font-size:12px;">${report.zip ? `ZIP ${report.zip}` : escapeHtml(report.city || report.locationDetail || report.state || 'Pinned location')}</div>
           <div style="color:#888;margin-bottom:2px;">${escapeHtml(report.zip ? (report.city ?? '') : (report.state ?? ''))}</div>
-          ${report.locationDetail ? `<div style="color:#00ff88;margin:4px 0 2px;font-size:11px;line-height:1.4;">📍 ${escapeHtml(report.locationDetail)}</div>` : ''}
+          ${report.locationDetail ? `<div style="color:#46f0a2;margin:4px 0 2px;font-size:11px;line-height:1.4;">📍 ${escapeHtml(report.locationDetail)}</div>` : ''}
           ${report.sourceUrl && /^https?:\/\//i.test(report.sourceUrl) ? `<a href="${escapeHtml(report.sourceUrl)}" target="_blank" rel="noopener noreferrer" style="display:block;color:#60a5fa;margin:4px 0 2px;font-size:11px;text-decoration:underline;">📰 Source article ↗</a>` : ''}
           <div style="margin-top:6px;display:flex;justify-content:space-between;gap:16px;">
             <span style="color:#aaa;">Disease</span>
@@ -276,7 +276,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             <span style="color:#aaa;">Reported</span>
             <span style="color:#e0e0e0;">${ageLabel}</span>
           </div>
-          ${report.verifiedClinic ? `<div style="margin-top:8px;color:#00ff88;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Anonymous community report</div>`}
+          ${report.verifiedClinic ? `<div style="margin-top:8px;color:#46f0a2;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Anonymous community report</div>`}
           ${report.locationDetail ? reportBtnHtml : ''}
           ${flagButtonHtml(report.id)}
         </div>
@@ -416,7 +416,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     const dropIcon = L.divIcon({
       className: '',
-      html: `<div style="font-size:26px;line-height:1;filter:drop-shadow(0 0 5px #00ff88);">📍</div>`,
+      html: `<div style="font-size:26px;line-height:1;filter:drop-shadow(0 0 5px #46f0a2);">📍</div>`,
       iconSize: [26, 26],
       iconAnchor: [13, 26],
     })
@@ -503,11 +503,15 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           alignItems: 'center',
           gap: '6px',
           padding: '8px 12px',
-          background: dropMode ? '#00ff88' : 'rgba(10,10,10,0.90)',
-          color: dropMode ? '#04130c' : '#00ff88',
-          border: `1px solid ${dropMode ? '#00ff88' : '#2a2a2a'}`,
-          borderRadius: '4px',
-          backdropFilter: 'blur(8px)',
+          // Frosted glass in the idle state — floats over the live map so the
+          // pins show through; solid green when armed for a clear active cue.
+          background: dropMode ? '#46f0a2' : 'rgba(14,16,18,0.45)',
+          color: dropMode ? '#04130c' : '#46f0a2',
+          border: `1px solid ${dropMode ? '#46f0a2' : 'rgba(255,255,255,0.14)'}`,
+          borderRadius: '8px',
+          backdropFilter: 'blur(16px) saturate(1.5)',
+          WebkitBackdropFilter: 'blur(16px) saturate(1.5)',
+          boxShadow: dropMode ? 'none' : 'inset 0 1px 0 rgba(255,255,255,0.06), 0 10px 30px -16px rgba(0,0,0,0.9)',
           fontFamily: "'IBM Plex Mono', monospace",
           fontSize: '11px',
           fontWeight: 700,
@@ -573,7 +577,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         {[
           { label: 'Last 48h',     color: '#ef4444' },
           { label: 'Last 7 days',  color: '#f59e0b' },
-          { label: 'Last 30 days', color: '#00ff88' },
+          { label: 'Last 30 days', color: '#46f0a2' },
           { label: 'Historical',   color: '#3a3a3a' },
           { label: 'Lost dog',     emoji: '🐶', divider: true },
         ].map(({ label, color, emoji, divider }) => (
@@ -610,7 +614,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       {[
         { color: '#ef4444', label: 'Last 48h' },
         { color: '#f59e0b', label: 'Last 7 days' },
-        { color: '#00ff88', label: 'Last 30 days' },
+        { color: '#46f0a2', label: 'Last 30 days' },
         { color: '#2a2a2a', label: 'Historical', border: '1px solid #666' },
         { emoji: '🐶', label: 'Lost dog' },
       ].map(item => (

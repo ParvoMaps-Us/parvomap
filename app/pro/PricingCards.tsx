@@ -197,15 +197,16 @@ export default function PricingCards() {
               style={{
                 width: '100%',
                 padding: '11px 16px',
-                borderRadius: 6,
+                borderRadius: 12,
                 border: 'none',
                 cursor: loading !== null ? 'default' : 'pointer',
                 fontFamily: 'var(--mono)',
                 fontSize: 13,
                 fontWeight: 700,
-                background: t.highlight ? 'var(--green)' : 'transparent',
-                color: t.highlight ? '#04130b' : 'var(--text)',
+                background: t.highlight ? 'linear-gradient(180deg,#5cf7b1,#2fd88f)' : 'transparent',
+                color: t.highlight ? '#052015' : 'var(--text)',
                 outline: t.highlight ? 'none' : '1px solid var(--border)',
+                boxShadow: t.highlight ? '0 0 0 1px rgba(70,240,162,0.4), 0 14px 34px -10px rgba(70,240,162,0.5)' : 'none',
                 opacity: loading !== null && loading !== t.plan ? 0.5 : 1,
               }}
             >
