@@ -18,6 +18,7 @@ const DISEASES = [
   { key: 'screwworm', label: 'New World Screwworm', color: 'var(--d-screwworm)' },
   { key: 'rabies', label: 'Rabies', color: 'var(--d-rabies)' },
   { key: 'fleas', label: 'Fleas', color: 'var(--d-fleas)' },
+  { key: 'mange', label: 'Sarcoptic Mange', color: 'var(--d-mange)' },
   { key: 'cyano', label: 'Blue-green Algae', color: 'var(--d-cyano)' },
   { key: 'lyme', label: 'Lyme Disease', color: 'var(--d-lyme)' },
   { key: 'rmsf', label: 'RMSF', color: 'var(--d-rmsf)' },

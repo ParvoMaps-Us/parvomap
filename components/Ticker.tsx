@@ -10,7 +10,7 @@ export default function Ticker({ reports }: TickerProps) {
   const DISEASE_LABELS: Record<string, string> = {
     parvo: 'Parvovirus', distemper: 'Distemper', kennel: 'Kennel Cough',
     leptospira: 'Leptospirosis', influenza: 'Dog Flu', strepzoo: 'Strep Zoo', giardia: 'Giardia',
-    ringworm: 'Ringworm', brucella: 'Brucellosis', cyano: 'Blue-green Algae',
+    ringworm: 'Ringworm', brucella: 'Brucellosis', mange: 'Sarcoptic Mange', cyano: 'Blue-green Algae',
     lyme: 'Lyme Disease', rmsf: 'RMSF', anaplasma: 'Anaplasmosis',
     ehrlichia: 'Ehrlichiosis', tickspot: 'Tick Sighting',
   }

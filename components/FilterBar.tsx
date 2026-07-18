@@ -18,6 +18,7 @@ const INFECTIOUS = [
   { key: 'screwworm', label: 'New World Screwworm', color: 'var(--d-screwworm)' },
   { key: 'rabies', label: 'Rabies', color: 'var(--d-rabies)' },
   { key: 'fleas', label: 'Fleas', color: 'var(--d-fleas)' },
+  { key: 'mange', label: 'Sarcoptic Mange', color: 'var(--d-mange)' },
 ]
 
 const ENVIRONMENTAL = [
