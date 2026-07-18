@@ -26,6 +26,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 const wrap = { maxWidth: 720, margin: '40px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
+// Concept "background box" for the article body + FAQ — blue-black card fill,
+// cool hairline, soft depth shadow + top highlight. Solid (no backdrop-filter)
+// so it doesn't create a stacking context that would fight the post images'
+// z-index lift over the scanline overlay.
+const panel = {
+  background: 'var(--bg-card)',
+  border: '1px solid var(--border)',
+  borderRadius: 14,
+  padding: 'clamp(20px, 4vw, 32px)',
+  boxShadow: '0 24px 60px -24px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05)',
+} as const
 
 function fmtDate(iso: string): string {
   return new Date(iso + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
@@ -120,7 +131,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         />
       </div>
 
-      <article>
+      <article style={panel}>
         {post.body.map((block, i) => {
           if (block.type === 'heading') {
             return <h2 key={i} style={{ fontSize: 19, fontWeight: 800, margin: '28px 0 10px' }}>{block.text}</h2>
@@ -147,7 +158,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </article>
 
       {post.faqs && post.faqs.length > 0 && (
-        <section style={{ marginTop: 32 }}>
+        <section style={{ ...panel, marginTop: 20 }}>
           <h2 style={{ fontSize: 19, fontWeight: 800, margin: '0 0 12px' }}>Frequently asked questions</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {post.faqs.map((f, i) => (
