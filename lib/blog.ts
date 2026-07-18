@@ -72,6 +72,124 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'can-i-catch-ringworm-from-my-dog',
+    title: 'Can I Catch Ringworm From My Dog?',
+    description:
+      'Yes, ringworm spreads from dogs to people through direct contact or contaminated objects. What it looks like, how long dogs stay contagious, and how to clear your home.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-18',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/ringworm-dogs-contagious-humans.webp',
+    coverAlt: 'A circular patch of hair loss on a dog, a classic sign of ringworm',
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'Yes, and this is one of the more genuinely contagious conditions on this list, both between pets and from pets to people. If your dog has a suspicious bald patch, this is worth taking seriously for the whole household, not just the dog.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Ringworm Actually Is',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Despite the name, ',
+          { text: 'ringworm', href: '/diseases/ringworm' },
+          " isn't a worm at all. It's a fungal infection, medically called dermatophytosis, that feeds on the protein in skin, hair, and nails. The name comes from the classic appearance in humans: a circular, red, raised rash. In dogs, it more often shows up as circular patches of hair loss, sometimes with red or crusty edges, typically on the face, ears, paws, or tail. Unlike a lot of other skin conditions, ringworm usually doesn't itch much, which can actually make it easier to overlook at first.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why It Spreads So Easily',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Ringworm spores are hardy. They can survive for months on brushes, bedding, furniture, carpets, and clothing, not just on the infected animal itself. Direct contact with an infected dog, cat, or person is the most common way it spreads, but contact with a contaminated object works just as well. Some dogs carry and shed the fungus without showing any visible symptoms themselves, which means an apparently healthy-looking dog can still pass it along.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Can Humans Really Catch It From Dogs?',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Yes. Ringworm is zoonotic, meaning it moves between species, and it's caught through direct contact with an infected animal or a contaminated surface. Broken skin, like a scratch, cut, or a pre-existing skin condition, makes infection more likely, but intact skin isn't a guarantee either. Children, elderly family members, and anyone immunocompromised are at higher risk of catching it and are worth keeping away from an infected dog until treatment is well underway.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How Long a Dog Stays Contagious',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "This is where patience matters. Even with aggressive treatment, dogs typically remain contagious for around three weeks. With minimal or inconsistent treatment, that window stretches out considerably longer, sometimes months. Just because visible symptoms clear up doesn't mean the dog has stopped shedding spores, which is why vets recommend continuing treatment for the full prescribed course and getting a negative fungal culture confirmed before declaring a dog in the clear.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Treatment and Home Cleanup',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Treatment usually combines topical antifungal medication with oral medication for more significant or widespread cases. Just as important as the medication is environmental cleanup: washing bedding in hot water, vacuuming frequently, disinfecting hard surfaces, and cleaning any brushes, toys, or grooming tools the dog has touched. Skipping the environmental side of treatment is one of the most common reasons ringworm keeps coming back in a household even after the dog seems to improve.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What to Do If You Suspect It',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Get your dog to a vet for confirmation rather than guessing based on appearance alone, since ringworm can look similar to mange, allergies, or bacterial skin infections. Wear gloves when handling your dog during treatment, wash your hands after every interaction, and keep young children and immunocompromised family members away from direct contact until your vet gives the all-clear.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Ringworm moves through places where dogs gather, from grooming tables to daycare floors. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks ',
+          { text: 'ringworm reports', href: '/diseases/ringworm' },
+          ' alongside other contagious conditions, so you can see if something has been circulating near you. If your dog has been infected with any disease we track, ',
+          { text: 'reporting your case', href: '/#report' },
+          ' helps this map grow and protects other dog owners. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so nearby cases reach you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Can humans catch ringworm from dogs?',
+        answer:
+          'Yes. Ringworm is zoonotic and spreads through direct contact with an infected animal or a contaminated object like bedding, brushes, or furniture. Broken skin makes infection more likely, and children, elderly family members, and immunocompromised people are at higher risk and should avoid contact until treatment is well underway.',
+      },
+      {
+        question: 'How long is a dog with ringworm contagious?',
+        answer:
+          'Around three weeks with aggressive, consistent treatment, and considerably longer, sometimes months, with minimal or inconsistent treatment. Clearing of visible symptoms does not mean the dog has stopped shedding spores, so vets recommend finishing the full course and confirming with a negative fungal culture.',
+      },
+      {
+        question: 'What does ringworm look like on a dog?',
+        answer:
+          'Most often circular patches of hair loss, sometimes with red or crusty edges, typically on the face, ears, paws, or tail. Unlike many skin conditions it usually is not very itchy, which makes it easy to overlook. It can resemble mange, allergies, or bacterial skin infections, so a vet visit is the only way to confirm.',
+      },
+      {
+        question: 'How do I get ringworm out of my house?',
+        answer:
+          'Treat the environment as seriously as the dog: wash bedding in hot water, vacuum frequently, disinfect hard surfaces, and clean brushes, toys, and grooming tools. Spores can survive for months on household surfaces, and skipping this cleanup is one of the most common reasons ringworm keeps coming back after the dog improves.',
+      },
+    ],
+  },
+  {
     slug: 'dog-heartworm-on-monthly-prevention',
     title: 'Can My Dog Get Heartworm Even on Monthly Prevention?',
     description:
