@@ -72,6 +72,138 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'mange-vs-allergies-in-dogs',
+    title: "What's the Difference Between Mange and Just Normal Itching or Allergies?",
+    description:
+      'Mange and allergies can look identical on the surface: itching, redness, hair loss. The clues that separate them, why testing matters, and how the wrong guess backfires.',
+    category: 'Symptoms',
+    datePublished: '2026-07-18',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/mange-vs-allergies-dogs-itching.webp',
+    coverAlt: 'A dog scratching at irritated skin, a symptom shared by mange and allergies',
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          "If your dog is scratching constantly, this is a genuinely hard call to make just by looking, and even experienced owners get it wrong without testing. Here's what actually separates the two, and why getting it right matters more than it might seem.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why They Get Confused So Easily',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Both conditions can produce the same surface picture: red, irritated skin, hair loss, and a dog that won't stop scratching, licking, or chewing at itself. Underneath that shared appearance, though, the two problems come from completely different causes.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Allergies happen when a dog's immune system overreacts to something, whether that's pollen, dust, mold, fleas, or specific food proteins. It's an internal, inflammatory response. Mange is caused by microscopic mites living on or burrowing into the skin. It's a parasitic infestation, not an immune overreaction, even though the itching it causes can look remarkably similar on the surface.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Clues That Point Toward Mange',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "A few patterns lean toward mange rather than allergies. Sarcoptic mange in particular tends to cause intense, often severe itching along with hair loss, redness, and scabby or crusted skin, frequently starting on the ears, elbows, belly, or chest. It's also highly contagious to other animals, and to people in mild, self-limiting ways, which is a detail allergies don't share. Demodectic mange behaves differently. It's not contagious and often causes localized bald patches, commonly around the face, with less intense itching than the sarcoptic form.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Clues That Point Toward Allergies',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Allergies more often come with additional symptoms beyond just skin irritation: sneezing, watery eyes, and recurring ear infections. Food allergies in particular tend to cause year-round symptoms rather than a seasonal pattern, while environmental allergies like pollen often flare at specific times of year. Allergic dogs frequently focus their licking and chewing on their paws, which is a pattern less typical of mange.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: "Why You Genuinely Can't Tell From Looking Alone",
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Here's the honest complication. Sarcoptic mange in particular can produce an itch response that's partly allergic in nature, since the dog's immune system reacts to proteins from the mites themselves. That overlap means even a fairly typical mange presentation can look convincingly like a straightforward allergy. On top of that, skin scrapings used to diagnose mange sometimes come back falsely negative even when mange is actually present, since the mites can be difficult to capture in a sample.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Because of this, vets often diagnose based on a combination of the visual pattern, the history of onset, skin scrapings or biopsies, and sometimes simply treating for mange first with an antiparasitic and observing the response, before moving on to explore allergies if that does not resolve things.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why Getting the Diagnosis Wrong Can Make Things Worse',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "This isn't a case where guessing and self-treating is a safe middle ground. Some medications used to manage allergic itching work by suppressing the immune system. If a dog's symptoms are actually caused by undiagnosed mange and gets put on an immune-suppressing anti-itch medication meant for allergies, the mite population can grow rapidly instead of being controlled, making the underlying infestation considerably worse.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Bottom Line',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If your dog has persistent itching, redness, or hair loss, this is worth an actual vet visit rather than a guess based on what the skin looks like. The visual overlap between mange and allergies is real enough that even experienced eyes can be wrong, and the wrong treatment path can actively make things worse rather than just delay improvement.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Skin conditions that spread between dogs tend to move through the same shared spaces: parks, daycares, groomers. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks contagious conditions like ',
+          { text: 'ringworm', href: '/diseases/ringworm' },
+          ' and ',
+          { text: 'flea infestations', href: '/diseases/fleas' },
+          ' near you, ',
+          { text: 'among others', href: '/diseases' },
+          '. If your dog has been infected with any disease we track, ',
+          { text: 'reporting your case', href: '/#report' },
+          ' helps this map grow and protects other dog owners. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so nearby cases reach you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'How can I tell if my dog has mange or just allergies?',
+        answer:
+          'You usually cannot tell from looking alone. Both cause itching, redness, and hair loss. Mange leans toward intense itching with scabby, crusted skin starting on the ears, elbows, belly, or chest, while allergies more often add sneezing, watery eyes, ear infections, and paw licking. A vet visit with testing is the only reliable way to separate them.',
+      },
+      {
+        question: 'Is mange contagious to other dogs or humans?',
+        answer:
+          'Sarcoptic mange is highly contagious to other animals and can affect people in mild, self-limiting ways. Demodectic mange is not contagious and tends to cause localized bald patches with less intense itching. Allergies are not contagious at all, which is one of the few clean dividing lines between the conditions.',
+      },
+      {
+        question: 'Can a skin scraping miss mange?',
+        answer:
+          'Yes. Skin scrapings sometimes come back falsely negative even when mange is present, because the mites are difficult to capture in a sample. Vets often combine the visual pattern, onset history, scrapings or biopsies, and sometimes a trial antiparasitic treatment before concluding it is allergies instead.',
+      },
+      {
+        question: 'What happens if a dog with mange is treated for allergies instead?',
+        answer:
+          'It can make things considerably worse. Some allergy medications suppress the immune system, and if the real cause is an undiagnosed mite infestation, that suppression can let the mite population grow rapidly instead of being controlled. This is why guessing between the two is riskier than it seems.',
+      },
+    ],
+  },
+  {
     slug: 'dog-disease-tracker-app',
     title: 'Is There an App or Website That Tracks Dog Diseases Like Flu Trackers for Humans?',
     description:
