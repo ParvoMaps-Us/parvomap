@@ -72,6 +72,136 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'dog-bitten-by-wild-animal',
+    title: 'What Do I Do If My Dog Was Bitten by a Wild Animal?',
+    description:
+      'A wild animal bite is a same-day emergency because of rabies risk, not just the wound. First steps, what happens based on vaccination status, and what to watch for.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-18',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/dog-bitten-wild-animal-rabies-exposure.webp',
+    coverAlt: 'A vet examining a bite wound on a dog after a wildlife encounter',
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          "This is a genuine emergency, and the reason isn't necessarily the bite wound itself. It's the possibility of ",
+          { text: 'rabies', href: '/diseases/rabies' },
+          ' exposure, which becomes untreatable once symptoms start. Acting immediately, not after watching and waiting, is the right call here.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The First Steps Right After It Happens',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "If it's safe to do so, separate your dog from the wild animal without putting yourself at risk of getting bitten or scratched too. Do not try to capture or handle the wild animal yourself. If the animal is still around and behaving strangely, contact your local animal control rather than approaching it.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Get your dog to a vet the same day, even if the wound looks minor. Bite wounds can carry bacteria and cause deeper tissue damage than they appear to on the surface, and your vet needs to assess the wound and discuss next steps for rabies risk regardless of how the bite looks.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why This Gets Treated So Seriously',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Rabies is nearly always fatal once symptoms appear, and there is no treatment at that stage. The virus can incubate silently for anywhere from about ten days up to a year before symptoms show, which means a dog can look and act completely normal for a long stretch after exposure. This silent window is exactly why a bite from a wild animal, especially a raccoon, skunk, fox, coyote, or bat, the species most commonly associated with rabies in the United States, gets treated as a potential rabies exposure regardless of how the animal looked at the time.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Happens Depending on Vaccination Status',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If your dog is currently vaccinated against rabies, your vet will typically clean the wound and may give a booster shot to reinforce protection, along with a period of observation at home as instructed by your vet and local health authority.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "If your dog is unvaccinated or your dog's vaccination status is unclear, the situation is more serious. Depending on state and local regulations, an unvaccinated dog exposed to a potentially rabid animal may face a strict quarantine period, sometimes for several months, and in the most serious cases, when rabies exposure is confirmed or highly suspected and the dog isn't vaccinated, euthanasia may be recommended to protect human safety, since there's no reliable way to confirm a living dog doesn't have rabies short of extended observation. This is exactly why keeping your dog's rabies vaccine current isn't optional if there's any chance of wildlife exposure, even for dogs that mostly stay in a fenced yard.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Reporting the Incident',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Your vet will likely be required to report the bite to your local health department, and this is a legal requirement in most places, not optional paperwork. If the wild animal can be safely located and captured by animal control, it may be tested for rabies, which can resolve uncertainty faster than a lengthy observation period would.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Watching Your Dog Afterward',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Even after initial treatment, keep an eye out for behavior changes over the following weeks: unusual aggression or unusual affection in a normally standoffish dog, excessive drooling, difficulty swallowing, staggering, or sudden weakness that doesn't fit anything else going on. If any of these appear, that's an immediate call to your vet, not a wait-and-see situation.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Preventing This Going Forward',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Keep your dog\'s rabies vaccine current regardless of whether they seem like an "indoor dog" or a dog that rarely encounters wildlife. Supervise outdoor time, especially at dawn and dusk when wildlife is more active, and avoid letting your dog roam off leash in wooded or rural areas where encounters with raccoons, skunks, or foxes are more likely.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Rabid wildlife tends to surface in clusters, and knowing about a nearby case changes how cautious you are on walks. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks ',
+          { text: 'rabies reports', href: '/diseases/rabies' },
+          ' alongside other threats, so you can check what has been circulating in your area. If your dog has been infected with any disease we track, ',
+          { text: 'reporting your case', href: '/#report' },
+          ' helps this map grow and protects other dog owners. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so nearby cases reach you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is a wild animal bite on a dog an emergency?',
+        answer:
+          'Yes. Get your dog to a vet the same day, even if the wound looks minor. Bite wounds can carry bacteria and hide deeper tissue damage, and the bigger concern is rabies exposure, which becomes untreatable once symptoms start. Do not try to capture the wild animal yourself; call animal control if it is still nearby.',
+      },
+      {
+        question: 'What happens if a vaccinated dog is bitten by a wild animal?',
+        answer:
+          'Typically the vet cleans the wound and gives a rabies booster to reinforce protection, followed by a period of at-home observation as directed by the vet and local health authority. The situation is far less dire than for an unvaccinated dog, which is the strongest argument for keeping the vaccine current.',
+      },
+      {
+        question: 'What happens if an unvaccinated dog is bitten by a possibly rabid animal?',
+        answer:
+          'Depending on state and local regulations, an unvaccinated dog may face a strict quarantine, sometimes lasting several months. In the most serious cases, when exposure is confirmed or highly suspected, euthanasia may be recommended, since there is no reliable way to confirm a living dog does not have rabies short of extended observation.',
+      },
+      {
+        question: 'What rabies symptoms should I watch for after a bite?',
+        answer:
+          'Behavior changes over the following weeks: unusual aggression or unusual affection, excessive drooling, difficulty swallowing, staggering, or sudden weakness that does not fit anything else. Rabies can incubate from about ten days up to a year, so a normal-looking dog is not proof of safety. Any of these signs means an immediate vet call.',
+      },
+    ],
+  },
+  {
     slug: 'can-i-catch-ringworm-from-my-dog',
     title: 'Can I Catch Ringworm From My Dog?',
     description:
