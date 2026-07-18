@@ -100,6 +100,13 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
     transmission: 'Picked up from infested animals, bedding, carpets, yards, or wildlife. Fleas jump onto a host and reproduce rapidly in the environment.',
     prevention: 'Year-round flea preventives, washing bedding in hot water, and treating the home and yard. Treat every pet in the household at once.',
   },
+  mange: {
+    name: 'Sarcoptic Mange', category: 'infectious', pinTtlDays: 90, severity: 'moderate', aka: 'Scabies, Sarcoptes scabiei',
+    blurb: 'A highly contagious mite infestation that burrows into the skin and causes intense itching. It spreads dog to dog and from infested wildlife like foxes and coyotes, and can briefly affect people.',
+    symptoms: ['Intense, relentless scratching', 'Hair loss', 'Red, irritated skin', 'Scabby or crusted skin, often starting on ears, elbows, belly, or chest', 'Restlessness and poor sleep from itching'],
+    transmission: 'Direct contact with infested dogs or wildlife (foxes, coyotes), plus shared bedding, kennels, and grooming areas.',
+    prevention: 'Avoid contact with mangy wildlife and stray dogs, wash shared bedding, and use vet-prescribed antiparasitics, which both treat and prevent infestations.',
+  },
   cyano: {
     name: 'Blue-green Algae', category: 'environmental', pinTtlDays: 30, severity: 'high', aka: 'Cyanobacteria',
     blurb: 'A toxin produced by cyanobacteria in warm, stagnant water. Exposure can be rapidly fatal — treat any suspected case as an emergency.',
