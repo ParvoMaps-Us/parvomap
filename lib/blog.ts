@@ -72,6 +72,127 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'dog-disease-tracker-app',
+    title: 'Is There an App or Website That Tracks Dog Diseases Like Flu Trackers for Humans?',
+    description:
+      'Yes. ParvoMaps is a free crowdsourced map tracking parvo, distemper, kennel cough, lepto, Lyme, and algae reports near you, like a flu tracker built for dogs.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-18',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/parvomaps-dog-disease-outbreak-tracker.webp',
+    coverAlt: 'A dog owner checking a disease outbreak map on their phone at the park',
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          "Yes, and if you've never heard of one before, that's not an oversight on your part. Until recently, nothing like this existed for dogs in any meaningful, publicly accessible way.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why This Gap Existed',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'For human illness, this kind of infrastructure is everywhere and taken for granted. You can look up flu activity in your county, check what is circulating before a trip, or see a local outbreak reported on the evening news. That early-warning system is treated as basic public health.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Dogs have had nothing comparable. A puppy can get seriously sick from ',
+          { text: 'parvo', href: '/diseases/parvo' },
+          ' on one street, and the family three blocks over walking their unvaccinated puppy through the same patch of grass has no way of knowing the virus is there, even though it can survive in soil for up to a year. Veterinary clinics know what they are seeing locally, but that knowledge stays inside individual practices. Shelters know. Breeders in a region often know when something is moving through their network. None of it gets pooled anywhere the average dog owner can check before deciding whether to visit a specific park or trail.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What ParvoMaps Does',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          { text: 'ParvoMaps', href: '/' },
+          ' was built specifically to close this gap. It is a free, crowdsourced map that tracks canine disease reports across multiple categories, including parvo, ',
+          { text: 'distemper', href: '/diseases/distemper' },
+          ', ',
+          { text: 'kennel cough', href: '/diseases/kennel' },
+          ', ',
+          { text: 'leptospirosis', href: '/diseases/leptospira' },
+          ', ',
+          { text: 'Lyme disease', href: '/diseases/lyme' },
+          ', and ',
+          { text: 'blue-green algae', href: '/diseases/cyano' },
+          ' exposure, ',
+          { text: 'among others', href: '/diseases' },
+          '.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The mechanic is simple by design. Anyone who spots a sick dog or has a confirmed case, whether an individual dog owner, a veterinarian, a boarding facility, or another source, can ',
+          { text: 'submit a report', href: '/#report' },
+          ' anonymously by entering a ZIP code or pinning a location on the map. Reports go live after email verification, and the person submitting identifies what type of reporter they are, which gives everyone else viewing the map a sense of how much weight to put on that particular report.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why the Details Reflect Real Disease Behavior',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'One design choice reflects an understanding of how these diseases actually work biologically. Parvo pins stay active on the map for 12 months, because canine parvovirus survives in soil for that long. Other disease pins expire after 90 days, since most of the other tracked conditions do not linger in the environment nearly as long. That distinction matters because a stale warning is nearly as unhelpful as no warning at all, and an outdated one that never expires eventually gets ignored.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How People Actually Use It',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The tool is most valuable before a dog gets sick, not after. An owner whose puppy seems a little off can check the map, see a confirmed case reported nearby, and use that information to move from "let\'s wait and see" to "we\'re going to the vet today." Someone deciding where to swim can check for reported algae blooms before choosing a lake. Someone planning a hike can see if Lyme disease has been reported along a specific trail recently.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "None of this replaces a vet's judgment or diagnostic testing. What it does is give owners a piece of information they have never had easy access to before: what is actually circulating nearby, right now, reported by the people who just encountered it. If your dog has been infected with any disease we track, ",
+          { text: 'reporting your case', href: '/#report' },
+          ' helps this map grow and protects other dog owners. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so nearby cases reach you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is there an app that tracks dog diseases like flu trackers track human illness?',
+        answer:
+          'Yes. ParvoMaps is a free, crowdsourced map that tracks canine disease reports across the United States, including parvo, distemper, kennel cough, leptospirosis, Lyme disease, and blue-green algae exposure. It works like a flu activity tracker, but built for dog diseases and searchable by location.',
+      },
+      {
+        question: 'How do reports get on ParvoMaps?',
+        answer:
+          'Anyone can submit a report anonymously, whether a dog owner, veterinarian, or boarding facility, by entering a ZIP code or pinning a location. Reports go live after email verification, and each report is labeled by reporter type so viewers know how much weight to give it.',
+      },
+      {
+        question: 'How long do disease reports stay on the map?',
+        answer:
+          'Parvo pins stay active for 12 months, matching how long canine parvovirus can survive in soil. Most other disease pins expire after 90 days, since those conditions do not persist in the environment as long. Expiring stale pins keeps the map current enough to act on.',
+      },
+      {
+        question: 'Is ParvoMaps a replacement for seeing a vet?',
+        answer:
+          'No. It does not replace veterinary judgment or diagnostic testing. What it adds is context owners never had before: whether a disease has been reported near a specific park, trail, lake, or neighborhood, which can turn "wait and see" into a same-day vet visit when a case is circulating nearby.',
+      },
+    ],
+  },
+  {
     slug: 'dog-bitten-by-wild-animal',
     title: 'What Do I Do If My Dog Was Bitten by a Wild Animal?',
     description:
