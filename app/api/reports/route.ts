@@ -1,5 +1,12 @@
 import { getReports } from '@/lib/redis'
 
+// This is the live outbreak feed — always read current Redis state. Without
+// these, Next/Vercel caches the Upstash REST read (persisting across deploys),
+// so newly-seeded pins silently never appear on the map.
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+export const revalidate = 0
+
 export async function GET() {
   try {
     const reports = await getReports({ limit: 200 })
