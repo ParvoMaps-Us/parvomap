@@ -75,7 +75,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.redirect(new URL('/admin/login?error=expired', req.url), 303)
   }
 
-  const res = NextResponse.redirect(new URL('/admin', req.url), 303)
+  // Land on the full dashboard (stats + moderation in one view), not the
+  // standalone moderation page.
+  const res = NextResponse.redirect(new URL('/dashboard', req.url), 303)
   res.cookies.set(ADMIN_SESSION_COOKIE, signAdminSession(email), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

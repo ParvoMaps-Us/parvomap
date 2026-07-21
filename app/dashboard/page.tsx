@@ -126,7 +126,14 @@ export default async function DashboardPage({
 
   return (
     <main style={{ maxWidth: 1000, margin: '40px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>📊 Tracking Dashboard</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>📊 Tracking Dashboard</h1>
+        <form action="/api/admin/logout" method="post" style={{ margin: 0 }}>
+          <button type="submit" style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit' }}>
+            {sessionEmail} · sign out
+          </button>
+        </form>
+      </div>
       <p style={{ color: 'var(--text-dim)', fontSize: 12, marginBottom: 16 }}>
         Generated {fmt(data.generatedAt)} · internal view · {regionLabel}
       </p>
