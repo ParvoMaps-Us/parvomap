@@ -9,7 +9,12 @@ export const revalidate = 0
 
 export async function GET() {
   try {
-    const reports = await getReports({ limit: 200 })
+    // Keep this in step with the homepage server render (app/page.tsx) — when the
+    // two disagree, the map paints every pin on load and then silently drops the
+    // overflow on the first client refresh. The cap is oldest-first, so a lower
+    // limit culls the long-lived diseases (parvo 365d, rabies 180d) while recent
+    // short-TTL cyano pins crowd the top of the feed.
+    const reports = await getReports({ limit: 500 })
 
     // Strip private fields — never expose email, breed, source, notes publicly.
     // locationDetail is public (a hazard/exposure spot shown on the map).
