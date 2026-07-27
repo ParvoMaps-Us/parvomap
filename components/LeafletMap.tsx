@@ -131,6 +131,17 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     mapRef.current = map
 
+    // Leaflet throws away a click if the pointer moved more than clickTolerance
+    // (3px) between press and release, on the assumption it was a drag. A finger
+    // drifts more than 3px on almost every tap, so taps on pins were being
+    // silently discarded as micro-pans — the pin only opened on the try that
+    // happened to be steady enough, which reads as "I have to tap it a few
+    // times." Widen it on touch only; a <14px movement is a tap, not a pan.
+    // Scoped to this map's draggable rather than L.Draggable.prototype so we
+    // don't change drag behaviour for anything else on the page.
+    const draggable = (map as any).dragging?._draggable
+    if (draggable && L.Browser.touch) draggable.options.clickTolerance = 14
+
     const tileLayer = L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
       {
@@ -189,7 +200,12 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     // Markers live in a layer group so we can clear and re-cluster on zoom.
     const markerLayer = L.layerGroup().addTo(map)
     // Shared canvas renderer for the disease dots (one canvas, not 150 DOM nodes).
-    const canvasRenderer = L.canvas({ padding: 0.5 })
+    // tolerance widens the hit area of every dot: the core is radius 5 with a
+    // 2px stroke, so this brings the tappable radius to ~9px — i.e. out to the
+    // edge of the glow halo that's already drawn behind each pin. Deliberately
+    // no further: the target then matches what the eye reads as the pin, rather
+    // than claiming empty space and stealing taps from a neighbouring dot.
+    const canvasRenderer = L.canvas({ padding: 0.5, tolerance: 3 })
 
     // Double-click a marker → fast fly-zoom in (also declusters a hotspot).
     const flyZoom = (lat: number, lng: number) =>
