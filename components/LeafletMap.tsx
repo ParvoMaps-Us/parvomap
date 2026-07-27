@@ -131,6 +131,17 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     mapRef.current = map
 
+    // Leaflet throws away a click if the pointer moved more than clickTolerance
+    // (3px) between press and release, on the assumption it was a drag. A finger
+    // drifts more than 3px on almost every tap, so taps on pins were being
+    // silently discarded as micro-pans — the pin only opened on the try that
+    // happened to be steady enough, which reads as "I have to tap it a few
+    // times." Widen it on touch only; a <14px movement is a tap, not a pan.
+    // Scoped to this map's draggable rather than L.Draggable.prototype so we
+    // don't change drag behaviour for anything else on the page.
+    const draggable = (map as any).dragging?._draggable
+    if (draggable && L.Browser.touch) draggable.options.clickTolerance = 14
+
     const tileLayer = L.tileLayer(
       'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
       {
@@ -189,7 +200,12 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     // Markers live in a layer group so we can clear and re-cluster on zoom.
     const markerLayer = L.layerGroup().addTo(map)
     // Shared canvas renderer for the disease dots (one canvas, not 150 DOM nodes).
-    const canvasRenderer = L.canvas({ padding: 0.5 })
+    // tolerance widens the hit area of every dot: the core is radius 5 with a
+    // 2px stroke, so this brings the tappable radius to ~9px — i.e. out to the
+    // edge of the glow halo that's already drawn behind each pin. Deliberately
+    // no further: the target then matches what the eye reads as the pin, rather
+    // than claiming empty space and stealing taps from a neighbouring dot.
+    const canvasRenderer = L.canvas({ padding: 0.5, tolerance: 3 })
 
     // Double-click a marker → fast fly-zoom in (also declusters a hotspot).
     const flyZoom = (lat: number, lng: number) =>
@@ -361,51 +377,10 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       wireMarker(marker, lat, lng, { locationDetail: area, lat, lng, zip: valid[0].zip })
     }
 
-    // A genuine outbreak hotspot is a fixed ~2.8mi (0.04°) cell holding this
-    // many reports. Deliberately measured on the ground and NOT in screen
-    // pixels, so "☣ hotspot" means the same thing at every zoom level.
+    // Cluster cell scales with zoom: zoomed out → ~1.4mi cells (hotspots emerge);
+    // zoomed in → much smaller cells, so a dense spot breaks apart into the
+    // individual pins it's made of. Re-rendered on every zoom.
     const BIOHAZARD_THRESHOLD = 10
-    const HOTSPOT_CELL = 0.04
-
-    // Separately, pins that merely *collide on screen* get merged so they stay
-    // tappable. On a phone at the default zoom, without this, ~70% of pins were
-    // drawn underneath a neighbour and could not be opened at all.
-    // Must exceed the 30px cluster badge below, not just the 10px dot — sizing
-    // this to the dot leaves the badges themselves overlapping each other.
-    const CLUSTER_PX = 34
-
-    // "N reports here" badge for a screen-space collision. Intentionally NOT the
-    // biohazard icon: when zoomed out these pins can be hundreds of miles apart,
-    // and rendering that as an outbreak would assert something untrue. Tapping
-    // fits the map to the group, which breaks it back into its members.
-    const addOverlapCluster = (group: Report[]) => {
-      const valid = group.filter(r => r.lat != null && r.lng != null)
-      if (valid.length === 0) return
-      const lat = valid.reduce((s, r) => s + r.lat!, 0) / valid.length
-      const lng = valid.reduce((s, r) => s + r.lng!, 0) / valid.length
-
-      const icon = L.divIcon({
-        className: '',
-        html: `<div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(12,12,12,0.88);border:1.5px solid #6b7280;box-shadow:0 0 8px rgba(0,0,0,0.65);color:#e5e7eb;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;">${valid.length}</div>`,
-        iconSize: [30, 30],
-        iconAnchor: [15, 15],
-      })
-
-      const marker = L.marker([lat, lng], { icon, zIndexOffset: 500 }).addTo(markerLayer)
-      const bounds = L.latLngBounds(valid.map(r => [r.lat!, r.lng!] as [number, number]))
-      const expand = (ev: any) => {
-        L.DomEvent.stop(ev)
-        // Degenerate bounds (pins at identical coords) just fly in as far as
-        // they usefully can; pad() on a zero-size box would be a no-op.
-        if (bounds.getNorth() === bounds.getSouth() && bounds.getEast() === bounds.getWest()) {
-          flyZoom(lat, lng)
-        } else {
-          map.flyToBounds(bounds.pad(0.35), { maxZoom: 15, duration: 0.6 })
-        }
-      }
-      marker.on('click', expand)
-      marker.on('dblclick', expand)
-    }
 
     // Does a report pass the current filter-bar selection?
     const matchesFilter = (r: Report): boolean => {
@@ -421,44 +396,23 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     const renderMarkers = () => {
       markerLayer.clearLayers()
-
-      // Pass 1 — real ground density. Fixed cell, so hotspots are a property of
-      // the data rather than of how far the user happens to be zoomed out.
-      const geoCells = new Map<string, Report[]>()
-      const loose: Report[] = []
+      const zoom = map.getZoom()
+      const cell = Math.min(0.04, Math.max(0.0005, 0.02 * Math.pow(2, 11 - zoom)))
+      const cells = new Map<string, Report[]>()
       reports.forEach(r => {
         if (r.lat == null || r.lng == null) return
         if (!matchesFilter(r)) return
         // Lost-dog pins are always shown individually — they never merge into a
         // disease "outbreak hotspot" cluster.
         if (r.kind === 'lost') { addReportMarker(r); return }
-        const key = `${Math.round(r.lat / HOTSPOT_CELL)}_${Math.round(r.lng / HOTSPOT_CELL)}`
-        const arr = geoCells.get(key)
+        const key = `${Math.round(r.lat / cell)}_${Math.round(r.lng / cell)}`
+        const arr = cells.get(key)
         if (arr) arr.push(r)
-        else geoCells.set(key, [r])
+        else cells.set(key, [r])
       })
-      geoCells.forEach(group => {
+      cells.forEach(group => {
         if (group.length >= BIOHAZARD_THRESHOLD) addHotspotMarker(group)
-        else loose.push(...group)
-      })
-
-      // Pass 2 — everything that isn't a hotspot gets merged only where it would
-      // physically collide on screen. The cell is derived from the current zoom
-      // so groups split apart as you zoom in and are gone entirely by ~z10.
-      // (Approximation: Mercator stretches latitude by 1/cos(lat), so lat cells
-      // run a little taller on screen than lng cells. Close enough for spacing.)
-      const degPerPx = 360 / (256 * Math.pow(2, map.getZoom()))
-      const visualCell = Math.max(CLUSTER_PX * degPerPx, 0.0002)
-      const visCells = new Map<string, Report[]>()
-      loose.forEach(r => {
-        const key = `${Math.round(r.lat! / visualCell)}_${Math.round(r.lng! / visualCell)}`
-        const arr = visCells.get(key)
-        if (arr) arr.push(r)
-        else visCells.set(key, [r])
-      })
-      visCells.forEach(group => {
-        if (group.length > 1) addOverlapCluster(group)
-        else addReportMarker(group[0])
+        else group.forEach(addReportMarker)
       })
     }
 
