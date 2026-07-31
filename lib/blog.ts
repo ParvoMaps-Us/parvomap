@@ -72,6 +72,112 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'new-world-screwworm-in-dogs',
+    title: 'Can Dogs Get New World Screwworm? What to Watch For',
+    description:
+      'New World screwworm was confirmed in the US in 2026. What it is, how it infests dogs through wounds, the warning signs, and how to protect your dog.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-31',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/new-world-screwworm-dogs-wound-check.webp',
+    coverAlt: "An owner's hands parting the fur around a small healing wound on a dog's leg to inspect it in daylight",
+    readingMinutes: 4,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'For the first time since it was eradicated from the country in 1966, New World screwworm was confirmed in the United States in June 2026 as the pest spread north through Central America and Mexico. It can infest livestock, wildlife, pets, and in rare cases people, so yes, dogs are at risk. Here is what it is and exactly what to watch for.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What New World Screwworm Actually Is',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "New World screwworm is the larva of a specific fly. What makes it dangerous is unusual: unlike ordinary maggots that feed only on dead tissue, screwworm larvae burrow into the living flesh of a warm-blooded animal, which is where the \"screw\" in the name comes from. A female fly lays her eggs at the edge of an open wound, and once they hatch the larvae eat their way inward, enlarging the wound and drawing more flies. The US eliminated it in 1966 and stamped out a small Florida Keys outbreak in 2017, but the 2026 detection means it is back on the radar.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How Dogs Get It',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Any break in the skin is a possible entry point: a cut, a scrape, a tick-bite sore, a surgical incision, an ear infection wound, or even the navel of a newborn puppy. Dogs that spend time outdoors with untreated minor injuries are the most exposed. The wound does not need to be large. A small, damp, open sore is enough to attract the fly.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Signs to Watch For',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The tell is a wound that gets worse instead of better. Watch for a sore that grows over a day or two rather than scabbing over, a foul odor, bloody or brown drainage, visible maggots deep in the wound, and obvious pain or restlessness. Because the larvae tunnel inward, the opening on the surface can look smaller than the damage underneath.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why It Is an Emergency',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Screwworm can destroy tissue quickly and become life-threatening, and it is a reportable pest, meaning cases need to reach a veterinarian and animal-health authorities so spread can be tracked. Do not just flush it at home and hope. If you see maggots in a wound that is enlarging, get to a vet promptly.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How to Protect Your Dog',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Check outdoor dogs regularly and treat even small wounds right away by cleaning them and keeping them covered until they heal. Watch surgical sites and newborn puppies closely. And know what is being reported near you, since screwworm risk is regional and moving. You can see current activity on the ',
+          { text: 'ParvoMaps outbreak map', href: '/' },
+          ' and read the full overview on our ',
+          { text: 'screwworm page', href: '/diseases/screwworm' },
+          '.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Because screwworm risk moves with the outbreak, staying current on what is active near you is the best early warning. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks canine disease and pest reports in your area, and you can ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so new detections reach you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is New World screwworm in the United States right now?',
+        answer:
+          'A case was confirmed in Texas in June 2026, the first US detection in decades, and animal-health agencies are actively responding. Risk is regional, so check reports for your area.',
+      },
+      {
+        question: 'How is screwworm different from regular maggots on a wound?',
+        answer:
+          'Ordinary maggots feed on dead tissue. Screwworm larvae feed on living tissue, which is what makes them so damaging.',
+      },
+      {
+        question: 'Can people get screwworm?',
+        answer:
+          'Rarely, and usually through an existing wound. The larger concern is livestock, wildlife, and pets.',
+      },
+      {
+        question: 'What should I do if I think my dog has it?',
+        answer:
+          'Get to a veterinarian promptly. It is a reportable pest, and prompt treatment limits the tissue damage.',
+      },
+    ],
+  },
+  {
     slug: 'signs-of-rabies-in-dogs',
     title: 'Signs of Rabies in Dogs (and How Fast Symptoms Appear)',
     description:
