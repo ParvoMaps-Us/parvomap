@@ -72,6 +72,118 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'dog-anaplasmosis-no-symptoms',
+    title: 'My Dog Tested Positive for Anaplasmosis but Has No Symptoms',
+    description:
+      'A positive anaplasmosis test on a dog that seems perfectly fine is confusing. What the result actually means, when it needs treatment, and the tick link you should not ignore.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-31',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/dog-anaplasmosis-positive-no-symptoms-test.webp',
+    coverAlt: 'A bright, healthy dog on a vet exam table while a vet holds a blood test result slip',
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'It is a common and confusing moment: your dog goes in for a routine wellness visit, the tick-borne disease screen comes back positive for anaplasmosis, and your dog looks and acts completely normal. Does a healthy dog with a positive test need treatment? Here is how to think about it.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What the Positive Actually Tells You',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Most routine screens detect antibodies, which are proof that your dog was exposed to the bacteria at some point, not proof of active illness right now. Plenty of exposed dogs mount an immune response and never get sick. So a positive result on a symptom-free dog often means \"a tick carrying anaplasma bit your dog,\" not \"your dog is currently ill.\" Your vet may look at bloodwork, especially platelet counts, to tell exposure from active disease.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'When No Symptoms Is Genuinely Fine',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'For a dog with no clinical signs and normal bloodwork, many vets do not automatically prescribe antibiotics. The body often handles the exposure on its own, and treating a healthy, symptom-free dog is not always the right call. This is a conversation to have with your vet rather than a guaranteed prescription.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Signs to Watch For',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If a subclinical case does become active, the signs to catch early are lethargy, fever, lameness or stiff and painful joints that may seem to shift from leg to leg, reduced appetite, and, because anaplasmosis can lower platelets, easy bruising or nosebleeds. If any of those show up, it moves from watch-and-wait to a vet visit.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why It Matters Even If Your Dog Feels Fine',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Here is the part not to shrug off. A positive test is hard proof that ticks are reaching your dog and staying attached long enough to transmit disease. The same ticks carry Lyme and ehrlichia, so a quiet anaplasmosis positive is really a warning about your dog's overall tick exposure. The useful response is to tighten prevention. Our ",
+          { text: 'anaplasmosis overview', href: '/diseases/anaplasma' },
+          ' and ',
+          { text: 'Lyme page', href: '/diseases/lyme' },
+          ' cover the tick link, and our guide on ',
+          { text: 'how long a tick has to be attached to transmit disease', href: '/blog/how-long-tick-attached-to-transmit-lyme' },
+          ' explains why fast tick removal matters.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Your Vet May Recommend',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Depending on the bloodwork and your dog's history, your vet might suggest monitoring, a recheck, a review of your tick-prevention product, and treatment only if symptoms or lab changes appear. Bring the positive result as a prompt to make sure your prevention is actually working.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'A positive tick-borne test is also a signal about what is active in your area. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks tick-borne illnesses like ',
+          { text: 'Lyme disease', href: '/diseases/lyme' },
+          ' and ',
+          { text: 'anaplasmosis', href: '/diseases/anaplasma' },
+          ' near you, and you can ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so nearby cases reach you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Does a positive test mean my dog needs antibiotics?',
+        answer:
+          'Not always. For a symptom-free dog with normal bloodwork, many vets monitor rather than treat. It depends on the full picture.',
+      },
+      {
+        question: 'Can anaplasmosis clear on its own?',
+        answer:
+          'Many exposed dogs clear it without ever getting sick, which is why a positive antibody test alone does not always mean active disease.',
+      },
+      {
+        question: 'Is anaplasmosis contagious to me or my other dogs?',
+        answer:
+          'Not directly. It spreads through tick bites, not dog to dog or dog to human, though your other pets share the same tick exposure.',
+      },
+      {
+        question: 'Should I still be worried about a positive with no symptoms?',
+        answer:
+          'The infection itself may be mild, but the positive is a real signal that ticks are getting to your dog, so it is worth tightening prevention.',
+      },
+    ],
+  },
+  {
     slug: 'new-world-screwworm-in-dogs',
     title: 'Can Dogs Get New World Screwworm? What to Watch For',
     description:
