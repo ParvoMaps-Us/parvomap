@@ -72,6 +72,129 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'when-to-take-dog-to-emergency-vet',
+    title:
+      'What Symptoms Should Send Me to the Emergency Vet the Same Night Versus Waiting for a Regular Appointment?',
+    description:
+      'How to tell which dog symptoms mean the emergency vet tonight versus which can wait for a regular appointment, plus a fast at-home gut check when you are unsure.',
+    category: 'Symptoms',
+    datePublished: '2026-07-31',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/dog-emergency-vet-symptoms-checklist.webp',
+    coverAlt: "A dog lying still on the floor late at night, seen from above with an owner's slippers nearby",
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          "This is one of the hardest calls to make as a dog owner, especially at 11pm with a dog who seems \"off\" but isn't obviously in crisis. Here's a clearer way to think through it.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: "The Immediate, Don't-Wait Category",
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'A few signs are close to universal red flags, regardless of what else is going on. Any significant difficulty breathing, including rapid or labored breathing, open-mouth breathing, wheezing, gasping, or gums that look pale, white, gray, or blue, needs emergency care immediately. Breathing problems can deteriorate extremely fast, and this is never a wait-and-see symptom.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Other immediate emergencies include a hard, visibly distended abdomen paired with unproductive retching, which can indicate bloat and is life-threatening within hours. Prolonged unconsciousness or inability to wake your dog. Seizures, especially a first-time seizure or one that doesn't stop within a couple minutes. Sudden collapse or inability to stand. Major trauma of any kind, including being hit by a car, a serious fall, or a fight with another animal, even if your dog seems okay immediately afterward, since internal injuries aren't always visible right away. Known or suspected ingestion of something toxic. Straining to urinate with little or no output, which can indicate a blockage and become life-threatening within a day or two. Suspected broken bones, an inability to bear any weight on a limb, or visibly deformed limbs.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "If any of these are happening, the answer is always the same: go now, don't wait, and don't second-guess yourself.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Middle Ground: Concerning But Not Immediately Life-Threatening',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "A lot of situations fall into genuine gray area, and this is where judgment matters most. A single episode of vomiting or diarrhea in a dog who's otherwise acting normal, eating, and alert usually doesn't need an emergency visit, though it's worth monitoring closely and calling your regular vet if it continues into a second day.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Mild limping where your dog can still bear some weight, without an obviously deformed limb or exposed bone, can typically wait for a regular appointment. A ',
+          { text: 'mild, occasional cough', href: '/diseases/kennel' },
+          " in a dog who's otherwise behaving normally, especially after known exposure to other dogs, often falls into the wait-and-see category rather than emergency territory. Mild discomfort that your dog can still work through, where they can still lie down and get somewhat comfortable, is different from severe pain where they can't settle at all.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Judgment Call That Matters Most',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Here's the piece worth internalizing more than any specific symptom list. Dogs hide illness well, often better than owners expect. By the time a dog seems obviously unwell, an underlying problem may already be fairly advanced. This means subtle changes, appetite loss, unusual quietness, reluctance to do things they'd normally enjoy, deserve real attention even when nothing dramatic is happening yet.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "A useful gut check: gently lift your dog's lip and look at their gums. They should be pink. Pale, white, or grayish gums point toward shock or significant blood loss and warrant emergency care right away. Watch your dog breathe at rest for 15 seconds and multiply by four. Normal resting breathing for a dog is roughly 10 to 30 breaths per minute; noticeably faster, or breathing that looks like real effort rather than normal panting, is a signal to go in.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: "When You're Genuinely Unsure",
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "If you're still not sure after running through this, the safest move is to call an emergency vet or a 24-hour animal poison control line and describe exactly what you're seeing. Most emergency clinics are used to fielding exactly this kind of question and can help you make the call without requiring you to already be certain. Acting on an instinct that something is wrong, even when you can't articulate exactly why, is not overreacting. It's one of the more reliable signals available to you as the person who knows your dog best.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Some of these symptoms overlap with contagious illnesses moving through your area. A sudden bout of vomiting and diarrhea can be early ',
+          { text: 'parvo', href: '/diseases/parvo' },
+          ', and a new cough can be the start of ',
+          { text: 'kennel cough', href: '/diseases/kennel' },
+          '. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks these outbreaks near you, so you can see what is spreading before your dog shows signs. You can also ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so nearby cases reach you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'What dog symptoms are always an emergency?',
+        answer:
+          'Trouble breathing or pale, white, gray, or blue gums, a hard distended belly with unproductive retching (possible bloat), seizures, collapse, major trauma, suspected poisoning, and straining to urinate with little or no output. These need care immediately, do not wait or second-guess.',
+      },
+      {
+        question: 'Is one episode of vomiting or diarrhea an emergency?',
+        answer:
+          'Usually not, if your dog is otherwise alert, eating, and acting normal. Monitor closely and call your regular vet if it continues into a second day or your dog becomes lethargic.',
+      },
+      {
+        question: 'How can I quickly check my dog at home?',
+        answer:
+          'Lift the lip and look at the gums, which should be pink rather than pale, white, gray, or blue, and count resting breaths for 15 seconds and multiply by four. Roughly 10 to 30 breaths per minute is normal, and faster or labored breathing is a reason to go in.',
+      },
+      {
+        question: 'What if I am not sure whether it is an emergency?',
+        answer:
+          'Call an emergency vet or a 24-hour animal poison control line and describe what you see. They field these calls constantly, and acting on an instinct that something is wrong is not overreacting.',
+      },
+    ],
+  },
+  {
     slug: 'how-to-find-out-if-dog-food-is-recalled',
     title: "How Do I Find Out If My Dog's Food Brand Has Been Recalled?",
     description:
