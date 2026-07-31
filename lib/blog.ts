@@ -72,6 +72,130 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'how-to-tell-if-dog-has-fleas',
+    title: 'How to Tell If Your Dog Has Fleas (and What to Do Next)',
+    description:
+      "Not sure if it's fleas or just an itch? The signs that actually confirm fleas, exactly where to look, and what to do before they take over your house.",
+    category: 'Symptoms',
+    datePublished: '2026-07-31',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/how-to-tell-dog-has-fleas-flea-dirt.webp',
+    coverAlt: "Hands parting a dog's fur to reveal skin with tiny black flecks of flea dirt",
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'Constant scratching is the first thing owners notice, but scratching alone does not confirm fleas. Allergies, dry skin, and mites cause the same restless itching. The good news is that fleas leave evidence, and once you know where to look, you can confirm them in about two minutes without a vet visit.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Fastest Way to Confirm Fleas',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'You are often more likely to find flea dirt than a live flea, because fleas move fast and hide in the coat. Flea dirt is digested blood the fleas leave behind, and it looks like tiny black specks or ground pepper down at the skin. Comb some of those specks onto a damp white paper towel. If the flecks smear reddish brown, that is dried blood, and it confirms fleas. If they stay black and dry, it is probably just regular dirt.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Where to Actually Look',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Fleas concentrate where the coat is warm and the dog has a hard time reaching. Part the fur and check the base of the tail, the lower back, the belly, the groin, and the armpits. Skip the back and shoulders, that is the last place you will find them. On dogs with dark or thick coats, the flea dirt test above is far more reliable than trying to spot a moving flea.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Signs Beyond the Scratching',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Fleas usually bring more than an itch. Watch for red bumps or scabs, often in a cluster, thinning hair or bald patches from chewing, especially near the tail, and general restlessness or trouble settling. In heavy infestations on puppies or small dogs, fleas can drain enough blood to cause anemia, which shows up as pale gums and low energy. That one is an urgent vet visit, not a wait-and-see.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why It Is Not Just an Itch',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Fleas are not only a comfort problem. They are the most common way dogs pick up tapeworm, they trigger flea allergy dermatitis in sensitive dogs where a single bite sets off days of misery, and they can carry bacteria that affect both dogs and people. If you want the full picture on what fleas transmit and how the infestation cycle works, our ',
+          { text: 'flea overview page', href: '/diseases/fleas' },
+          ' breaks it down.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why the Fleas You See Are the Small Problem',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Here is the part that catches people off guard. The adult fleas on your dog are roughly five percent of the problem. The other ninety-five percent are eggs, larvae, and pupae worked into your carpet, bedding, and furniture. That is why a flea bath alone never fixes it, and why the itching seems to come back a week later. You have to treat the dog and the environment at the same time, and treat every pet in the house, even the ones not scratching.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What to Do Now',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Confirm with the paper towel test, then get a vet-recommended flea treatment rather than relying only on a drugstore product, since resistance and safety vary a lot by product and by your dog's size. Wash all bedding in hot water, vacuum thoroughly including under furniture, and repeat the treatment on the schedule your vet gives you so you catch the next generation as it hatches. If your area is seeing a lot of parasite activity this season, you can check what is being reported near you on the ",
+          { text: 'ParvoMaps outbreak map', href: '/' },
+          '.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Fleas spread through the same shared spaces dogs pass through every day: parks, daycares, and groomers. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks contagious conditions like ',
+          { text: 'flea infestations', href: '/diseases/fleas' },
+          ', ',
+          { text: 'mange', href: '/diseases/mange' },
+          ', and ',
+          { text: 'ringworm', href: '/diseases/ringworm' },
+          ' near you. If your dog has picked up something we track, ',
+          { text: 'reporting your case', href: '/#report' },
+          ' helps other owners, and you can ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so nearby cases reach you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Can indoor dogs get fleas?',
+        answer:
+          'Yes. Fleas hitch a ride in on your clothes, on other pets, or from a quick trip outside, so a dog that never leaves the yard can still get them.',
+      },
+      {
+        question: 'Can I get fleas from my dog?',
+        answer:
+          'Fleas will bite people, usually around the ankles, but they do not live on humans. The real fix is clearing the dog and the home.',
+      },
+      {
+        question: 'How fast do fleas multiply?',
+        answer:
+          'One female can lay up to 50 eggs a day, so a small problem becomes a full infestation in a couple of weeks. That is why acting early matters.',
+      },
+      {
+        question: 'Will fleas go away on their own?',
+        answer:
+          'No. Without treating both the dog and the environment, the cycle just keeps restarting.',
+      },
+    ],
+  },
+  {
     slug: 'when-to-take-dog-to-emergency-vet',
     title:
       'What Symptoms Should Send Me to the Emergency Vet the Same Night Versus Waiting for a Regular Appointment?',
