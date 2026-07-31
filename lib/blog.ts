@@ -72,6 +72,114 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'signs-of-rabies-in-dogs',
+    title: 'Signs of Rabies in Dogs (and How Fast Symptoms Appear)',
+    description:
+      'What rabies actually looks like in dogs, the two forms it takes, how long after a bite symptoms appear, and why it is a same-day emergency.',
+    category: 'Symptoms',
+    datePublished: '2026-07-31',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/signs-of-rabies-in-dogs-wildlife-exposure.webp',
+    coverAlt: 'A dog standing alert at the edge of a yard at dusk, looking toward the treeline where wildlife would be',
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'Rabies is rare in vaccinated dogs, but it is worth understanding because once symptoms begin it is almost always fatal, and there is no treatment at that stage. The part that matters most happens before any symptoms show, in the window right after a possible exposure. Knowing the signs, and knowing they can take a while to appear, is what protects your dog and your family.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How Long After a Bite Do Signs Appear?',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'This is the detail most people get wrong. Rabies does not show up right away. The virus travels slowly along the nerves toward the brain, and symptoms usually appear a few weeks to a few months after the bite, sometimes longer. The incubation time depends on where the bite landed and how much virus entered. That long, silent gap is exactly why you cannot wait to see if your dog seems fine. Once neurological signs begin, the disease typically progresses to death within about a week.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Early Signs Are Easy to Miss',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The first stage is subtle: a change in behavior. A friendly dog becomes withdrawn, or a calm dog becomes anxious and irritable. There may be a low fever and repeated licking or chewing at the bite site. Because these signs are vague, they are easy to explain away, which is why any known exposure to a wild animal should go to the vet regardless of how your dog is acting.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Two Forms: Furious and Paralytic',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Rabies then moves into one of two forms. The furious form is the one people picture: restlessness, aggression, biting at objects, and heavy drooling. The paralytic or \"dumb\" form is quieter and often missed: weakness, a dropped jaw, trouble swallowing, and progressive paralysis. The classic \"foaming at the mouth\" is not foam so much as saliva the dog can no longer swallow.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What to Do If Your Dog Is Bitten by a Wild Animal',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Treat any wildlife bite as a possible exposure. Wear gloves, avoid contact with saliva, and get your dog to a vet the same day. Your vet will handle wound care, a rabies booster if appropriate, and the quarantine and reporting steps your state requires. For the full walkthrough on handling a wildlife bite, see our guide on ',
+          { text: 'what to do when a dog is bitten by a wild animal', href: '/blog/dog-bitten-by-wild-animal' },
+          ', and our ',
+          { text: 'rabies overview', href: '/diseases/rabies' },
+          '.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Prevention Is the Whole Game',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Because there is no cure once symptoms start, prevention is everything. Keep your dog's rabies vaccine current, which is also legally required in most places, and reduce contact with wildlife like bats, raccoons, skunks, and foxes. A vaccinated dog that gets exposed is in a completely different situation from an unvaccinated one.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Rabies is one of many reasons it helps to know what is moving through your area. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks canine disease reports near you, and you can ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so nearby cases reach you first. If your dog has had a run-in with wildlife or a disease we track, ',
+          { text: 'reporting it', href: '/#report' },
+          ' helps other owners stay ahead.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Can a vaccinated dog get rabies?',
+        answer:
+          'It is extremely rare. Vaccination is highly effective, which is the main reason to keep it current.',
+      },
+      {
+        question: 'How is rabies confirmed in dogs?',
+        answer:
+          'There is no reliable test in a living animal. Confirmation is done on brain tissue after death, which is another reason prevention and prompt exposure response matter so much.',
+      },
+      {
+        question: 'Can I catch rabies from my dog?',
+        answer:
+          'Yes, through a bite or through saliva contacting broken skin or your eyes, nose, or mouth. If that happens, seek medical care right away and do not wait for symptoms.',
+      },
+      {
+        question: 'How long can rabies stay dormant before symptoms appear?',
+        answer:
+          'Usually a few weeks to a few months, and occasionally longer, which is why a wildlife exposure is urgent even if your dog looks fine.',
+      },
+    ],
+  },
+  {
     slug: 'how-to-tell-if-dog-has-fleas',
     title: 'How to Tell If Your Dog Has Fleas (and What to Do Next)',
     description:
