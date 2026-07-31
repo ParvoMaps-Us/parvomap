@@ -72,6 +72,116 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'strep-zoo-in-dogs',
+    title: 'Strep Zoo in Dogs: The Fast-Moving Shelter Illness to Know',
+    description:
+      'Strep zoo can look like ordinary kennel cough, then turn into deadly pneumonia in under 48 hours. The signs, why shelters are ground zero, and when it is an emergency.',
+    category: 'Symptoms',
+    datePublished: '2026-07-31',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/strep-zoo-in-dogs-shelter-respiratory.webp',
+    coverAlt: 'A dog resting in a shelter kennel run, lying down and breathing with visible effort',
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'Strep zoo, short for Streptococcus zooepidemicus, is a bacterial infection that matters because of its speed. It often starts looking like a routine case of kennel cough, then in some dogs it progresses to severe, bleeding pneumonia within a day or two. In documented shelter outbreaks it has caused very high illness rates and roughly half of affected dogs dying. Knowing how it differs from ordinary kennel cough is what buys you time.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why It Gets Missed Early',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The trap is that the opening act mimics kennel cough: a cough, nasal discharge, and lower energy. Owners and even shelters can reasonably assume it is the usual respiratory bug going around, which is exactly why the more dangerous cases are sometimes recognized too late.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'The Signs It Is Something Worse',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Watch for a fast, hard turn. Warning signs that this is not routine include a sudden high fever, labored or rapid breathing, bloody or blood-tinged nasal discharge, coughing up blood, extreme weakness, and collapse. What makes strep zoo frightening is how quickly it can move from mild-seeming to critical, often within 24 to 48 hours.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Why Shelters and Kennels Are Ground Zero',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'This is an illness of dense, high-turnover dog housing: shelters, boarding facilities, and busy daycares, where many dogs mix, stress is high, and new dogs arrive constantly. Those conditions let it spread fast, and the big documented outbreaks have all been in crowded facilities. This is exactly the kind of facility-level cluster the ',
+          { text: 'ParvoMaps outbreak map', href: '/' },
+          ' exists to surface, so owners can see what is circulating near them.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What to Do',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If your dog was recently in a shelter, boarding kennel, or daycare and develops sudden severe breathing trouble or any bloody nasal discharge, treat it as an emergency and get to a vet right away. Early antibiotics and supportive care make a real difference, and time is the variable that matters most. Keep a sick dog isolated from other dogs in the meantime.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How to Lower the Risk',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Use reputable boarding and daycare facilities, avoid overcrowded ones, and watch a newly adopted or recently boarded dog closely for the first week or two. Keep core vaccines and kennel cough protection current. Those will not prevent strep zoo specifically, but they reduce the other respiratory infections that can set the stage. Our ',
+          { text: 'kennel cough overview', href: '/diseases/kennel' },
+          ' and our guide on ',
+          { text: 'kennel cough versus dog flu', href: '/blog/kennel-cough-vs-dog-flu' },
+          ' help you tell the milder respiratory bugs apart from something serious.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Because strep zoo moves through facilities, knowing what is circulating near you is real protection. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks contagious dog illnesses in your area, and you can ',
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so a nearby cluster reaches you before your dog does. If your dog has caught something we track, ',
+          { text: 'reporting it', href: '/#report' },
+          ' helps other owners stay ahead.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is strep zoo the same as kennel cough?',
+        answer:
+          'No. It can start out looking like kennel cough, but it is a different, more aggressive infection that can progress to fatal pneumonia.',
+      },
+      {
+        question: 'Can my dog catch it at daycare or boarding?',
+        answer:
+          'Yes. Dense, high-turnover dog environments are where outbreaks happen, which is why it is worth watching a recently boarded dog closely.',
+      },
+      {
+        question: 'Is strep zoo contagious to humans?',
+        answer:
+          'Human cases are rare and usually involve close contact with many animals. The main concern is dog to dog spread in crowded settings.',
+      },
+      {
+        question: 'How fast can it become fatal?',
+        answer:
+          'In severe cases, dogs have deteriorated within 24 to 48 hours, which is why sudden breathing trouble or bloody discharge is a same-day emergency.',
+      },
+    ],
+  },
+  {
     slug: 'dog-anaplasmosis-no-symptoms',
     title: 'My Dog Tested Positive for Anaplasmosis but Has No Symptoms',
     description:
