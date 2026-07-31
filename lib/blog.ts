@@ -72,6 +72,132 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'how-to-find-out-if-dog-food-is-recalled',
+    title: "How Do I Find Out If My Dog's Food Brand Has Been Recalled?",
+    description:
+      'Dog food recalls happen more often than owners realize and rarely make the news. Where to check, what most recalls involve, and what to do if your brand is listed.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-07-31',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/dog-food-recall-check-fda.webp',
+    coverAlt: "Close-up of a dog food bag's printed lot number and best by date, the codes you check against a recall notice",
+    readingMinutes: 4,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          "Pet food recalls happen more often than most owners realize, and the recall itself is rarely announced anywhere near loud enough for the average person to catch it in time. Here's where to actually look, and what to do if your brand shows up.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Where Recalls Actually Get Posted',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The two most authoritative sources are the ',
+          { text: "FDA's Animal and Veterinary recall page", href: 'https://www.fda.gov/animal-veterinary/safety-health/recalls-withdrawals' },
+          ' and the ',
+          { text: "American Veterinary Medical Association's recalls and alerts page", href: 'https://www.avma.org/news/recalls-alerts' },
+          ". Both publish official recall notices and safety advisories as they're issued, and both are worth checking periodically rather than assuming you'll hear about a recall some other way.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "It's worth understanding there's a difference between an FDA advisory and a formal company recall. An advisory is the FDA telling pet owners not to feed a specific product due to a safety concern, sometimes before a formal recall has been issued by the company itself. Both matter equally for keeping your dog safe, even though they're technically different categories.",
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Most Recalls Are Actually About',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "The most common reason pet food gets recalled is bacterial contamination, most often Salmonella, and less frequently Listeria monocytogenes. Raw and freeze-dried diets carry meaningfully higher risk for this specific problem compared to standard kibble or canned food, since the manufacturing process for raw diets doesn't include a kill step for pathogens the way cooking or extrusion does.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Other historical causes include excess vitamin D, which can cause acute kidney failure in dogs, and foreign object contamination. Melamine contamination, the cause behind a major recall crisis years ago, is a rare historical footnote rather than a frequent current cause.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How to Check If Your Specific Bag Is Affected',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Recalls are almost always tied to specific lot numbers and production date ranges, not entire brands wholesale. If you see a recall notice for a brand you feed, check the lot number and best-by date printed on your bag or container against the specific numbers listed in the recall notice before assuming your food is affected or unaffected.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What to Do If Your Food Is Recalled',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Stop feeding it immediately. Don't finish the bag to avoid waste, since the whole point of a recall is that the product poses a real risk. Contact the manufacturer directly for refund or replacement instructions, which are usually included in the recall notice or on the company's website. Dispose of the food in a sealed container so neither pets nor wildlife can access it, and thoroughly clean any bowls or storage containers that held it.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'If your dog has already eaten some of the recalled food and shows any symptoms, contact your vet right away and mention the recall specifically, since it gives them useful context for what to test for. Your vet may also report the illness to the FDA, which helps track the scope of a given contamination event.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'A Simple Way to Stay Ahead of This',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          "Since recalls don't always make major news, and even when they do, it's easy to miss the announcement in the middle of a busy week, it's worth periodically checking the FDA and AVMA recall pages directly, especially if you feed raw or freeze-dried diets, which carry a higher baseline recall frequency than standard commercial kibble.",
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'You can also let ParvoMaps do some of that watching for you. ',
+          { text: 'ParvoMaps', href: '/' },
+          ' tracks ',
+          { text: 'pet food recalls', href: '/recalls' },
+          " alongside canine disease outbreaks, so recent notices sit in one place next to what's spreading near you. If you would rather be told than remember to check, you can ",
+          { text: 'set up outbreak alerts', href: '/alerts' },
+          ' so new reports reach you first.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'How often is dog food recalled?',
+        answer:
+          'More often than most owners realize, and recalls rarely get loud news coverage. That is why it helps to check the FDA and AVMA recall pages periodically, especially if you feed raw or freeze-dried diets, which carry a higher baseline recall frequency than standard kibble.',
+      },
+      {
+        question: 'Does a recall mean the whole brand is dangerous?',
+        answer:
+          'Usually not. Recalls are almost always tied to specific lot numbers and production date ranges, not an entire brand. Check the lot number and best-by date printed on your bag against the numbers listed in the recall notice before assuming your food is affected.',
+      },
+      {
+        question: 'Why are raw and freeze-dried diets recalled more often?',
+        answer:
+          'Their manufacturing does not include a cooking or extrusion kill step that removes pathogens like Salmonella and Listeria, so they carry a meaningfully higher contamination risk than standard kibble or canned food.',
+      },
+      {
+        question: 'What should I do if my dog already ate recalled food?',
+        answer:
+          'Stop feeding it immediately. If your dog shows any symptoms, contact your vet right away and mention the recall specifically so they know what to test for. Your vet may also report the illness to the FDA, which helps track the contamination event.',
+      },
+    ],
+  },
+  {
     slug: 'mange-vs-allergies-in-dogs',
     title: "What's the Difference Between Mange and Just Normal Itching or Allergies?",
     description:
