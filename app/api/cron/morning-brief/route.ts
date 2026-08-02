@@ -58,6 +58,37 @@ async function getWeather(): Promise<string | null> {
   }
 }
 
+// Security threat watch — searches Google News for active attacks relevant to
+// the owner's stack (npm/PyPI supply chain, browser extensions, GitHub/Vercel,
+// Meta/Instagram phishing, macOS). Last 3 days, max 3 items.
+async function getThreatWatch(): Promise<string[]> {
+  try {
+    const q = encodeURIComponent(
+      '("supply chain attack" OR "npm packages" OR "PyPI" OR "chrome extension" OR "GitHub tokens" OR "Instagram phishing" OR macOS) (malware OR compromised OR worm OR breach OR stolen) when:3d'
+    )
+    const res = await fetch(
+      `https://news.google.com/rss/search?q=${q}&hl=en-US&gl=US&ceid=US:en`,
+      { cache: 'no-store', headers: { 'User-Agent': 'Mozilla/5.0 (morning-brief cron)' } }
+    )
+    if (!res.ok) return []
+    const xml = await res.text()
+    const relevant = /npm|pypi|supply.chain|extension|github|vercel|instagram|meta|macos|malware|worm|phish|token|credential/i
+    const titles: string[] = []
+    const re = /<item>[\s\S]*?<title>([\s\S]*?)<\/title>/g
+    let m: RegExpExecArray | null
+    while ((m = re.exec(xml)) && titles.length < 3) {
+      const t = m[1]
+        .replace(/<!\[CDATA\[|\]\]>/g, '')
+        .replace(/&amp;/g, '&')
+        .trim()
+      if (t && relevant.test(t)) titles.push(t)
+    }
+    return titles
+  } catch {
+    return []
+  }
+}
+
 async function getHeadlines(): Promise<string[]> {
   try {
     const res = await fetch(
@@ -96,9 +127,13 @@ export async function GET(req: Request) {
     weekday: 'long', month: 'long', day: 'numeric', timeZone: TIMEZONE,
   }).format(new Date())
 
-  const [weather, headlines] = await Promise.all([getWeather(), getHeadlines()])
+  const [weather, headlines, threats] = await Promise.all([
+    getWeather(),
+    getHeadlines(),
+    getThreatWatch(),
+  ])
 
-  const brief: MorningBrief = { dateLabel, weather, headlines, place: PLACE }
+  const brief: MorningBrief = { dateLabel, weather, headlines, threats, place: PLACE }
 
   try {
     await sendMorningBrief(RECIPIENT, brief)
@@ -107,5 +142,5 @@ export async function GET(req: Request) {
     return Response.json({ ok: false, error: String(e) }, { status: 500 })
   }
 
-  return Response.json({ ok: true, weather: Boolean(weather), headlines: headlines.length })
+  return Response.json({ ok: true, weather: Boolean(weather), headlines: headlines.length, threats: threats.length })
 }

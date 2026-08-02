@@ -52,6 +52,8 @@ export interface MorningBrief {
   weather: string | null
   /** Top headlines (already trimmed to a few). */
   headlines: string[]
+  /** Active cyber-threat headlines relevant to the owner's stack (may be empty). */
+  threats?: string[]
   /** City label shown in the email, e.g. "Salt Lake City". */
   place: string
 }
@@ -66,6 +68,16 @@ export async function sendMorningBrief(to: string, brief: MorningBrief): Promise
         )
         .join('')
     : `<li style="margin:0;color:#888;font-size:15px;">No headlines available today.</li>`
+
+  const threats = brief.threats ?? []
+  const threatItems = threats.length
+    ? threats
+        .map(
+          t =>
+            `<li style="margin:0 0 10px;color:#f0f0f0;font-size:15px;line-height:1.5;">${esc(t)}</li>`
+        )
+        .join('')
+    : `<li style="margin:0;color:#888;font-size:15px;">Nothing new that touches your stack. Quiet day.</li>`
 
   await sendEmail({
     from:    FROM_ALERTS,
@@ -94,6 +106,11 @@ export async function sendMorningBrief(to: string, brief: MorningBrief): Promise
     <div style="margin:0 0 28px;">
       <div style="color:#00ff88;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 12px;">Top Headlines</div>
       <ul style="margin:0;padding:0 0 0 18px;">${headlineItems}</ul>
+    </div>
+
+    <div style="margin:0 0 28px;padding:20px;background:#141414;border-radius:10px;border-left:3px solid #ff5544;">
+      <div style="color:#ff5544;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 12px;">Threat Watch · your stack</div>
+      <ul style="margin:0;padding:0 0 0 18px;">${threatItems}</ul>
     </div>
 
     <p style="color:#555;font-size:12px;margin:24px 0 0;line-height:1.6;">
