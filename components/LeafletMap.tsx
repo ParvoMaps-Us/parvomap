@@ -31,7 +31,7 @@ function escapeHtml(s: string): string {
 
 /** Small "report this pin" control appended to each report popup for moderation. */
 function flagButtonHtml(id: string): string {
-  return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#999;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">🚩 Something looks wrong</button>`
+  return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#999;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">Something looks wrong</button>`
 }
 
 /** Popup markup for a lost-dog pin: photo, name, details, exact address, contact. */
@@ -217,7 +217,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     // above the "Report this pin" moderation button and read as "flag this as
     // wrong". The two verbs are now distinct — ADD a case vs REPORT a problem.
     const reportBtnHtml =
-      `<button class="report-area-btn" style="margin-top:10px;width:100%;background:#46f0a2;color:#000;border:none;border-radius:3px;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">＋ Add a case here</button>`
+      `<button class="report-area-btn" style="margin-top:10px;width:100%;background:#46f0a2;color:#000;border:none;border-radius:3px;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Add a case here</button>`
 
     const wireMarker = (
       marker: any,
@@ -285,8 +285,8 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#e0e0e0;background:#111;padding:10px 12px;border:1px solid #2a2a2a;border-radius:4px;min-width:160px;">
           <div style="color:#fff;font-weight:700;margin-bottom:6px;font-size:12px;">${report.zip ? `ZIP ${report.zip}` : escapeHtml(report.city || report.locationDetail || report.state || 'Pinned location')}</div>
           <div style="color:#888;margin-bottom:2px;">${escapeHtml(report.zip ? (report.city ?? '') : (report.state ?? ''))}</div>
-          ${report.locationDetail ? `<div style="color:#46f0a2;margin:4px 0 2px;font-size:11px;line-height:1.4;">📍 ${escapeHtml(report.locationDetail)}</div>` : ''}
-          ${report.sourceUrl && /^https?:\/\//i.test(report.sourceUrl) ? `<a href="${escapeHtml(report.sourceUrl)}" target="_blank" rel="noopener noreferrer" style="display:block;color:#60a5fa;margin:4px 0 2px;font-size:11px;text-decoration:underline;">📰 Source article ↗</a>` : ''}
+          ${report.locationDetail ? `<div style="color:#46f0a2;margin:4px 0 2px;font-size:11px;line-height:1.4;">${escapeHtml(report.locationDetail)}</div>` : ''}
+          ${report.sourceUrl && /^https?:\/\//i.test(report.sourceUrl) ? `<a href="${escapeHtml(report.sourceUrl)}" target="_blank" rel="noopener noreferrer" style="display:block;color:#60a5fa;margin:4px 0 2px;font-size:11px;text-decoration:underline;">Source article ↗</a>` : ''}
           <div style="margin-top:6px;display:flex;justify-content:space-between;gap:16px;">
             <span style="color:#aaa;">Disease</span>
             <span style="color:${color};font-weight:600;text-transform:capitalize;">${escapeHtml(report.disease)}</span>
@@ -297,9 +297,9 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           </div>
           <div style="display:flex;justify-content:space-between;gap:16px;">
             <span style="color:#aaa;">Found in</span>
-            <span style="color:${report.subject === 'wildlife' ? '#f0b846' : '#e0e0e0'};font-weight:600;">${report.subject === 'wildlife' ? '🦝 Wildlife' : '🐕 A dog'}</span>
+            <span style="color:${report.subject === 'wildlife' ? '#f0b846' : '#e0e0e0'};font-weight:600;">${report.subject === 'wildlife' ? 'Wildlife' : 'A dog'}</span>
           </div>
-          ${report.subject === 'wildlife' ? `<div style="margin-top:7px;padding:6px 8px;background:#2a2010;border-left:2px solid #f0b846;color:#f0b846;font-size:10px;line-height:1.45;">⚠️ Confirmed in a wild animal, not a dog. Keep your dog leashed here, away from wildlife, and current on shots.</div>` : ''}
+          ${report.subject === 'wildlife' ? `<div style="margin-top:7px;padding:6px 8px;background:#2a2010;border-left:2px solid #f0b846;color:#f0b846;font-size:10px;line-height:1.45;">Confirmed in a wild animal, not a dog. Keep your dog leashed here, away from wildlife, and current on shots.</div>` : ''}
           ${report.verifiedClinic ? `<div style="margin-top:8px;color:#46f0a2;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Anonymous community report</div>`}
           ${reportBtnHtml}
           ${flagButtonHtml(report.id)}
