@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getRecallBySlug, recallKind, RECALL_COPY, FDA_PET_RECALLS_URL } from '@/lib/recalls'
+import { getRecallBySlug, recallKind, recallParent, RECALL_COPY, FDA_PET_RECALLS_URL } from '@/lib/recalls'
 import { buildMetadata } from '@/lib/seo'
 
 const wrap = { maxWidth: 720, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
@@ -31,6 +31,7 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
 
   const kind = recallKind(recall)
   const copy = RECALL_COPY[kind]
+  const parent = recallParent(recall)
   const url = `https://www.parvomaps.us/recalls/${slug}`
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -50,7 +51,7 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.parvomaps.us/' },
-          { '@type': 'ListItem', position: 2, name: 'Dog Food Recalls', item: 'https://www.parvomaps.us/recalls' },
+          { '@type': 'ListItem', position: 2, name: parent.name, item: `https://www.parvomaps.us${parent.href}` },
           { '@type': 'ListItem', position: 3, name: recall.title.slice(0, 70), item: url },
         ],
       },
@@ -62,7 +63,7 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <div style={{ marginBottom: 18 }}>
-        <Link href="/recalls" style={{ fontSize: 13, color: 'var(--text-dim)', textDecoration: 'none' }}>← All dog food recalls</Link>
+        <Link href={parent.href} style={{ fontSize: 13, color: 'var(--text-dim)', textDecoration: 'none' }}>← All {parent.name.toLowerCase()}</Link>
       </div>
 
       <h1 style={{ fontSize: 24, fontWeight: 800, lineHeight: 1.3, margin: '0 0 8px' }}>{recall.title}</h1>
@@ -98,7 +99,7 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
       <div style={{ ...card, borderColor: 'var(--green)', marginBottom: 24 }}>
         <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 4 }}>🛑 Never miss a recall for your brand</div>
         <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: 12 }}>
-          Tell us what your dog eats and we&apos;ll email you the instant the FDA recalls it. Included with a ParvoMaps Guardian membership.
+          Tell us the brands your dog eats and takes, and we&apos;ll email you the instant the FDA recalls one. Included with a ParvoMaps Guardian membership.
         </div>
         <Link href="/pro" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 800, background: 'var(--green)', color: '#04130b' }}>
           Set up recall alerts →

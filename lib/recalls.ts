@@ -80,6 +80,22 @@ export function recallKind(recall: Pick<Recall, 'title' | 'summary'>): RecallKin
   return 'food'
 }
 
+/** Food recalls live on /recalls; everything else (vet drugs, supplements,
+ *  devices) lives on /recalls/medications so neither page mixes advice. */
+export function isFoodRecall(r: Pick<Recall, 'title' | 'summary'>): boolean {
+  return recallKind(r) === 'food'
+}
+
+/** The list page a recall belongs to. Detail pages stay at /recalls/<slug>. */
+export function recallParent(r: Pick<Recall, 'title' | 'summary'>): {
+  href: string
+  name: string
+} {
+  return isFoodRecall(r)
+    ? { href: '/recalls', name: 'Dog Food Recalls' }
+    : { href: '/recalls/medications', name: 'Pet Medication & Supplement Recalls' }
+}
+
 /** Per-kind copy. `noun` names the product, `stop` is the first instruction,
  *  `id` is what the owner should read off the package to check the lot. */
 export const RECALL_COPY: Record<RecallKind, {

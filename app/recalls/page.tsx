@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getRecallsForList, recallKind, RECALL_COPY, FDA_PET_RECALLS_URL } from '@/lib/recalls'
+import { getRecallsForList, isFoodRecall, FDA_PET_RECALLS_URL } from '@/lib/recalls'
 import { buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = {
@@ -36,7 +36,11 @@ const RECALL_REASONS = [
 ]
 
 export default async function RecallsPage() {
-  const recalls = await getRecallsForList()
+  const all = await getRecallsForList()
+  // Food only. Vet drugs, supplements, and devices get their own page, since the
+  // "stop feeding it, check the best-by date" advice below is wrong for them.
+  const recalls = all.filter(isFoodRecall)
+  const medCount = all.length - recalls.length
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -117,16 +121,24 @@ export default async function RecallsPage() {
             {recalls.map(r => (
               <Link key={r.slug} href={`/recalls/${r.slug}`} style={{ ...card, textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{r.title}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 6 }}>
-                  {RECALL_COPY[recallKind(r)].label}
-                  {r.date && ` · ${r.date}`} · FDA
-                </div>
+                {r.date && <div style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 6 }}>{r.date} · FDA</div>}
                 {r.summary && <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>{r.summary}…</div>}
                 <div style={{ fontSize: 11, color: '#60a5fa', marginTop: 8 }}>See recall details →</div>
               </Link>
             ))}
           </div>
         )}
+        <Link href="/recalls/medications" style={{ ...card, textDecoration: 'none', color: 'inherit', display: 'block', marginTop: 12 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 3 }}>
+            💊 Medication &amp; supplement recalls
+            {medCount > 0 && <span style={{ color: 'var(--text-dim)', fontWeight: 400 }}> · {medCount} listed</span>}
+          </div>
+          <div style={{ fontSize: 12.5, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+            The FDA also recalls veterinary drugs, joint supplements, and vet products. Those are
+            tracked separately, with the right steps for a dose rather than a bowl.
+          </div>
+        </Link>
+
         <p style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 12, lineHeight: 1.6 }}>
           Source: FDA Recalls &amp; Safety Alerts. ParvoMaps mirrors the FDA feed for convenience - the{' '}
           <a href={FDA_PET_RECALLS_URL} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa' }}>
@@ -150,10 +162,6 @@ export default async function RecallsPage() {
 
       {/* ─── Evergreen SEO content ─── */}
       <Section title="If your dog's food is recalled">
-        <p style={{ fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.7, margin: '0 0 12px' }}>
-          The FDA feed also carries veterinary medications and supplements, not just food - those are
-          labelled above, and each one&apos;s page gives the right steps for that kind of product.
-        </p>
         <ol style={{ margin: 0, paddingLeft: 20, fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.9 }}>
           <li><strong>Stop feeding it immediately</strong> and seal or set aside the bag - note the lot number and best-by date.</li>
           <li><strong>Check the recall details</strong> against your product&apos;s lot/UPC; not every bag of a brand is always affected.</li>
