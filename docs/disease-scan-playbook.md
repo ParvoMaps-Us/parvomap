@@ -12,8 +12,16 @@ A case goes on the map only if **all** of these are true:
 
 1. **Real + sourced** — a specific news article or official health/shelter/agency
    notice. No rumors, no fabrication.
-2. **Dog-specific** — affects dogs (not just livestock/humans). Screwworm/algae
-   that killed a dog counts; a cattle-only screwworm case does not.
+2. **Dog-RELEVANT** — a confirmed case in *any* species counts as long as a dog
+   could realistically catch it there. **Amended 2026-08-03 (owner's call):** the
+   map's job is prevention, so a rabid skunk, raccoon, fox, or bat is a valid pin
+   even when no dog was infected. A dog owner seeing "rabies confirmed here" keeps
+   their dog leashed and their shots current, and that pin is exactly the warning
+   we exist to give. Same logic for algae blooms: an advisory on a named lake is a
+   pin, no dog death required.
+   Still excluded: species-locked cases with no dog pathway (a cattle-only
+   screwworm detection, a human-only illness) and pure risk *forecasts* (CAPC
+   models, "cases are up statewide") — those are predictions, not incidents.
 3. **Location-specific** — at least a city or county we can geocode. A statewide
    "cases are up" advisory with no place is NOT mappable.
 4. **A disease we track** — see `lib/diseases.ts` (`DISEASE_MAP`). Currently:
@@ -106,8 +114,15 @@ For each qualifying case the assistant:
 4. Uses a stable, human-readable id like `PARVO-BALTIMORE-2026-06` so it can be
    found and removed later (`zrem` the member whose JSON `id` matches).
 
-**Note:** `.env.local` Upstash points at PROD — seeding writes to the live public
-map. Each seeded case id is recorded in the disease-tracker memory note.
+**Note:** `.env.local` `UPSTASH_REDIS_REST_*` must point at the LIVE prod DB
+**`live-katydid-108013`** (= `parvo-redis` via Vercel `KV_*`). `lib/redis.ts` prefers
+`UPSTASH_*` over `KV_*`, so a stale `UPSTASH_*` silently sends seeds to a dead DB.
+**This exact bug happened:** it pointed at the retired `alive-wombat-147981` ("wombat")
+and weeks of seeds went nowhere the site could read. Fixed 2026-07-27 — repointed to
+katydid; wombat to be deleted. **Guard before every seed:** confirm the target with
+`curl -s $UPSTASH_REDIS_REST_URL/zcard/reports:verified -H "Authorization: Bearer $UPSTASH_REDIS_REST_TOKEN"`
+and sanity-check the count against the live map (`www.parvomaps.us/api/reports`). Each
+seeded case id is recorded in the disease-tracker memory note.
 
 ---
 
@@ -118,4 +133,15 @@ map. Each seeded case id is recorded in the disease-tracker memory note.
 - [ ] Filter to cases meeting the 4 criteria above; drop livestock-only / no-location.
 - [ ] De-dupe against what's already on the map.
 - [ ] Confirm the batch, then seed.
+- [ ] **Report the batch back (required, every time).** Right after seeding, give
+      Izic a short breakdown, not just a pin count:
+      1. Totals by disease, and the pin count before → after.
+      2. Per-state line: what each state contributed, and which states came back
+         empty **with the reason** (duplicate, wildlife-only under the old rule,
+         no location, too stale).
+      3. The 3-5 headline cases in one sentence each — the ones with a real story
+         (first rabid dog since 1994, 82 dogs euthanized, 10 puppies dead).
+      4. Anything DROPPED and why (dead source URL, unverifiable date).
+      Keep it short. This is the record of what changed and the raw material for
+      blog posts and social content, so the interesting cases must surface.
 - [ ] (Optional) note any new disease not yet in `DISEASE_MAP` to add later.

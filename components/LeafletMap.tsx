@@ -292,6 +292,11 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             <span style="color:#aaa;">Reported</span>
             <span style="color:#e0e0e0;">${ageLabel}</span>
           </div>
+          <div style="display:flex;justify-content:space-between;gap:16px;">
+            <span style="color:#aaa;">Found in</span>
+            <span style="color:${report.subject === 'wildlife' ? '#f0b846' : '#e0e0e0'};font-weight:600;">${report.subject === 'wildlife' ? '🦝 Wildlife' : '🐕 A dog'}</span>
+          </div>
+          ${report.subject === 'wildlife' ? `<div style="margin-top:7px;padding:6px 8px;background:#2a2010;border-left:2px solid #f0b846;color:#f0b846;font-size:10px;line-height:1.45;">⚠️ Confirmed in a wild animal, not a dog. Keep your dog leashed here, away from wildlife, and current on shots.</div>` : ''}
           ${report.verifiedClinic ? `<div style="margin-top:8px;color:#46f0a2;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Anonymous community report</div>`}
           ${report.locationDetail ? reportBtnHtml : ''}
           ${flagButtonHtml(report.id)}

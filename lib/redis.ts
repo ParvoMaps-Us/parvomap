@@ -56,6 +56,13 @@ export interface Report {
   locationDetail?: string
   // Source article link for news/media reports. Public, non-PII.
   sourceUrl?: string
+  // WHO the confirmed case was in. 'dog' = a dog was infected. 'wildlife' = the
+  // positive animal was a skunk/raccoon/bat/fox etc., or a place-based hazard
+  // (algae bloom) with no confirmed dog case. Drives the popup's "watch your
+  // dog" advisory. Absent on older pins, which are treated as 'dog'.
+  // Rule set 2026-08-03: wildlife cases belong on the map because the pin's job
+  // is prevention — see docs/disease-scan-playbook.md criterion 2.
+  subject?: 'dog' | 'wildlife'
   // Source category (drives map icon + credibility). Public, non-PII.
   reporterType?: 'individual' | 'vet' | 'facility' | 'news'
   // True when the reporter's email belongs to an active Pro Clinic account.
@@ -141,6 +148,7 @@ export async function publishVerifiedReport(report: PendingReport): Promise<void
     confidence: report.confidence,
     locationDetail: report.locationDetail ?? undefined,
     sourceUrl: report.sourceUrl ?? undefined,
+    subject: report.subject ?? undefined,
     reporterType: report.reporterType ?? undefined,
     verifiedClinic: report.verifiedClinic ?? undefined,
     country: report.country ?? undefined,

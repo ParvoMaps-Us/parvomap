@@ -51,3 +51,6 @@ migration-snapshot-*.json
 /public/article-images/*.png
 /public/article-images/*.jpg
 /public/article-images/*.jpeg
+
+# env backups (contain live tokens — never commit)
+.env*.bak*

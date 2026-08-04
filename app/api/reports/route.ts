@@ -19,7 +19,7 @@ export async function GET() {
     // Strip private fields — never expose email, breed, source, notes publicly.
     // locationDetail is public (a hazard/exposure spot shown on the map).
     const public_reports = reports.map(
-      ({ id, disease, zip, state, city, lat, lng, timestamp, verified, locationDetail, sourceUrl, reporterType, verifiedClinic }) => ({
+      ({ id, disease, zip, state, city, lat, lng, timestamp, verified, locationDetail, sourceUrl, reporterType, verifiedClinic, subject }) => ({
         id,
         disease,
         zip,
@@ -33,6 +33,7 @@ export async function GET() {
         sourceUrl,
         reporterType,
         verifiedClinic,
+        subject,
       })
     )
 
