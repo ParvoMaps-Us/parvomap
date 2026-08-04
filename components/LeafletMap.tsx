@@ -268,6 +268,26 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       if (!report.lat || !report.lng) return
 
       const color = pinColor(report)
+
+      // What the pin is actually reporting, for the popup's "Found in" row.
+      // Place-based hazards (an algae bloom, a tick sighting) are NOT a case in
+      // any animal — labelling them "A dog" was wrong, since the source article
+      // usually never mentions a dog at all. Derived from the disease category
+      // so it stays right for every future pin without a data backfill.
+      const isHazard =
+        DISEASE_MAP[report.disease]?.category === 'environmental' || report.disease === 'tickspot'
+      const foundLabel = isHazard
+        ? (report.disease === 'cyano' ? 'This water' : 'This area')
+        : report.subject === 'wildlife'
+          ? 'Wildlife'
+          : 'A dog'
+      const advisory = isHazard
+        ? (report.disease === 'cyano'
+            ? 'Toxic algae confirmed in this water. Do not let your dog swim here, wade, or drink from it. Rinse them off if they do.'
+            : 'Ticks reported in this area. Check your dog over after walks and keep tick prevention current.')
+        : report.subject === 'wildlife'
+          ? 'Confirmed in a wild animal, not a dog. Keep your dog leashed here, away from wildlife, and current on shots.'
+          : ''
       const rc = recencyClass(report.timestamp)
       const glowColor = rc === 'red' ? '#ef4444' : rc === 'amber' ? '#f59e0b' : '#46f0a2'
 
@@ -296,10 +316,10 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             <span style="color:#e0e0e0;">${ageLabel}</span>
           </div>
           <div style="display:flex;justify-content:space-between;gap:16px;">
-            <span style="color:#aaa;">Found in</span>
-            <span style="color:${report.subject === 'wildlife' ? '#f0b846' : '#e0e0e0'};font-weight:600;">${report.subject === 'wildlife' ? 'Wildlife' : 'A dog'}</span>
+            <span style="color:#aaa;">${isHazard ? 'Hazard in' : 'Found in'}</span>
+            <span style="color:${advisory ? '#f0b846' : '#e0e0e0'};font-weight:600;">${foundLabel}</span>
           </div>
-          ${report.subject === 'wildlife' ? `<div style="margin-top:7px;padding:6px 8px;background:#2a2010;border-left:2px solid #f0b846;color:#f0b846;font-size:10px;line-height:1.45;">Confirmed in a wild animal, not a dog. Keep your dog leashed here, away from wildlife, and current on shots.</div>` : ''}
+          ${advisory ? `<div style="margin-top:7px;padding:6px 8px;background:#2a2010;border-left:2px solid #f0b846;color:#f0b846;font-size:10px;line-height:1.45;">${advisory}</div>` : ''}
           ${report.verifiedClinic ? `<div style="margin-top:8px;color:#46f0a2;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Anonymous community report</div>`}
           ${reportBtnHtml}
           ${flagButtonHtml(report.id)}
