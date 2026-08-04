@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getRecallsForList, FDA_PET_RECALLS_URL } from '@/lib/recalls'
+import { getRecallsForList, recallKind, RECALL_COPY, FDA_PET_RECALLS_URL } from '@/lib/recalls'
 import { buildMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = {
@@ -117,7 +117,10 @@ export default async function RecallsPage() {
             {recalls.map(r => (
               <Link key={r.slug} href={`/recalls/${r.slug}`} style={{ ...card, textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>{r.title}</div>
-                {r.date && <div style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 6 }}>{r.date} · FDA</div>}
+                <div style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 6 }}>
+                  {RECALL_COPY[recallKind(r)].label}
+                  {r.date && ` · ${r.date}`} · FDA
+                </div>
                 {r.summary && <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>{r.summary}…</div>}
                 <div style={{ fontSize: 11, color: '#60a5fa', marginTop: 8 }}>See recall details →</div>
               </Link>
@@ -147,6 +150,10 @@ export default async function RecallsPage() {
 
       {/* ─── Evergreen SEO content ─── */}
       <Section title="If your dog's food is recalled">
+        <p style={{ fontSize: 13, color: 'var(--text-dim)', lineHeight: 1.7, margin: '0 0 12px' }}>
+          The FDA feed also carries veterinary medications and supplements, not just food - those are
+          labelled above, and each one&apos;s page gives the right steps for that kind of product.
+        </p>
         <ol style={{ margin: 0, paddingLeft: 20, fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.9 }}>
           <li><strong>Stop feeding it immediately</strong> and seal or set aside the bag - note the lot number and best-by date.</li>
           <li><strong>Check the recall details</strong> against your product&apos;s lot/UPC; not every bag of a brand is always affected.</li>

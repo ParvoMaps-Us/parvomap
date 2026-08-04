@@ -50,6 +50,75 @@ export function matchBrand(recall: Recall, brands: string[]): string | null {
 const PET_RE =
   /\b(dog|cat|canine|feline|puppy|kitten|kibble|thiamine)\b|\bpet (food|treat)|\banimal (food|feed)\b|\bfreeze-?dried\b|\braw food\b/i
 
+// ─── What KIND of product got recalled ────────────────────────────────────────
+// PET_RE above matches any pet item in the FDA feed, and that feed carries far
+// more than kibble: veterinary drugs (Adequan Canine, recalled Aug 2026 for
+// glass fibers), supplements, and medical devices all show up. Telling an owner
+// to "stop feeding it and check the best-by date" is wrong and confusing when
+// the product is an injectable. We classify at read time from the title +
+// summary rather than storing a field, so every already-archived recall gets
+// the correct copy with no backfill.
+
+export type RecallKind = 'food' | 'medication' | 'supplement' | 'device'
+
+// Dosage forms, routes, and pharma vocabulary. Checked before food, since a
+// drug notice ("Adequan Canine ... 100 mg/mL injection") can still mention a
+// food-ish word.
+const MED_RE =
+  /\b(injection|injectable|intramuscular|intravenous|subcutaneous|tablets?|capsules?|caplets?|oral (solution|suspension|paste|gel)|suspension|ointment|eye drops|ear drops|otic|ophthalmic|topical|transdermal|vaccine|antibiotic|dewormer|anthelmintic|sterile|vial|ampule|prescription|pharmaceutical|drug|medication|USP|mg\/mL|NADA|ANADA)\b|\bi\.m\.|\bAnimal Health\b/i
+const DEVICE_RE =
+  /\b(needle sets?|syringes?|catheters?|infusion (set|pump)|medical device|surgical|implant)\b/i
+const SUPP_RE =
+  /\b(supplements?|vitamins?|nutraceutical|chews? for (joint|hip)|probiotic|CBD)\b/i
+
+/** Classify a recall so the page and email give the right instructions. */
+export function recallKind(recall: Pick<Recall, 'title' | 'summary'>): RecallKind {
+  const hay = `${recall.title} ${recall.summary}`
+  if (DEVICE_RE.test(hay)) return 'device'
+  if (MED_RE.test(hay)) return 'medication'
+  if (SUPP_RE.test(hay)) return 'supplement'
+  return 'food'
+}
+
+/** Per-kind copy. `noun` names the product, `stop` is the first instruction,
+ *  `id` is what the owner should read off the package to check the lot. */
+export const RECALL_COPY: Record<RecallKind, {
+  label: string
+  noun: string
+  stop: string
+  id: string
+  symptoms: string
+}> = {
+  food: {
+    label: 'Dog food recall',
+    noun: 'food',
+    stop: 'Stop feeding it immediately and set the bag aside',
+    id: 'lot number and best-by date',
+    symptoms: 'vomiting, diarrhea, lethargy, or appetite loss',
+  },
+  medication: {
+    label: 'Veterinary medication recall',
+    noun: 'medication',
+    stop: 'Stop giving this medication and set the package aside — then call your vet before the next dose, since stopping a prescribed drug has its own risks and they may need to swap you to another lot or product',
+    id: 'lot number and expiration date',
+    symptoms: 'a reaction at the injection or dose site, swelling, pain, lethargy, or anything unusual',
+  },
+  supplement: {
+    label: 'Pet supplement recall',
+    noun: 'supplement',
+    stop: 'Stop giving it and set the container aside',
+    id: 'lot number and expiration date',
+    symptoms: 'vomiting, diarrhea, lethargy, or appetite loss',
+  },
+  device: {
+    label: 'Veterinary product recall',
+    noun: 'product',
+    stop: 'Stop using it and set it aside',
+    id: 'lot or catalog number',
+    symptoms: 'anything unusual after it was used',
+  },
+}
+
 function decodeEntities(s: string): string {
   return s
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')

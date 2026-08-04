@@ -4,6 +4,7 @@ import { getLeadType } from './lead'
 import { BIOREST_ENABLED } from './flags'
 import { signLostToken } from './lost-token'
 import { signUnsubToken } from './magic-link'
+import { recallKind, RECALL_COPY } from './recalls'
 import type { PendingReport, Report } from './redis'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -473,16 +474,28 @@ export async function sendClinicMagicLink(email: string, dashboardUrl: string): 
 
 // ─── RECALL ALERT (paid Guardian perk) ────────────────────────────────────────
 
-/** Notify a subscriber that a brand they feed appears in an FDA pet-food recall. */
+/** Notify a subscriber that a brand they gave us appears in an FDA pet recall.
+ *  The FDA feed carries vet medications and devices as well as food, so the copy
+ *  branches on `recallKind` — telling an owner to stop FEEDING an injectable is
+ *  both wrong and alarming. */
 export async function sendRecallAlert(
   email: string,
   brand: string,
   recall: { title: string; url: string; summary: string; date: string },
 ): Promise<void> {
+  const copy = RECALL_COPY[recallKind(recall)]
+  const intro =
+    copy.noun === 'food'
+      ? 'The FDA has posted a pet-food recall that matches a brand you told us your dog eats. Check the details and your lot number right away.'
+      : `The FDA has posted a veterinary ${copy.noun} recall that matches a brand you gave us. Check the details and your lot number right away, and call your vet before changing anything you were told to give.`
+  const verify =
+    copy.noun === 'food'
+      ? 'Not every bag of a brand is always affected — verify your lot number and best-by date against the FDA notice. This is not veterinary advice; if your dog seems unwell, call your vet.'
+      : `Not every lot of a brand is always affected — verify your ${copy.id} against the FDA notice. This is not veterinary advice, and do not stop a prescribed ${copy.noun} without talking to your vet first.`
   await sendEmail({
     from:    FROM_ALERTS,
     to:      email,
-    subject: `🛑 Recall alert: ${brand} pet food`,
+    subject: `🛑 Recall alert: ${brand} ${copy.noun === 'food' ? 'pet food' : copy.noun}`,
     html: `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
@@ -493,7 +506,7 @@ export async function sendRecallAlert(
     </div>
     <h1 style="font-size:22px;font-weight:700;color:#f0f0f0;margin:0 0 8px;">🛑 Recall alert for ${brand}</h1>
     <p style="color:#888;font-size:14px;margin:0 0 20px;line-height:1.6;">
-      The FDA has posted a pet-food recall that matches a brand you told us your dog eats. Check the details and your lot number right away.
+      ${intro}
     </p>
     <div style="border:1px solid #222;border-radius:8px;padding:16px;margin-bottom:24px;">
       <div style="font-size:15px;font-weight:700;color:#f0f0f0;margin-bottom:6px;">${recall.title}</div>
@@ -504,7 +517,7 @@ export async function sendRecallAlert(
       Read the FDA notice →
     </a>
     <p style="color:#555;font-size:12px;margin:20px 0 0;line-height:1.6;">
-      Not every bag of a brand is always affected — verify your lot number and best-by date against the FDA notice. This is not veterinary advice; if your dog seems unwell, call your vet.
+      ${verify}
     </p>
     <div style="border-top:1px solid #222;margin:28px 0;"></div>
     <p style="color:#444;font-size:11px;line-height:1.6;">You receive recall alerts as a ParvoMaps Guardian. Manage your brands and alerts anytime from your alert settings · parvomaps.us</p>

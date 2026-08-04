@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getRecallBySlug, FDA_PET_RECALLS_URL } from '@/lib/recalls'
+import { getRecallBySlug, recallKind, RECALL_COPY, FDA_PET_RECALLS_URL } from '@/lib/recalls'
 import { buildMetadata } from '@/lib/seo'
 
 const wrap = { maxWidth: 720, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
@@ -14,9 +14,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // The full FDA headline can be 170+ chars — keep the SEO title short (the full
   // headline stays in the H1). Lead = brand/product before the first delimiter.
   const lead = recall.title.split(/[—–:,(]| - /)[0].trim()
+  // Not every pet recall is food — the feed also carries vet drugs and devices.
+  const copy = RECALL_COPY[recallKind(recall)]
   return buildMetadata({
-    title: `${lead} Dog Food Recall (FDA) | ParvoMaps`,
-    description: recall.summary || `Details on the ${lead} pet food recall reported by the FDA.`,
+    title: `${lead} ${copy.label} (FDA) | ParvoMaps`,
+    description: recall.summary || `Details on the ${lead} pet ${copy.noun} recall reported by the FDA.`,
     path: `/recalls/${slug}`,
     type: 'article',
   })
@@ -27,6 +29,8 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
   const recall = await getRecallBySlug(slug)
   if (!recall) notFound()
 
+  const kind = recallKind(recall)
+  const copy = RECALL_COPY[kind]
   const url = `https://www.parvomaps.us/recalls/${slug}`
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -40,7 +44,7 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
         url,
         isPartOf: { '@type': 'WebSite', name: 'ParvoMaps', url: 'https://www.parvomaps.us' },
         publisher: { '@type': 'Organization', name: 'ParvoMaps', url: 'https://www.parvomaps.us' },
-        about: { '@type': 'Thing', name: 'Pet food recall' },
+        about: { '@type': 'Thing', name: copy.label },
       },
       {
         '@type': 'BreadcrumbList',
@@ -62,7 +66,10 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
       </div>
 
       <h1 style={{ fontSize: 24, fontWeight: 800, lineHeight: 1.3, margin: '0 0 8px' }}>{recall.title}</h1>
-      {recall.date && <div style={{ fontSize: 12, color: 'var(--text-dim)', marginBottom: 18 }}>Reported {recall.date} · U.S. Food &amp; Drug Administration</div>}
+      <div style={{ fontSize: 12, color: 'var(--text-dim)', marginBottom: 18 }}>
+        {copy.label}
+        {recall.date && ` · Reported ${recall.date}`} · U.S. Food &amp; Drug Administration
+      </div>
 
       {recall.summary && (
         <p style={{ fontSize: 15, color: 'var(--text-muted)', lineHeight: 1.7, marginBottom: 24 }}>{recall.summary}…</p>
@@ -71,10 +78,10 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
       <div style={{ ...card, marginBottom: 24 }}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>What to do</div>
         <ol style={{ margin: 0, paddingLeft: 20, fontSize: 13.5, color: 'var(--text-muted)', lineHeight: 1.9 }}>
-          <li>Stop feeding the product and set the bag aside - note the lot number and best-by date.</li>
+          <li>{copy.stop} - note the {copy.id}.</li>
           <li>Check those against the official FDA notice; not every lot of a brand is always affected.</li>
-          <li>Watch your dog for vomiting, diarrhea, lethargy, or appetite loss, and call your vet if anything seems off.</li>
-          <li>Keep the packaging for a refund and return or dispose of the product as the notice directs.</li>
+          <li>Watch your dog for {copy.symptoms}, and call your vet if anything seems off.</li>
+          <li>Keep the packaging for a refund and return or dispose of the {copy.noun} as the notice directs.</li>
         </ol>
       </div>
 
