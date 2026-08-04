@@ -31,7 +31,7 @@ function escapeHtml(s: string): string {
 
 /** Small "report this pin" control appended to each report popup for moderation. */
 function flagButtonHtml(id: string): string {
-  return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#999;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">🚩 Report this pin</button>`
+  return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#999;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">🚩 Something looks wrong</button>`
 }
 
 /** Popup markup for a lost-dog pin: photo, name, details, exact address, contact. */
@@ -211,10 +211,13 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     const flyZoom = (lat: number, lng: number) =>
       map.flyTo([lat, lng], Math.max(map.getZoom() + 4, 15), { duration: 0.6 })
 
-    // "⚠ Report this area" CTA appended to popups; clicking it prefills the
+    // "Add a case here" CTA appended to popups; clicking it prefills the
     // form's location and scrolls to the report section.
+    // Wording matters: this used to read "Report this area", which sat right
+    // above the "Report this pin" moderation button and read as "flag this as
+    // wrong". The two verbs are now distinct — ADD a case vs REPORT a problem.
     const reportBtnHtml =
-      `<button class="report-area-btn" style="margin-top:10px;width:100%;background:#46f0a2;color:#000;border:none;border-radius:3px;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">⚠ Report this area</button>`
+      `<button class="report-area-btn" style="margin-top:10px;width:100%;background:#46f0a2;color:#000;border:none;border-radius:3px;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">＋ Add a case here</button>`
 
     const wireMarker = (
       marker: any,
@@ -298,7 +301,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           </div>
           ${report.subject === 'wildlife' ? `<div style="margin-top:7px;padding:6px 8px;background:#2a2010;border-left:2px solid #f0b846;color:#f0b846;font-size:10px;line-height:1.45;">⚠️ Confirmed in a wild animal, not a dog. Keep your dog leashed here, away from wildlife, and current on shots.</div>` : ''}
           ${report.verifiedClinic ? `<div style="margin-top:8px;color:#46f0a2;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Anonymous community report</div>`}
-          ${report.locationDetail ? reportBtnHtml : ''}
+          ${reportBtnHtml}
           ${flagButtonHtml(report.id)}
         </div>
       `)
