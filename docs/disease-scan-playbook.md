@@ -26,9 +26,19 @@ A case goes on the map only if **all** of these are true:
    "cases are up" advisory with no place is NOT mappable.
 4. **A disease we track** — see `lib/diseases.ts` (`DISEASE_MAP`). Currently:
    parvo, distemper, kennel, leptospira, influenza, giardia, ringworm, brucella,
-   screwworm, rabies, fleas, cyano (blue-green algae), lyme, rmsf, anaplasma,
-   ehrlichia, tickspot. If a found disease isn't in the map yet, it can be added
-   (5-file recipe — see the disease-tracker memory note).
+   screwworm, rabies, fleas, mange, strepzoo, corona (canine coronavirus / CCoV),
+   cyano (blue-green algae), lyme, rmsf, anaplasma, ehrlichia, tickspot.
+   If a found disease isn't in the map yet, it can be added — the recipe is
+   6 files: `lib/diseases.ts` (the entry), `components/Ticker.tsx` (display
+   name), `components/Map.tsx` (pin colour), `components/FilterBar.tsx` and
+   `components/ReportForm.tsx` (the picker rows), and `app/globals.css`
+   (`--d-<key>` variable + the `.pin[data-disease=...]` rule).
+
+   **Note on `corona`:** this is canine enteric coronavirus (CCoV), a DOG gut
+   virus. It has nothing to do with COVID-19. Do not map human COVID stories,
+   and do not map a "dog tested positive for SARS-CoV-2" story under this key.
+   CCoV matters mainly as a parvo co-infection, so it surfaces in the same
+   shelter and kennel outbreak coverage — check parvo articles for it.
 
 Recency: anything within a disease's pin TTL shows as **active**; older shows as
 **historical** (still fine to add, just dimmed). TTLs: cyano 30d, parvo 365d,
@@ -48,6 +58,7 @@ dog leptospirosis cases 2026 city veterinary warning outbreak
 blue-green algae dog death lake warning <MONTH> 2026
 canine influenza H3N2 outbreak 2026 dogs city boarding daycare
 dog kennel cough outbreak 2026 boarding daycare city
+canine coronavirus CCoV outbreak 2026 dogs shelter city diarrhea
 new world screwworm dog 2026 USDA confirmed
 dog rabies case 2026 county confirmed exposure
 tick disease dog lyme anaplasma ehrlichia 2026 county warning

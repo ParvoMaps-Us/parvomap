@@ -19,6 +19,7 @@ const DISEASES = [
   { key: 'rabies', label: 'Rabies', color: 'var(--d-rabies)' },
   { key: 'fleas', label: 'Fleas', color: 'var(--d-fleas)' },
   { key: 'mange', label: 'Sarcoptic Mange', color: 'var(--d-mange)' },
+  { key: 'corona', label: 'Canine Coronavirus', color: 'var(--d-corona)' },
   { key: 'cyano', label: 'Blue-green Algae', color: 'var(--d-cyano)' },
   { key: 'lyme', label: 'Lyme Disease', color: 'var(--d-lyme)' },
   { key: 'rmsf', label: 'RMSF', color: 'var(--d-rmsf)' },

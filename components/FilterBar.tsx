@@ -19,6 +19,7 @@ const INFECTIOUS = [
   { key: 'rabies', label: 'Rabies', color: 'var(--d-rabies)' },
   { key: 'fleas', label: 'Fleas', color: 'var(--d-fleas)' },
   { key: 'mange', label: 'Sarcoptic Mange', color: 'var(--d-mange)' },
+  { key: 'corona', label: 'Canine Coronavirus', color: 'var(--d-corona)' },
 ]
 
 const ENVIRONMENTAL = [

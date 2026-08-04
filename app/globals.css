@@ -33,6 +33,7 @@
   --d-rabies:     #e11d48;
   --d-fleas:      #9a3412;
   --d-mange:      #a16207;
+  --d-corona:     #7c9ec4;
   --d-cyano:      #06b6d4;
   --d-lyme:       #84cc16;
   --d-rmsf:       #dc2626;
@@ -549,6 +550,7 @@ nav a:hover { color: var(--text); }
 .pin[data-disease="rabies"]     { background: var(--d-rabies); }
 .pin[data-disease="fleas"]      { background: var(--d-fleas); }
 .pin[data-disease="mange"]      { background: var(--d-mange); }
+.pin[data-disease="corona"]     { background: var(--d-corona); }
 .pin[data-disease="cyano"]      { background: var(--d-cyano); }
 .pin[data-disease="lyme"]       { background: var(--d-lyme); }
 .pin[data-disease="rmsf"]       { background: var(--d-rmsf); }

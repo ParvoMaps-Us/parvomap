@@ -107,6 +107,13 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
     transmission: 'Direct contact with infested dogs or wildlife (foxes, coyotes), plus shared bedding, kennels, and grooming areas.',
     prevention: 'Avoid contact with mangy wildlife and stray dogs, wash shared bedding, and use vet-prescribed antiparasitics, which both treat and prevent infestations.',
   },
+  corona: {
+    name: 'Canine Coronavirus', category: 'infectious', pinTtlDays: 90, severity: 'moderate', aka: 'CCoV, Canine enteric coronavirus',
+    blurb: 'A gut virus that usually causes mild, short-lived diarrhea on its own. It matters most as a co-infection: a dog fighting coronavirus and parvo at the same time gets far sicker than either alone, which is why it shows up in the same shelters and kennels. It is a dog virus and is not the coronavirus that causes COVID-19 in people.',
+    symptoms: ['Sudden loose, foul-smelling, orange-tinged diarrhea', 'Lethargy and low appetite', 'Occasional vomiting', 'Usually little or no fever', 'Severe illness if parvo is present too'],
+    transmission: 'Spread through infected feces, then picked up by sniffing, licking, or grooming. Contaminated bowls, floors, kennels, and shoes carry it, so it moves fast anywhere dogs are housed together.',
+    prevention: 'Strict sanitation, prompt cleanup of feces, and keeping unvaccinated puppies away from communal areas. A vaccine exists but is not part of the core series; most healthy adult dogs recover with supportive care, so ask your vet whether your dog\'s situation warrants it.',
+  },
   cyano: {
     name: 'Blue-green Algae', category: 'environmental', pinTtlDays: 30, severity: 'high', aka: 'Cyanobacteria',
     blurb: 'A toxin produced by cyanobacteria in warm, stagnant water. Exposure can be rapidly fatal — treat any suspected case as an emergency.',

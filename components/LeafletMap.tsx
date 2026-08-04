@@ -31,7 +31,7 @@ function escapeHtml(s: string): string {
 
 /** Small "report this pin" control appended to each report popup for moderation. */
 function flagButtonHtml(id: string): string {
-  return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#999;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">Something looks wrong</button>`
+  return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#999;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">🚩 Report this pin</button>`
 }
 
 /** Popup markup for a lost-dog pin: photo, name, details, exact address, contact. */

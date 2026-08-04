@@ -17,6 +17,7 @@ const DISEASE_COLORS: Record<string, string> = {
   rabies: '#e11d48',
   fleas: '#9a3412',
   mange: '#a16207',
+  corona: '#7c9ec4',
   cyano: '#14b8a6',
   lyme: '#22c55e',
   rmsf: '#fb923c',
