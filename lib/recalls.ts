@@ -61,21 +61,34 @@ const PET_RE =
 
 export type RecallKind = 'food' | 'medication' | 'supplement' | 'device'
 
-// Dosage forms, routes, and pharma vocabulary. Checked before food, since a
-// drug notice ("Adequan Canine ... 100 mg/mL injection") can still mention a
-// food-ish word.
+// Only DOSAGE FORMS and pharma standards count as drug signals — things that
+// cannot describe a bag of food. Deliberately excluded: "drug", "medication",
+// and company-name fragments like "Animal Health", which all appear in ordinary
+// food notices (Revival Animal Health recalls milk replacer).
 const MED_RE =
-  /\b(injection|injectable|intramuscular|intravenous|subcutaneous|tablets?|capsules?|caplets?|oral (solution|suspension|paste|gel)|suspension|ointment|eye drops|ear drops|otic|ophthalmic|topical|transdermal|vaccine|antibiotic|dewormer|anthelmintic|sterile|vial|ampule|prescription|pharmaceutical|drug|medication|USP|mg\/mL|NADA|ANADA)\b|\bi\.m\.|\bAnimal Health\b/i
+  /\b(injection|injectable|intramuscular|intravenous|subcutaneous|tablets?|capsules?|caplets?|oral (solution|suspension|paste|gel)|ointment|eye drops|ear drops|otic|ophthalmic|transdermal|vaccine|antibiotic|dewormer|anthelmintic|sterile|vials?|ampules?|prescription|pharmaceutical|USP|NADA|ANADA)\b|\bmg\s?\/\s?mL\b|\bi\.m\.\s/i
 const DEVICE_RE =
   /\b(needle sets?|syringes?|catheters?|infusion (set|pump)|medical device|surgical|implant)\b/i
+// A supplement is a PRODUCT, so match product words only. A nutrient named as
+// the reason for a recall ("low levels of thiamine (Vitamin B1)", "excess
+// vitamin D") is the single most common FOOD recall there is — matching bare
+// "vitamin" here sent Go Raw's freeze-dried chicken to the medication page.
 const SUPP_RE =
-  /\b(supplements?|vitamins?|nutraceutical|chews? for (joint|hip)|probiotic|CBD)\b/i
+  /\b(supplements?|nutraceutical|probiotic|CBD)\b|\b(chews?|tablets?|powder) for (joint|hip|skin|calming)\b/i
+// Unambiguous food words. Checked before supplements so a nutrient-deficiency
+// recall on a real food product lands on the food page.
+const FOOD_RE =
+  /\b(pet food|dog food|cat food|kibble|freeze-?dried|recipe|treats?|biscuits?|jerky|canned|milk replacer|formula|raw (food|diet)|feed)\b/i
 
-/** Classify a recall so the page and email give the right instructions. */
+/** Classify a recall so the page and email give the right instructions.
+ *  Order matters: a hard dosage form beats everything, then food words beat the
+ *  softer supplement words, and anything unrecognised defaults to food (the
+ *  common case, and the page most people arrive looking for). */
 export function recallKind(recall: Pick<Recall, 'title' | 'summary'>): RecallKind {
   const hay = `${recall.title} ${recall.summary}`
   if (DEVICE_RE.test(hay)) return 'device'
   if (MED_RE.test(hay)) return 'medication'
+  if (FOOD_RE.test(hay)) return 'food'
   if (SUPP_RE.test(hay)) return 'supplement'
   return 'food'
 }
