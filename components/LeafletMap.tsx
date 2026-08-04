@@ -276,18 +276,22 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       // so it stays right for every future pin without a data backfill.
       const isHazard =
         DISEASE_MAP[report.disease]?.category === 'environmental' || report.disease === 'tickspot'
-      const foundLabel = isHazard
-        ? (report.disease === 'cyano' ? 'This water' : 'This area')
-        : report.subject === 'wildlife'
-          ? 'Wildlife'
-          : 'A dog'
-      const advisory = isHazard
-        ? (report.disease === 'cyano'
-            ? 'Toxic algae confirmed in this water. Do not let your dog swim here, wade, or drink from it. Rinse them off if they do.'
-            : 'Ticks reported in this area. Check your dog over after walks and keep tick prevention current.')
+      // Each pin type gets its own row, because "Found in: A dog" is a lie on a
+      // bloom advisory and on a tick sighting — neither is a case in an animal.
+      const rowLabel = report.disease === 'tickspot' ? 'Report type' : isHazard ? 'Hazard in' : 'Found in'
+      const foundLabel =
+        report.disease === 'tickspot' ? 'Tick sighting'
+        : isHazard ? 'This water'
+        : report.subject === 'wildlife' ? 'Wildlife'
+        : 'A dog'
+      const advisory =
+        report.disease === 'tickspot'
+          ? 'Ticks were spotted here. No dog is sick — this is a heads-up. Check your dog over after walks and keep tick prevention current.'
+        : isHazard
+          ? 'Toxic algae confirmed in this water. No dog is sick — this is a warning. Do not let your dog swim here, wade, or drink from it.'
         : report.subject === 'wildlife'
           ? 'Confirmed in a wild animal, not a dog. Keep your dog leashed here, away from wildlife, and current on shots.'
-          : ''
+        : ''
       const rc = recencyClass(report.timestamp)
       const glowColor = rc === 'red' ? '#ef4444' : rc === 'amber' ? '#f59e0b' : '#46f0a2'
 
