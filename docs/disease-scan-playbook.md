@@ -42,7 +42,34 @@ A case goes on the map only if **all** of these are true:
 
 Recency: anything within a disease's pin TTL shows as **active**; older shows as
 **historical** (still fine to add, just dimmed). TTLs: cyano 30d, parvo 365d,
-most others 90d.
+rabies 180d, screwworm 365d, tickspot 30d, everything else 90d
+(source of truth: `pinTtlDays` in `lib/diseases.ts` — read it, don't trust
+this list if the two disagree).
+
+### Age gate: check retention BEFORE seeding, not after
+
+A pin is retained for **its TTL + 60 days of historical grace**
+(`HISTORICAL_GRACE_DAYS` in `lib/retention.ts`). Past that, the retention job
+deletes it. So an age check is required per case, using its OWN disease's TTL:
+
+| Disease | TTL | Max age worth seeding (TTL + 60) |
+|---|---|---|
+| cyano, tickspot | 30d | **90d** |
+| most (distemper, kennel, lepto, strepzoo, giardia, mange, flu, ticks) | 90d | **150d** |
+| rabies | 180d | **240d** |
+| parvo, screwworm | 365d | **425d** |
+
+- Older than TTL but inside the grace window: fine to seed, renders dimmed under
+  the "Historical" toggle.
+- **Older than TTL + 60: do NOT seed.** It is dead on arrival, gets auto-deleted,
+  and in the meantime is stale data claiming to be current.
+- Note the trap: a "within the last 12 months" search rule is far too loose for
+  a 90-day disease. Twelve months is only correct for parvo and screwworm.
+
+**This exact bug happened 2026-08-07:** the batch included a Miami strep zoo case
+397 days old (strep zoo retention is 150 days) plus 10 others past retention;
+caught on review and removed. Always run the age gate over the whole batch before
+seeding, and report anything dropped for age.
 
 ---
 
@@ -122,6 +149,17 @@ For each qualifying case the assistant:
    `source` (vet-diagnosed / positive-test / other), `reporterType: 'news'`,
    `sourceUrl` (the article), `kind: 'disease'`. Place-based hazards (cyano,
    tickspot) also set `locationDetail` (the lake/park/spot).
+
+   **`subject` is PER CASE, never per batch.** Set it from what actually tested
+   positive: `'dog'` for a dog case, `'wildlife'` for a rabid raccoon/bat/fox/
+   skunk/beaver or distemper confirmed in raccoons, `'other'` for a non-dog
+   domestic animal (e.g. a rabid unvaccinated cat). It drives the popup's
+   "Found in:" row and its advisory, so a wildlife case stamped `'dog'` puts
+   "Found in: A dog" on a raccoon pin, which is a lie on the map.
+   **This exact bug happened 2026-08-07:** an 82-pin batch was seeded with a
+   blanket `subject: 'dog'`, mislabeling 24 wildlife/other cases; caught on
+   review and corrected. Algae and tickspot pins derive their label from the
+   disease category, so they are immune either way.
 4. Uses a stable, human-readable id like `PARVO-BALTIMORE-2026-06` so it can be
    found and removed later (`zrem` the member whose JSON `id` matches).
 
@@ -143,6 +181,15 @@ seeded case id is recorded in the disease-tracker memory note.
 - [ ] Run the core query set (× each state if scoped).
 - [ ] Filter to cases meeting the 4 criteria above; drop livestock-only / no-location.
 - [ ] De-dupe against what's already on the map.
+- [ ] **Age gate:** drop anything older than its disease's TTL + 60d (table above).
+- [ ] **Set `subject` per case** (dog / wildlife / other) from what tested positive.
+- [ ] **Verify coordinates land in the stated county** before writing. Free check:
+      `geocoding.geo.census.gov/geocoder/geographies/coordinates?x=<lng>&y=<lat>`
+      `&benchmark=2020&vintage=2020&layers=Counties&format=json`.
+      City-name geocoding silently returns the wrong place for small towns —
+      on 2026-08-07 it put Deep Run NC in Baltimore, Oxbow OR in Portland, and
+      Michigan Center MI 200 miles north. A state bounding-box check is NOT
+      enough to catch those; only the county check is.
 - [ ] Confirm the batch, then seed.
 - [ ] **Report the batch back (required, every time).** Right after seeding, give
       Izic a short breakdown, not just a pin count:
