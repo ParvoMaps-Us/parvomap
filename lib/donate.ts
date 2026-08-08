@@ -4,4 +4,4 @@
  *
  *  Empty string = every donation UI element renders nothing, so this can ship
  *  ahead of the link existing. Paste the payment-link URL here to go live. */
-export const DONATE_URL = ''
+export const DONATE_URL = 'https://buy.stripe.com/4gMcMY9OscDGdAlbVY33W00'
