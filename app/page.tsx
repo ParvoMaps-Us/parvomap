@@ -70,7 +70,7 @@ export default async function HomePage({
             <Link href="/diseases" style={{ color: 'var(--green)' }}>all tracked diseases</Link>, see{' '}
             <Link href="/outbreaks" style={{ color: 'var(--green)' }}>outbreaks by state</Link>, check{' '}
             <Link href="/recalls" style={{ color: 'var(--green)' }}>dog food recalls</Link>, or{' '}
-            <Link href="/alerts" style={{ color: 'var(--green)' }}>set up outbreak alerts</Link>.
+            <Link href="/blog" style={{ color: 'var(--green)' }}>read the blog</Link>.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {[

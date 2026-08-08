@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { PAID_ALERTS_LIVE } from '@/lib/flags'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { verifyMagicToken } from '@/lib/magic-link'
 import { getAlertPrefs } from '@/lib/alerts'
@@ -18,6 +20,7 @@ export default async function ManageAlertsPage({
 }: {
   searchParams: Promise<{ e?: string; exp?: string; t?: string }>
 }) {
+  if (!PAID_ALERTS_LIVE) notFound()
   const { e, exp, t } = await searchParams
   const email = (e ?? '').trim().toLowerCase()
   const expNum = Number(exp)

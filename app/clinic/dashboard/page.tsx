@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { PAID_ALERTS_LIVE } from '@/lib/flags'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -94,6 +96,7 @@ export default async function ClinicDashboardPage({
 }: {
   searchParams: Promise<{ e?: string; exp?: string; t?: string; state?: string; county?: string; city?: string; disease?: string | string[] }>
 }) {
+  if (!PAID_ALERTS_LIVE) notFound()
   const { e, exp, t, state, county, city, disease } = await searchParams
   // `disease` arrives as a string (one checkbox) or array (several). Empty = all.
   const diseases = (Array.isArray(disease) ? disease : disease ? [disease] : []).filter(Boolean)

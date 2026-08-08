@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import ProCta from './ProCta'
+import { PAID_ALERTS_LIVE } from '@/lib/flags'
 
 /** Hamburger dropdown for the header nav on mobile, where the inline nav links
  *  are hidden. Shown only at <=767px via CSS (.menu-wrap). */
@@ -43,7 +44,7 @@ export default function MobileMenu({ recallActive }: { recallActive: boolean }) 
             <Link href="/recalls" onClick={close}>
               Recalls{recallActive && <span className="recall-dot-inline" aria-hidden="true" />}
             </Link>
-            <Link href="/alerts" onClick={close}>Alerts</Link>
+            {PAID_ALERTS_LIVE && <Link href="/alerts" onClick={close}>Alerts</Link>}
             <Link href="/blog" onClick={close}>Blog</Link>
             <Link href="/account" onClick={close}>Account</Link>
             <ProCta location="mobile_menu" className="mobile-menu-pro" onClick={close} />

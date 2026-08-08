@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getRecallBySlug, recallKind, recallParent, RECALL_COPY, FDA_PET_RECALLS_URL } from '@/lib/recalls'
 import { buildMetadata } from '@/lib/seo'
+import { PAID_ALERTS_LIVE } from '@/lib/flags'
 
 const wrap = { maxWidth: 720, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
 const card = { border: '1px solid var(--border)', borderRadius: 8, padding: 18, background: 'var(--bg-card)' } as const
@@ -96,7 +97,7 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
       </p>
 
       {/* Recall-alert upsell */}
-      <div style={{ ...card, borderColor: 'var(--green)', marginBottom: 24 }}>
+      {PAID_ALERTS_LIVE && <div style={{ ...card, borderColor: 'var(--green)', marginBottom: 24 }}>
         <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 4 }}>🛑 Never miss a recall for your brand</div>
         <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: 12 }}>
           Tell us the brands your dog eats and takes, and we&apos;ll email you the instant the FDA recalls one. Included with a ParvoMaps Guardian membership.
@@ -104,7 +105,7 @@ export default async function RecallDetailPage({ params }: { params: Promise<{ s
         <Link href="/pro" style={{ display: 'inline-block', padding: '10px 20px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 800, background: 'var(--green)', color: '#04130b' }}>
           Set up recall alerts →
         </Link>
-      </div>
+      </div>}
 
       <div style={{ ...card, textAlign: 'center' }}>
         <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 6 }}>Track disease outbreaks near you</div>

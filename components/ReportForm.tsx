@@ -4,6 +4,7 @@ import { LOCATION_DETAIL_DISEASES } from '@/lib/report-schema'
 import { downscaleImage } from '@/lib/resize-image'
 import LocationAutocomplete from './LocationAutocomplete'
 import ProCta from './ProCta'
+import { PAID_ALERTS_LIVE } from '@/lib/flags'
 
 const DISEASES = [
   { key: 'parvo', label: 'Parvovirus', color: 'var(--d-parvo)' },
@@ -341,12 +342,25 @@ export default function ReportForm() {
           {/* High-intent upsell: someone who just filed a report is the warmest
               possible lead for outbreak alerts. */}
           <div className="success-upsell">
-            <strong>Want a heads-up when disease is reported near you?</strong>
-            <span>
-              Guardian members get real-time alerts for their area — founding pricing is $5/mo,
-              locked for life.
-            </span>
-            <ProCta location="report_success">🔔 Get Outbreak Alerts</ProCta>
+            {PAID_ALERTS_LIVE ? (
+              <>
+                <strong>Want a heads-up when disease is reported near you?</strong>
+                <span>
+                  Guardian members get real-time alerts for their area — founding pricing is $5/mo,
+                  locked for life.
+                </span>
+                <ProCta location="report_success">🔔 Get Outbreak Alerts</ProCta>
+              </>
+            ) : (
+              <>
+                <strong>Thanks for helping other dog owners.</strong>
+                <span>
+                  ParvoMaps is free for everyone. If it helped you, a small chip-in keeps the
+                  servers running and the map free.
+                </span>
+                <ProCta location="report_success" />
+              </>
+            )}
           </div>
 
           <button

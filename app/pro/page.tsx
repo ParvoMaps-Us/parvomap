@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { PAID_ALERTS_LIVE } from '@/lib/flags'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import PricingCards from './PricingCards'
 import FoundingBanner from './FoundingBanner'
@@ -15,6 +17,7 @@ export default async function ProPage({
 }: {
   searchParams: Promise<{ checkout?: string }>
 }) {
+  if (!PAID_ALERTS_LIVE) notFound()
   const { checkout } = await searchParams
 
   return (

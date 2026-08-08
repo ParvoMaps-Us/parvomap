@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import PortalForm from './PortalForm'
+import { PAID_ALERTS_LIVE } from '@/lib/flags'
 
 export const metadata: Metadata = {
   title: 'Account — ParvoMaps',
@@ -24,6 +25,7 @@ export default function AccountPage() {
         <PortalForm />
       </div>
 
+      {PAID_ALERTS_LIVE && <>
       <p style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 18, lineHeight: 1.6 }}>
         Looking to change what you get alerted about? Head to{' '}
         <Link href="/alerts" style={{ color: 'var(--green)' }}>your alerts →</Link>
@@ -32,6 +34,7 @@ export default function AccountPage() {
         Pro Clinic subscriber? Open your{' '}
         <Link href="/clinic" style={{ color: 'var(--green)' }}>clinic dashboard →</Link>
       </p>
+      </>}
     </main>
   )
 }

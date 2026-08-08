@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { PAID_ALERTS_LIVE } from '@/lib/flags'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import RequestLinkForm from './RequestLinkForm'
 import { buildMetadata } from '@/lib/seo'
@@ -11,6 +13,7 @@ export const metadata: Metadata = buildMetadata({
 })
 
 export default function AlertsPage() {
+  if (!PAID_ALERTS_LIVE) notFound()
   return (
     <main style={{ maxWidth: 620, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' }}>
       <div style={{ marginBottom: 24 }}>

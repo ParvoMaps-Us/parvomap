@@ -3,6 +3,7 @@ import { hasCurrentRecall } from '@/lib/recalls'
 import MobileMenu from './MobileMenu'
 import OutbreaksNav from './OutbreaksNav'
 import ProCta from './ProCta'
+import { PAID_ALERTS_LIVE } from '@/lib/flags'
 
 export default async function Header() {
   const recallActive = await hasCurrentRecall()
@@ -21,7 +22,7 @@ export default async function Header() {
         <Link href="/recalls" className="nav-link recall-tab">
           Recalls{recallActive && <span className="recall-dot" aria-hidden="true" />}
         </Link>
-        <Link href="/alerts" className="nav-link">Alerts</Link>
+        {PAID_ALERTS_LIVE && <Link href="/alerts" className="nav-link">Alerts</Link>}
         <Link href="/blog" className="nav-link">Blog</Link>
         <a href="#report" className="btn-report">+ Report a Case</a>
         <ProCta location="header" />
