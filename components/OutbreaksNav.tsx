@@ -29,7 +29,7 @@ export default function OutbreaksNav() {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen(o => !o)}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}
       >
         Outbreaks
         <span aria-hidden="true" style={{ fontSize: 8, display: 'inline-block', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>▼</span>
