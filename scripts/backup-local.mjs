@@ -9,7 +9,7 @@ import { AwsClient } from 'aws4fetch'
 const env = Object.fromEntries(
   readFileSync(new URL('../.env.local', import.meta.url), 'utf8')
     .split('\n').filter(l => l.includes('=') && !l.trim().startsWith('#'))
-    .map(l => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim()] }),
+    .map(l => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^['"]|['"]$/g, '')] }),
 )
 
 const need = ['UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN', 'R2_ACCOUNT_ID', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET']
