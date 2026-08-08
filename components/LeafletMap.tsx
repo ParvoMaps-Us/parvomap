@@ -288,6 +288,8 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       const advisory =
         report.disease === 'tickspot'
           ? 'Ticks were spotted here. No dog is sick — this is a heads-up. Check your dog over after walks and keep tick prevention current.'
+        : isHazard && report.dogAffected
+          ? 'A dog was sickened or killed by toxic algae in this water. Keep your dog out completely — no swimming, wading, or drinking.'
         : isHazard
           ? 'Toxic algae confirmed in this water. No dog is sick — this is a warning. Do not let your dog swim here, wade, or drink from it.'
         : report.subject === 'wildlife'

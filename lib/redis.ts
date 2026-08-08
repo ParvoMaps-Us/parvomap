@@ -65,6 +65,10 @@ export interface Report {
   // 'other' covers a confirmed case in a non-dog domestic animal (e.g. a rabid
   // unvaccinated cat) — not wildlife, but not a dog case either.
   subject?: 'dog' | 'wildlife' | 'other'
+  // True when a place-based hazard (algae bloom) actually sickened or killed a
+  // dog per the source article — flips the popup from "no dog is sick" advisory
+  // language to a confirmed-victim warning. Absent = plain advisory.
+  dogAffected?: boolean
   // Source category (drives map icon + credibility). Public, non-PII.
   reporterType?: 'individual' | 'vet' | 'facility' | 'news'
   // True when the reporter's email belongs to an active Pro Clinic account.
