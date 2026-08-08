@@ -62,6 +62,13 @@ export default function TermsPage() {
         <li style={li}>Except where required by law, payments are non-refundable.</li>
       </ul>
 
+      <h2 style={h2}>Voluntary contributions</h2>
+      <ul style={ul}>
+        <li style={li}>You may choose to make a one-time voluntary contribution to support the site (&ldquo;chip in&rdquo;). Contributions are optional and do not unlock any features, subscription benefits, or services.</li>
+        <li style={li}>ParvoMaps is not a registered charity or nonprofit. Contributions are <strong>not tax-deductible</strong> as charitable donations.</li>
+        <li style={li}>Contributions are processed by Stripe and, except where required by law, are non-refundable.</li>
+      </ul>
+
       <h2 style={h2}>Founding Guardian price lock</h2>
       <ul style={ul}>
         <li style={li}>The first 1,000 subscribers to a Guardian or Guardian Annual plan (&ldquo;Founding Guardians&rdquo;) lock in the founding rate in effect at sign-up — currently $5/month or $50/year — for as long as their subscription remains <strong>continuously active</strong>.</li>

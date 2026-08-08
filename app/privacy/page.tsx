@@ -39,7 +39,8 @@ export default function PrivacyPage() {
           and, for lost-dog reports, a photo and any public contact info you choose to include.</li>
         <li style={li}><strong>Email address.</strong> Optionally provided to verify a report or receive alerts, and required
           for a subscription. We use it to contact you about your reports, alerts, and account.</li>
-        <li style={li}><strong>Subscription &amp; payment.</strong> Payments are processed by Stripe. We do not store your card
+        <li style={li}><strong>Subscription &amp; payment.</strong> Payments — including subscriptions and one-time voluntary
+          contributions — are processed by Stripe. We do not store your card
           number — we keep a Stripe customer ID, your plan, and subscription status.</li>
         <li style={li}><strong>Cookies.</strong> We set one strictly-necessary cookie, <code>clinic_session</code>, to keep Pro
           Clinic users signed in to their dashboard. It is not used for advertising or cross-site tracking.</li>
