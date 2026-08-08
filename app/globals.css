@@ -248,6 +248,21 @@ html.user-tabbing .skip-link:focus { top: 8px; }
   white-space: nowrap;
   flex-shrink: 0;
   text-transform: uppercase;
+  /* The moving track paints after this in the DOM, so without a stacking
+     context the report text scrolls OVER the badge. Lift the badge and let
+     items fade out under its trailing edge instead of colliding with it. */
+  position: relative;
+  z-index: 2;
+}
+.ticker-label::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  background: linear-gradient(to right, #000 0%, transparent 100%);
+  pointer-events: none;
 }
 .ticker-track {
   display: flex;
