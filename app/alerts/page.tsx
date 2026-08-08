@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import RequestLinkForm from './RequestLinkForm'
 import { buildMetadata } from '@/lib/seo'
+import { DONATE_URL } from '@/lib/donate'
 
 export const metadata: Metadata = buildMetadata({
   title: 'Manage Alerts — ParvoMaps',
@@ -31,6 +32,11 @@ export default function AlertsPage() {
       <p style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 18, lineHeight: 1.6 }}>
         Not a subscriber yet? <Link href="/pro" style={{ color: 'var(--green)' }}>Become a Guardian →</Link>
       </p>
+      {DONATE_URL && (
+        <p style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 8, lineHeight: 1.6 }}>
+          Just want to help? <a href={DONATE_URL} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--green)' }}>Chip in to keep the map free →</a>
+        </p>
+      )}
     </main>
   )
 }

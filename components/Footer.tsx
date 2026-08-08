@@ -1,4 +1,5 @@
 import { BIOREST_ENABLED } from '@/lib/flags'
+import { DONATE_URL } from '@/lib/donate'
 
 export default function Footer() {
   const year = new Date().getFullYear()
@@ -27,6 +28,11 @@ export default function Footer() {
         {BIOREST_ENABLED && (
           <a href="https://scoopie.us" className="scoopie-link" target="_blank" rel="noopener noreferrer">
             🐾 Dog illness in Utah? → Scoopie BioRest™
+          </a>
+        )}
+        {DONATE_URL && (
+          <a href={DONATE_URL} className="footer-feedback" target="_blank" rel="noopener noreferrer">
+            💚 Chip in to keep the map free
           </a>
         )}
         <a
