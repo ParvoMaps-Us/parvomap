@@ -1,6 +1,6 @@
 import { getVerifiedRaw, type Report } from '@/lib/redis'
 import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
-import { normalizeCounty, countyLabel } from '@/lib/states'
+import { normalizeCounty, countyLabel, toSlug } from '@/lib/states'
 
 const DAY = 24 * 60 * 60 * 1000
 
@@ -146,6 +146,71 @@ export async function getStateStats(abbr: string): Promise<StateStats> {
     // Normalize first so "Utah" and "Utah County" are one bucket, not two.
     byCounty: tally(rows, r => normalizeCounty(r.county), k => countyLabel(k, abbr) ?? k),
     recent: rows.slice(0, 12),
+  }
+}
+
+/** Live stats for one county within a state. County matching is by normalized
+ *  slug, so "Utah", "Utah County" and a /utah-county URL all meet in the middle. */
+export async function getCountyStats(abbr: string, countySlug: string): Promise<StateStats & { countyName?: string }> {
+  const all = (await getVerifiedRaw(5000)).map(v => v.report)
+  const rows = all.filter(r => {
+    if (r.kind === 'lost' || r.state !== abbr) return false
+    const norm = normalizeCounty(r.county)
+    return !!norm && toSlug(norm) === countySlug
+  })
+  const now = Date.now()
+  const within = (r: Report, days: number) => now - r.timestamp < days * DAY
+  const isActive = (r: Report) =>
+    now - r.timestamp < (DISEASE_MAP[r.disease]?.pinTtlDays ?? 90) * DAY
+  return {
+    total: rows.length,
+    active: rows.filter(isActive).length,
+    last7: rows.filter(r => within(r, 7)).length,
+    last30: rows.filter(r => within(r, 30)).length,
+    byDisease: tally(rows, r => r.disease || undefined, getDiseaseName),
+    byCounty: tally(rows, r => r.city || undefined),
+    recent: rows.slice(0, 12),
+    countyName: normalizeCounty(rows[0]?.county),
+  }
+}
+
+/** Live stats for one disease within one state — the "parvo in Texas" page. */
+export async function getStateDiseaseStats(abbr: string, diseaseKey: string): Promise<StateStats> {
+  const all = (await getVerifiedRaw(5000)).map(v => v.report)
+  const rows = all.filter(r => r.kind !== 'lost' && r.state === abbr && r.disease === diseaseKey)
+  const now = Date.now()
+  const within = (r: Report, days: number) => now - r.timestamp < days * DAY
+  const isActive = (r: Report) =>
+    now - r.timestamp < (DISEASE_MAP[r.disease]?.pinTtlDays ?? 90) * DAY
+  return {
+    total: rows.length,
+    active: rows.filter(isActive).length,
+    last7: rows.filter(r => within(r, 7)).length,
+    last30: rows.filter(r => within(r, 30)).length,
+    byDisease: tally(rows, r => r.disease || undefined, getDiseaseName),
+    byCounty: tally(rows, r => normalizeCounty(r.county), k => countyLabel(k, abbr) ?? k),
+    recent: rows.slice(0, 12),
+  }
+}
+
+/** Every (state, county-slug) and (state, disease) pair that actually has data —
+ *  the sitemap uses this so it only lists pages with content. */
+export async function getLocationCombos(): Promise<{
+  counties: { state: string; slug: string }[]
+  diseases: { state: string; disease: string }[]
+}> {
+  const all = (await getVerifiedRaw(5000)).map(v => v.report)
+  const countySet = new Set<string>()
+  const diseaseSet = new Set<string>()
+  for (const r of all) {
+    if (r.kind === 'lost' || !r.state) continue
+    if (r.disease) diseaseSet.add(`${r.state}|${r.disease}`)
+    const norm = normalizeCounty(r.county)
+    if (norm) countySet.add(`${r.state}|${toSlug(norm)}`)
+  }
+  return {
+    counties: [...countySet].map(k => { const [state, slug] = k.split('|'); return { state, slug } }),
+    diseases: [...diseaseSet].map(k => { const [state, disease] = k.split('|'); return { state, disease } }),
   }
 }
 

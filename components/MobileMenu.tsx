@@ -39,6 +39,7 @@ export default function MobileMenu({ recallActive }: { recallActive: boolean }) 
           <div className="menu-backdrop" onClick={close} aria-hidden="true" />
           <nav className="mobile-menu" aria-label="Main menu">
             <Link href="/diseases" onClick={close}>Diseases</Link>
+            <Link href="/outbreaks" onClick={close}>Outbreaks</Link>
             <Link href="/recalls" onClick={close}>
               Recalls{recallActive && <span className="recall-dot-inline" aria-hidden="true" />}
             </Link>

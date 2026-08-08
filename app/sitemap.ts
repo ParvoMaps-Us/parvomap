@@ -3,6 +3,7 @@ import { DISEASE_MAP } from '@/lib/diseases'
 import { getArchivedRecalls } from '@/lib/recalls'
 import { BLOG_POSTS } from '@/lib/blog'
 import { STATES } from '@/lib/states'
+import { getLocationCombos } from '@/lib/dashboard'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://www.parvomaps.us'
@@ -34,6 +35,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'daily',
     priority: 0.7,
   }))
+
+  // County and disease-in-state pages, but only combos that actually have data
+  // (best-effort; empty if Redis is down). Empty combos render noindex/404, so
+  // listing them would just burn crawl budget.
+  let comboPages: MetadataRoute.Sitemap = []
+  try {
+    const { counties, diseases } = await getLocationCombos()
+    const slugFor = new Map(STATES.map(s => [s.abbr, s.slug]))
+    comboPages = [
+      ...counties.flatMap(c => {
+        const st = slugFor.get(c.state)
+        return st ? [{ url: `${base}/outbreaks/${st}/${c.slug}`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.6 }] : []
+      }),
+      ...diseases.flatMap(d => {
+        const st = slugFor.get(d.state)
+        return st ? [{ url: `${base}/outbreaks/${st}/${d.disease}`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.6 }] : []
+      }),
+    ]
+  } catch { /* leave empty */ }
 
   const blogPages: MetadataRoute.Sitemap = BLOG_POSTS.map(post => ({
     url: `${base}/blog/${post.slug}`,
@@ -88,6 +108,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...recallPages,
     ...diseasePages,
     ...statePages,
+    ...comboPages,
     ...blogPages,
     { url: `${base}/privacy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${base}/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },

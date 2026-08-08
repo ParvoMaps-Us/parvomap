@@ -340,6 +340,19 @@ nav a {
   transition: color 0.15s;
 }
 nav a:hover { color: var(--text); }
+/* The Outbreaks dropdown toggle is a <button> but must read exactly like the
+   anchor nav items around it. */
+nav button.nav-link {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  transition: color 0.15s;
+  padding: 0;
+}
+nav button.nav-link:hover { color: var(--text); }
+nav .nav-link-wrap a:hover { color: var(--text); background: var(--bg-surface); }
 .btn-report {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700;

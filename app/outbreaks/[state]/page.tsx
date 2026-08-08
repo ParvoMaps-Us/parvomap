@@ -4,9 +4,9 @@ import { notFound } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
 import { getStateBySlug, STATES, countyLabel } from '@/lib/states'
 import { getStateStats, type Bucket } from '@/lib/dashboard'
-import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
 import { buildMetadata } from '@/lib/seo'
-import type { Report } from '@/lib/redis'
+import { toSlug } from '@/lib/states'
+import { wrap, card, StatTile, BarList, Section, ReportCard } from '../ui'
 
 // Same caching stance as the disease pages: the render is dynamic (per-request
 // CSP nonce rules out static generation) but the Redis aggregate is shared and
@@ -23,69 +23,6 @@ export async function generateMetadata({ params }: { params: Promise<{ state: st
     description: `Current canine disease reports in ${info.name}: parvo, distemper, rabies, leptospirosis, blue-green algae advisories and more, mapped by city and county with sources.`,
     path: `/outbreaks/${info.slug}`,
   })
-}
-
-const wrap = { maxWidth: 820, margin: '48px auto', padding: 24, fontFamily: 'var(--mono)', color: 'var(--text)' } as const
-const card = { border: '1px solid var(--border)', borderRadius: 8, padding: 18, background: 'var(--bg-card)' } as const
-
-function fmt(ts: number): string {
-  return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
-
-function StatTile({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div style={{ ...card, minWidth: 0 }}>
-      <div style={{ fontSize: 26, fontWeight: 800, lineHeight: 1.1 }}>{value}</div>
-      <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 4 }}>{label}</div>
-    </div>
-  )
-}
-
-function BarList({ buckets, hrefFor }: { buckets: Bucket[]; hrefFor?: (b: Bucket) => string }) {
-  const max = buckets[0]?.count ?? 1
-  if (buckets.length === 0) return <div style={{ fontSize: 12, color: 'var(--text-dim)' }}>Nothing reported yet.</div>
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      {buckets.slice(0, 10).map(b => {
-        const href = hrefFor?.(b)
-        return (
-          <div key={b.key} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 156, fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {href ? <Link href={href} style={{ color: 'var(--green)', textDecoration: 'none' }}>{b.label}</Link> : b.label}
-            </div>
-            <div style={{ flex: 1, height: 8, background: 'var(--bg-surface)', borderRadius: 4, overflow: 'hidden' }}>
-              <div style={{ width: `${Math.max(4, (b.count / max) * 100)}%`, height: '100%', background: 'var(--amber)' }} />
-            </div>
-            <div style={{ width: 28, textAlign: 'right', fontSize: 12, fontWeight: 700 }}>{b.count}</div>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div style={{ marginBottom: 26 }}>
-      <h2 style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>{title}</h2>
-      {children}
-    </div>
-  )
-}
-
-/** Render-time protocol guard, mirroring the check LeafletMap applies before it
- *  links a source. The submit API already enforces http(s), but seeded records
- *  are written straight to Redis and skip that validation, so anything that
- *  reaches an href gets checked here too rather than trusting the store. */
-function safeHttpUrl(url?: string): string | undefined {
-  return url && /^https?:\/\//i.test(url) ? url : undefined
-}
-
-/** A pin is still "active" while inside its disease's TTL — the same rule the
- *  map dims by, so the page and the map never disagree. */
-function isActive(r: Report): boolean {
-  const ttl = DISEASE_MAP[r.disease]?.pinTtlDays ?? 90
-  return Date.now() - r.timestamp < ttl * 24 * 60 * 60 * 1000
 }
 
 export default async function StateOutbreaksPage({ params }: { params: Promise<{ state: string }> }) {
@@ -185,7 +122,7 @@ export default async function StateOutbreaksPage({ params }: { params: Promise<{
           <div style={card}>
             <BarList
               buckets={stats.byDisease}
-              hrefFor={b => `/diseases/${b.key}`}
+              hrefFor={b => `/outbreaks/${info.slug}/${b.key}`}
             />
           </div>
         </Section>
@@ -193,39 +130,14 @@ export default async function StateOutbreaksPage({ params }: { params: Promise<{
 
       {stats.byCounty.length > 0 && (
         <Section title="Where in the state">
-          <div style={card}><BarList buckets={stats.byCounty} /></div>
+          <div style={card}><BarList buckets={stats.byCounty} hrefFor={b => `/outbreaks/${info.slug}/${toSlug(b.key)}`} /></div>
         </Section>
       )}
 
       {stats.recent.length > 0 && (
         <Section title="Recent reports">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {stats.recent.map((r, i) => (
-              <div key={r.id ?? i} style={card}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'baseline' }}>
-                  <div style={{ fontSize: 14, fontWeight: 700 }}>
-                    {getDiseaseName(r.disease)}
-                    {r.subject === 'wildlife' && <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}> · in wildlife</span>}
-                    {r.subject === 'other' && <span style={{ fontSize: 11, color: 'var(--text-dim)', fontWeight: 400 }}> · in another animal</span>}
-                  </div>
-                  <div style={{ fontSize: 12, color: isActive(r) ? 'var(--green)' : 'var(--text-dim)' }}>
-                    {isActive(r) ? 'Active' : 'Historical'} · {fmt(r.timestamp)}
-                  </div>
-                </div>
-                <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
-                  {[r.city, countyLabel(r.county, r.state)].filter(Boolean).join(", ")}
-                </div>
-                {r.locationDetail && (
-                  <div style={{ fontSize: 12, color: 'var(--text-dim)', marginTop: 4 }}>{r.locationDetail}</div>
-                )}
-                {safeHttpUrl(r.sourceUrl) && (
-                  <a href={safeHttpUrl(r.sourceUrl)} target="_blank" rel="noopener noreferrer nofollow"
-                     style={{ fontSize: 12, color: 'var(--green)', textDecoration: 'none', marginTop: 6, display: 'inline-block' }}>
-                    Source ↗
-                  </a>
-                )}
-              </div>
-            ))}
+            {stats.recent.map((r, i) => <ReportCard key={r.id ?? i} r={r} countyText={countyLabel(r.county, r.state)} />)}
           </div>
         </Section>
       )}

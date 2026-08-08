@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { hasCurrentRecall } from '@/lib/recalls'
 import MobileMenu from './MobileMenu'
+import OutbreaksNav from './OutbreaksNav'
 import ProCta from './ProCta'
 
 export default async function Header() {
@@ -16,6 +17,7 @@ export default async function Header() {
       </div>
       <nav>
         <Link href="/diseases" className="nav-link">Diseases</Link>
+        <OutbreaksNav />
         <Link href="/recalls" className="nav-link recall-tab">
           Recalls{recallActive && <span className="recall-dot" aria-hidden="true" />}
         </Link>
