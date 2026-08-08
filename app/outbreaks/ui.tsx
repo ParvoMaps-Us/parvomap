@@ -99,3 +99,11 @@ export function ReportCard({ r, countyText }: { r: Report; countyText?: string }
     </div>
   )
 }
+
+/** Serialize for an inline <script type="application/ld+json"> block.
+ *  JSON.stringify does NOT escape "</script>", so a string field sourced from
+ *  Redis (county names, location details) could otherwise close the tag and
+ *  inject markup. Escaping "<" neutralizes that while staying valid JSON. */
+export function jsonLdSafe(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c')
+}

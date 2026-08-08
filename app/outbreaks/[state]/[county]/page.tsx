@@ -6,7 +6,7 @@ import { getStateBySlug, countyLabel } from '@/lib/states'
 import { getCountyStats, getStateDiseaseStats } from '@/lib/dashboard'
 import { DISEASE_MAP } from '@/lib/diseases'
 import { buildMetadata } from '@/lib/seo'
-import { wrap, StatTile, BarList, Section, ReportCard } from '../../ui'
+import { wrap, StatTile, BarList, Section, ReportCard, jsonLdSafe } from '../../ui'
 
 // One dynamic segment serves two page kinds, disambiguated by slug:
 //   /outbreaks/texas/parvo        -> disease-in-state (slug is a disease key)
@@ -87,7 +87,7 @@ export default async function CountyOrDiseasePage({ params }: { params: Promise<
 
     return (
       <main style={wrap}>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }} />
         <div style={{ marginBottom: 16 }}>
           <Link href={`/outbreaks/${info.slug}`} style={{ fontSize: 13, color: 'var(--text-dim)', textDecoration: 'none' }}>← {info.name}</Link>
         </div>
@@ -153,7 +153,7 @@ export default async function CountyOrDiseasePage({ params }: { params: Promise<
 
   return (
     <main style={wrap}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }} />
       <div style={{ marginBottom: 16 }}>
         <Link href={`/outbreaks/${info.slug}`} style={{ fontSize: 13, color: 'var(--text-dim)', textDecoration: 'none' }}>← {info.name}</Link>
       </div>

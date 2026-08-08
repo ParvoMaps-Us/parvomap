@@ -6,7 +6,7 @@ import { getStateBySlug, STATES, countyLabel } from '@/lib/states'
 import { getStateStats, type Bucket } from '@/lib/dashboard'
 import { buildMetadata } from '@/lib/seo'
 import { toSlug } from '@/lib/states'
-import { wrap, card, StatTile, BarList, Section, ReportCard } from '../ui'
+import { wrap, card, StatTile, BarList, Section, ReportCard, jsonLdSafe } from '../ui'
 
 // Same caching stance as the disease pages: the render is dynamic (per-request
 // CSP nonce rules out static generation) but the Redis aggregate is shared and
@@ -90,7 +90,7 @@ export default async function StateOutbreaksPage({ params }: { params: Promise<{
 
   return (
     <main style={wrap}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSafe(jsonLd) }} />
 
       <div style={{ marginBottom: 16 }}>
         <Link href="/outbreaks" style={{ fontSize: 13, color: 'var(--text-dim)', textDecoration: 'none' }}>← All states</Link>
