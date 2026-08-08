@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { DISEASE_MAP } from '@/lib/diseases'
 import { getArchivedRecalls } from '@/lib/recalls'
 import { BLOG_POSTS } from '@/lib/blog'
+import { STATES } from '@/lib/states'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://www.parvomaps.us'
@@ -22,6 +23,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: now,
     changeFrequency: 'weekly',
     priority: 0.6,
+  }))
+
+  // One page per state. These target the searches only this site can answer
+  // ("is there parvo in <my state> right now"), unlike the national symptom
+  // terms the blog competes for.
+  const statePages: MetadataRoute.Sitemap = STATES.map(s => ({
+    url: `${base}/outbreaks/${s.slug}`,
+    lastModified: now,
+    changeFrequency: 'daily',
+    priority: 0.7,
   }))
 
   const blogPages: MetadataRoute.Sitemap = BLOG_POSTS.map(post => ({
@@ -76,6 +87,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     ...recallPages,
     ...diseasePages,
+    ...statePages,
     ...blogPages,
     { url: `${base}/privacy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${base}/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },

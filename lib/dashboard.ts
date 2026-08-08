@@ -1,5 +1,6 @@
 import { getVerifiedRaw, type Report } from '@/lib/redis'
-import { getDiseaseName } from '@/lib/diseases'
+import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
+import { normalizeCounty, countyLabel } from '@/lib/states'
 
 const DAY = 24 * 60 * 60 * 1000
 
@@ -113,6 +114,50 @@ export async function getDiseaseStats(diseaseKey: string): Promise<DiseaseStats>
     byState: tally(rows, r => r.state || undefined),
     recent: rows.slice(0, 10),
   }
+}
+
+export interface StateStats {
+  total: number
+  active: number
+  last7: number
+  last30: number
+  byDisease: Bucket[]
+  byCounty: Bucket[]
+  recent: Report[]
+  /** Neighbouring-state totals aren't included; the page links out instead. */
+}
+
+/** Live stats for a single state, pulled from verified reports.
+ *  `active` counts only pins still inside their disease's pin TTL, which is what
+ *  a visitor asking "is anything going on near me right now" actually means. */
+export async function getStateStats(abbr: string): Promise<StateStats> {
+  const all = (await getVerifiedRaw(5000)).map(v => v.report)
+  const rows = all.filter(r => r.kind !== 'lost' && r.state === abbr)
+  const now = Date.now()
+  const within = (r: Report, days: number) => now - r.timestamp < days * DAY
+  const isActive = (r: Report) =>
+    now - r.timestamp < (DISEASE_MAP[r.disease]?.pinTtlDays ?? 90) * DAY
+  return {
+    total: rows.length,
+    active: rows.filter(isActive).length,
+    last7: rows.filter(r => within(r, 7)).length,
+    last30: rows.filter(r => within(r, 30)).length,
+    byDisease: tally(rows, r => r.disease || undefined, getDiseaseName),
+    // Normalize first so "Utah" and "Utah County" are one bucket, not two.
+    byCounty: tally(rows, r => normalizeCounty(r.county), k => countyLabel(k, abbr) ?? k),
+    recent: rows.slice(0, 12),
+  }
+}
+
+/** Verified case count per state abbreviation — powers the state index list. */
+export async function getStateCounts(): Promise<Record<string, number>> {
+  const all = (await getVerifiedRaw(5000)).map(v => v.report)
+  const counts: Record<string, number> = {}
+  for (const r of all) {
+    if (r.kind === 'lost' || !r.state) continue
+    counts[r.state] = (counts[r.state] ?? 0) + 1
+  }
+  return counts
 }
 
 /** Total verified case count per disease key — powers the index page badges. */

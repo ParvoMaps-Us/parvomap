@@ -4,6 +4,7 @@ import { unstable_cache } from 'next/cache'
 import { getDashboardData } from '@/lib/dashboard'
 import { getDiseaseName } from '@/lib/diseases'
 import { buildMetadata } from '@/lib/seo'
+import { STATES, getStateSlug, getStateName } from '@/lib/states'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,15 +64,33 @@ export default async function OutbreaksPage() {
         <section style={{ marginBottom: 28 }}>
           <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 12 }}>By state</h2>
           <div style={card}>
-            {d.byState.map((b, i) => (
-              <div key={b.key} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderTop: i === 0 ? 'none' : '1px solid var(--border)', fontSize: 14 }}>
-                <span style={{ color: 'var(--text-muted)' }}>{b.label}</span>
-                <span style={{ fontWeight: 700 }}>{b.count}</span>
-              </div>
-            ))}
+            {d.byState.map((b, i) => {
+              const slug = getStateSlug(b.key)
+              const label = getStateName(b.key)
+              return (
+                <div key={b.key} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderTop: i === 0 ? 'none' : '1px solid var(--border)', fontSize: 14 }}>
+                  {slug
+                    ? <Link href={`/outbreaks/${slug}`} style={{ color: 'var(--green)', textDecoration: 'none' }}>{label}</Link>
+                    : <span style={{ color: 'var(--text-muted)' }}>{label}</span>}
+                  <span style={{ fontWeight: 700 }}>{b.count}</span>
+                </div>
+              )
+            })}
           </div>
         </section>
       )}
+
+      <section style={{ marginBottom: 28 }}>
+        <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 12 }}>Browse every state</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {STATES.map(s => (
+            <Link key={s.abbr} href={`/outbreaks/${s.slug}`}
+                  style={{ fontSize: 12, color: 'var(--text-dim)', textDecoration: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '4px 8px' }}>
+              {s.name}
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {d.total === 0 && (
         <p style={{ fontSize: 14, color: 'var(--text-dim)' }}>No active reports right now. Check the <Link href="/" style={{ color: 'var(--green)' }}>map</Link> or <Link href="/diseases" style={{ color: 'var(--green)' }}>browse diseases</Link>.</p>
