@@ -283,6 +283,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         report.disease === 'tickspot' ? 'Tick sighting'
         : isHazard ? 'This water'
         : report.subject === 'wildlife' ? 'Wildlife'
+        : report.subject === 'other' ? 'Another animal'
         : 'A dog'
       const advisory =
         report.disease === 'tickspot'
@@ -291,6 +292,8 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           ? 'Toxic algae confirmed in this water. No dog is sick — this is a warning. Do not let your dog swim here, wade, or drink from it.'
         : report.subject === 'wildlife'
           ? 'Confirmed in a wild animal, not a dog. Keep your dog leashed here, away from wildlife, and current on shots.'
+        : report.subject === 'other'
+          ? 'Confirmed in another animal, not a dog. A dog could catch it here, so keep yours leashed and current on shots.'
         : ''
       const rc = recencyClass(report.timestamp)
       const glowColor = rc === 'red' ? '#ef4444' : rc === 'amber' ? '#f59e0b' : '#46f0a2'

@@ -62,7 +62,9 @@ export interface Report {
   // dog" advisory. Absent on older pins, which are treated as 'dog'.
   // Rule set 2026-08-03: wildlife cases belong on the map because the pin's job
   // is prevention — see docs/disease-scan-playbook.md criterion 2.
-  subject?: 'dog' | 'wildlife'
+  // 'other' covers a confirmed case in a non-dog domestic animal (e.g. a rabid
+  // unvaccinated cat) — not wildlife, but not a dog case either.
+  subject?: 'dog' | 'wildlife' | 'other'
   // Source category (drives map icon + credibility). Public, non-PII.
   reporterType?: 'individual' | 'vet' | 'facility' | 'news'
   // True when the reporter's email belongs to an active Pro Clinic account.
