@@ -203,3 +203,48 @@ seeded case id is recorded in the disease-tracker memory note.
       Keep it short. This is the record of what changed and the raw material for
       blog posts and social content, so the interesting cases must surface.
 - [ ] (Optional) note any new disease not yet in `DISEASE_MAP` to add later.
+
+---
+
+## Back-test log
+
+### 2026-08-09 — subject audit of wildlife-common diseases
+
+Pins seeded before the per-case subject control existed all defaulted to
+`subject: 'dog'`. Audited the 20 highest-risk of them: every non-hazard pin whose
+disease is commonly a WILDLIFE or LIVESTOCK disease (rabies, distemper, screwworm).
+Each was re-read against its own source article.
+
+**8 of 20 were wrong. A 40% error rate in that subset.**
+
+Fixed:
+- RABIES-CACHE-2026-06 (Logan UT) dog -> wildlife. A bat.
+- RABIES-WEBER-2026-07 (Ogden UT) dog -> wildlife. A bat.
+- RABIES-LYONS-2026-06 (NY) dog -> wildlife. A raccoon.
+- RABIES-GALEN-2026-06 (NY) dog -> other. A cat.
+- DISTEMPER-PIMA-2026-06 source swapped to reachable KOLD coverage (old URL 403s).
+
+Removed:
+- RABIES-PAULDING-2026-06. The case was RETRACTED. Follow-up testing confirmed the
+  shelter dog did not have rabies. We were displaying a retracted case as confirmed.
+- DISTEMPER-DALLAS-2026-06. Sourced to an evergreen SPCA info page whose named
+  outbreak was 2022. Neither the subject nor the 2026 date was supported.
+
+Left alone by owner decision: NWS-PECOS-2026-06 (screwworm).
+
+**Lessons, now controls:**
+1. **A rabies story about a bat is not a dog case.** Judge only what the article says
+   tested POSITIVE. Exposure, biting, and proximity are not the case.
+   Counter-example worth remembering: RABIES-CALAVERAS-2026-05 mentions a skunk, but
+   the DOG was the confirmed positive. Read carefully in both directions.
+2. **Check for retractions.** Read the whole article including updates appended later.
+   A confirmed case can become an un-confirmed case a week after publication.
+3. **An evergreen page is not a source for a dated case.** If the URL is a general
+   info page, a dashboard, or a state landing page, it cannot support a specific
+   animal on a specific date. Find a species-specific, dated article or drop the pin.
+4. **The source URL must be reachable.** A 403 or a dead link means nobody can check
+   the work, including us.
+
+**Still unaudited:** ~58 non-hazard `subject: 'dog'` pins in diseases that genuinely
+are canine (parvo, kennel cough, mange, giardia, lepto, strep zoo). Lower risk, since
+the default is probably right, but never verified case by case.
