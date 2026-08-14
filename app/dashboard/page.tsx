@@ -54,6 +54,14 @@ function BarList({ title, buckets, accent }: { title: string; buckets: Bucket[];
   )
 }
 
+// Deep link to the homepage map, which flies to the pin and labels it.
+// The dashboard has no map of its own on purpose — one map, one focus path.
+function locateHref(r: Report): string | null {
+  if (typeof r.lat !== 'number' || typeof r.lng !== 'number') return null
+  const label = [r.city, r.state].filter(Boolean).join(', ') || r.zip || r.id
+  return `/?focus=${r.lat.toFixed(5)},${r.lng.toFixed(5)}&label=${encodeURIComponent(label)}`
+}
+
 function RecentTable({ rows, lost }: { rows: Report[]; lost?: boolean }) {
   if (rows.length === 0) return <div style={{ fontSize: 12, color: 'var(--text-dim)' }}>No reports yet.</div>
   return (
@@ -63,8 +71,10 @@ function RecentTable({ rows, lost }: { rows: Report[]; lost?: boolean }) {
           <tr style={{ color: 'var(--text-dim)', textAlign: 'left' }}>
             <th style={{ padding: '4px 8px' }}>{lost ? 'Dog / kind' : 'Disease'}</th>
             <th style={{ padding: '4px 8px' }}>Location</th>
+            <th style={{ padding: '4px 8px' }}>ZIP</th>
             <th style={{ padding: '4px 8px' }}>From</th>
             <th style={{ padding: '4px 8px' }}>When</th>
+            <th style={{ padding: '4px 8px' }}>Map</th>
           </tr>
         </thead>
         <tbody>
@@ -82,10 +92,16 @@ function RecentTable({ rows, lost }: { rows: Report[]; lost?: boolean }) {
               <td style={{ padding: '6px 8px', color: 'var(--text-muted)' }}>
                 {[r.city, r.state].filter(Boolean).join(', ') || r.zip || '—'}
               </td>
+              <td style={{ padding: '6px 8px', color: 'var(--text-dim)' }}>{r.zip || '—'}</td>
               <td style={{ padding: '6px 8px', color: nonUS ? 'var(--amber)' : 'var(--text-dim)', fontWeight: nonUS ? 700 : 400 }}>
                 {r.country ? `${nonUS ? '⚠ ' : ''}${r.country}` : '—'}
               </td>
               <td style={{ padding: '6px 8px', color: 'var(--text-dim)' }}>{fmt(r.timestamp)}</td>
+              <td style={{ padding: '6px 8px' }}>
+                {locateHref(r)
+                  ? <a href={locateHref(r)!} target="_blank" style={{ color: 'var(--green)', textDecoration: 'none', fontWeight: 700 }}>📍 Locate</a>
+                  : <span style={{ color: 'var(--text-dim)' }}>—</span>}
+              </td>
             </tr>
             )
           })}
@@ -259,6 +275,15 @@ export default async function DashboardPage({
               )}
 
               <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+                {r && locateHref(r) && (
+                  <a
+                    href={locateHref(r)!}
+                    target="_blank"
+                    style={{ border: '1px solid var(--green)', color: 'var(--green)', textDecoration: 'none', fontSize: 11, fontWeight: 700, padding: '7px 14px', borderRadius: 4 }}
+                  >
+                    📍 Locate on map
+                  </a>
+                )}
                 <a
                   href={`/api/admin/remove?id=${encodeURIComponent(f.id)}${qs}`}
                   style={{ background: 'var(--red)', color: '#fff', textDecoration: 'none', fontSize: 11, fontWeight: 700, padding: '7px 14px', borderRadius: 4 }}

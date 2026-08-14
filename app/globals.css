@@ -1762,3 +1762,17 @@ html body .leaflet-bar a:last-child {
   opacity: 1;
 }
 #report .char-counter { color: var(--g-t3); }
+
+/* Focus marker tooltip (ZIP search / dashboard Locate) — matches the dark map UI */
+.focus-tooltip {
+  background: rgba(10, 10, 10, 0.9);
+  border: 1px solid #46f0a2;
+  color: #e5e5e5;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  padding: 4px 10px;
+  box-shadow: 0 0 12px rgba(70, 240, 162, 0.25);
+}
+.focus-tooltip::before { display: none; }

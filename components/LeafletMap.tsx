@@ -464,6 +464,35 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     }
     window.addEventListener('parvomap:filter', onFilter)
 
+    // Fly-to requests from outside the map (ZIP search, dashboard "Locate"
+    // deep links). Drops a temporary labeled marker so the spot being answered
+    // about is unmistakable among the disease dots, then removes it on the
+    // next focus.
+    let focusMarker: any = null
+    const onFocus = (e: Event) => {
+      const { lat, lng, label, zoom } = (e as CustomEvent).detail ?? {}
+      if (typeof lat !== 'number' || typeof lng !== 'number') return
+      if (focusMarker) { focusMarker.remove(); focusMarker = null }
+      focusMarker = L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: '',
+          html: `<div style="font-size:26px;line-height:1;filter:drop-shadow(0 0 6px #46f0a2);">📍</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 26],
+        }),
+        zIndexOffset: 3000,
+        interactive: false,
+      }).addTo(map)
+      if (label) {
+        focusMarker.bindTooltip(String(label), {
+          permanent: true, direction: 'top', offset: [0, -26],
+          className: 'focus-tooltip',
+        }).openTooltip()
+      }
+      map.flyTo([lat, lng], typeof zoom === 'number' ? zoom : 9, { duration: 0.8 })
+    }
+    window.addEventListener('parvomap:focus', onFocus)
+
     // ─── Click-to-drop-a-pin ───
     mapRef.current = map
 
@@ -519,6 +548,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
 
     return () => {
       window.removeEventListener('parvomap:filter', onFilter)
+      window.removeEventListener('parvomap:focus', onFocus)
       map.remove()
       mapRef.current = null
       dropMarkerRef.current = null

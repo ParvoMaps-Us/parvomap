@@ -20,3 +20,22 @@ export function parseCoordinates(text?: string | null): { lat: number; lng: numb
 
   return { lat, lng }
 }
+
+/**
+ * Great-circle distance in miles between two points. Used by the ZIP search to
+ * answer "how many cases are near me" without a spatial index — at a few
+ * hundred pins a linear scan is far cheaper than anything cleverer.
+ */
+export function milesBetween(
+  aLat: number, aLng: number,
+  bLat: number, bLng: number,
+): number {
+  const R = 3958.8
+  const rad = (d: number) => (d * Math.PI) / 180
+  const dLat = rad(bLat - aLat)
+  const dLng = rad(bLng - aLng)
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(rad(aLat)) * Math.cos(rad(bLat)) * Math.sin(dLng / 2) ** 2
+  return 2 * R * Math.asin(Math.sqrt(h))
+}

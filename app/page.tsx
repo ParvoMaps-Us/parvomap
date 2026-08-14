@@ -8,6 +8,7 @@ import ReportForm from '@/components/ReportForm'
 import Footer from '@/components/Footer'
 import VerifiedBanner from '@/components/VerifiedBanner'
 import WelcomePopup from '@/components/WelcomePopup'
+import ZipSearch from '@/components/ZipSearch'
 import { getReports, getStats, toPublicReport } from '@/lib/redis'
 
 export default async function HomePage({
@@ -45,6 +46,7 @@ export default async function HomePage({
       {publicReports.length > 0 && <Ticker reports={publicReports} />}
       <Header />
       <StatsBar {...stats} />
+      <ZipSearch reports={publicReports} />
       <FilterBar reports={publicReports} />
       <Map reports={publicReports} />
       <main id="main-content">
