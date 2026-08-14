@@ -46,6 +46,58 @@ rabies 180d, screwworm 365d, tickspot 30d, everything else 90d
 (source of truth: `pinTtlDays` in `lib/diseases.ts` — read it, don't trust
 this list if the two disagree).
 
+### NEVER seed from a search snippet. Open the source first.
+
+**This is the single biggest failure mode in the whole scan.** On 2026-08-14 a
+40-state sweep produced roughly 25 real-looking candidates that turned out to be
+the WRONG YEAR. Every one of them was caught only by fetching the article:
+
+| Looked like | Actually |
+|---|---|
+| Delanco NJ, dog killed a rabid raccoon, "Aug 12" | Aug 2025 |
+| Happy Tails Rochester NY, six dogs dead of parvo | Feb 2025 |
+| York County SC, rabid skunks, two dogs exposed | Oct 2025 |
+| Devils Lake MI algae bloom | Aug 2024 |
+| Midland TX distemper outbreak | Mar 2024 |
+| Kansas City lepto, two dogs euthanized | Sep 2024 |
+| Las Vegas distemper at The Animal Foundation | Feb 2025 |
+| Soldan Dog Park MI algae | Aug 2025 |
+| Big Horn County MT rabid puppy | 2022 |
+| Houston County AL rabid bat | Apr 2025 |
+
+Why it happens, and why it will happen again:
+
+1. Search snippets print "August 21" or "January 27" with **no year**, and the
+   assistant fills in the current one.
+2. Shelter outbreaks **recur annually at the same facilities** (Weber County UT,
+   Memphis Animal Services, UPAWS). A 2025 story about the same shelter reads
+   exactly like a 2026 one.
+3. A URL containing `/2026/` proves when the page was *published or updated*, not
+   when the incident happened. Verify the date **in the body text**.
+
+**The control:** every case must have its date read out of the fetched article
+before it is seeded. A snippet is a lead, never a source. If the page 403s, is
+paywalled, or returns only navigation, the case does not get seeded — find
+another outlet or drop it (this is the same rule as control #4 in the back-test
+log below, and it bites often: Bangor Daily News, Toledo Blade, and several
+Yahoo mirrors all blocked automated fetching during the 2026-08-14 sweep).
+
+### Geocode traps: a lake is not in the county the story names
+
+Verify coordinates land in the stated county (see the checklist), but note the
+specific failure that a state bounding-box check will never catch:
+
+**Large waterbodies span counties, and the centroid usually sits in the wrong
+one.** On 2026-08-14 the Lake Lanier bloom was reported at the Six Mile
+Embayment in **Hall** County, but geocoding "Lake Lanier" returns a centroid in
+**Forsyth** County. Pin the *named feature in the story* (the embayment, the
+beach, the boat launch), not the lake as a whole, and re-run the county check on
+the point actually being written.
+
+Same logic for county-level cases with no town named: pin the **county seat**
+and say so in `locationDetail` ("exact location not disclosed"), rather than
+guessing at a neighbourhood.
+
 ### Age gate: check retention BEFORE seeding, not after
 
 A pin is retained for **its TTL + 60 days of historical grace**
@@ -94,6 +146,29 @@ pet food recall <brand> — (handled separately by /recalls, FDA feed)
 
 Rotate the `<MONTH>` and bump the year as time passes. Add a discovery query if a
 new threat is in the news (e.g. a novel respiratory illness).
+
+**Run each disease as its OWN query. Do not bundle.** A combined query like
+"dog parvo rabies distemper 2026 Ohio" returns whatever dominates that state's
+news, which is almost always rabies, and the other diseases silently vanish.
+The 2026-08-14 sweep produced 9 rabies pins and 0 of anything else until the
+bundling was stopped; running lepto as its own query immediately surfaced the
+Spokane County case, which doubled the map's entire leptospirosis coverage.
+
+**Expect the mix to be lopsided, and know why.** The map's disease ratios track
+*what gets publicly announced with a location*, not what dogs actually catch:
+
+- **Rabies** — county health departments publish formal alerts with a date and a
+  street. Florida issues them per county. Highly mappable.
+- **Cyano** — beach closures name the lake. Highly mappable.
+- **Parvo / distemper** — local news when a shelter closes. Episodic but real.
+- **Lepto, giardia, mange, kennel cough** — usually advisories to veterinarians,
+  with no address attached. Rarely mappable.
+- **Tick-borne (lyme, anaplasma, ehrlichia, rmsf)** — almost nothing but CAPC
+  forecasts, which criterion 2 excludes as predictions rather than incidents.
+
+That last group is the strongest argument for the clinic reporting channel: a
+vet reporting lepto directly is the only realistic way those diseases ever get
+represented on the map.
 
 Good source domains to trust: local TV/news (abc/cbs/fox/nbc affiliates),
 `*.gov` health departments, county animal-care pages, university vet schools
@@ -180,7 +255,13 @@ seeded case id is recorded in the disease-tracker memory note.
 - [ ] Decide scope (nationwide, or N states — rotate them).
 - [ ] Run the core query set (× each state if scoped).
 - [ ] Filter to cases meeting the 4 criteria above; drop livestock-only / no-location.
-- [ ] De-dupe against what's already on the map.
+- [ ] **Fetch every candidate's source and read the date out of the body.** No
+      snippet-only seeding, ever. Drop anything whose source won't load.
+- [ ] De-dupe against what's already on the map. Expect ~2/3 of per-state finds
+      to already be pinned from nationwide passes — that is the scan working,
+      not wasted effort. The remaining third is small-town material (a town
+      notice in Raymond ME, a county newsflash in Arvada CO) that never ranks
+      nationally, and it is the whole reason per-state passes exist.
 - [ ] **Age gate:** drop anything older than its disease's TTL + 60d (table above).
 - [ ] **Set `subject` per case** (dog / wildlife / other) from what tested positive.
 - [ ] **Verify coordinates land in the stated county** before writing. Free check:
