@@ -170,6 +170,35 @@ That last group is the strongest argument for the clinic reporting channel: a
 vet reporting lepto directly is the only realistic way those diseases ever get
 represented on the map.
 
+### Do NOT re-run these four weekly — swept 2026-08-14, zero new pins
+
+A full 50-state sweep of the four zero-pin diseases that looked most promising
+(**influenza, brucella, strepzoo, corona**) produced **exactly one** qualifying
+case, and it was already on the map. Findings, so this is not re-derived:
+
+| Disease | What exists | Why nothing was seeded |
+|---|---|---|
+| **influenza** | Real 2026 story: H3N2 vaccine shortage, daycare super-spreaders, LA County guidance 3/4/26 | 2026 coverage is national trend pieces with no facility or city. Every LOCATED outbreak was old: Tampa Bay 6/2024, Wake County NC 10/2023 |
+| **brucella** | MN Board of Animal Health warning 7/9/2026, several active cases from imported SD dogs | No county, city, or facility named — fails criterion 3. Iowa Marion County case is 5/2019 |
+| **strepzoo** | Four real 2026 US shelter outbreaks | Retention killed three: Sacramento 1/30/26 (196d), Multnomah 2/13/26 (182d) vs a 150d limit. Riverside is 1/2023, San Diego 11/2023, Stanislaus 7/2025. Stockton 5/21/26 was the only live one and was already pinned |
+| **corona** | Academic papers only (Portugal, Ecuador, Kazakhstan) | No US incident coverage exists to find |
+
+**The real reason these stay at zero is announcement shape, not rarity.**
+Rabies gets a county press release with a street address because it is a public
+health reporting requirement. Strep zoo only makes news when a shelter closes
+its doors. Brucellosis surfaces as state import policy, not a local quarantine
+notice. Influenza in 2026 is a national supply-chain story.
+
+Note the compounding trap: **strepzoo's 90d TTL means a shelter outbreak is
+past retention roughly 5 months after it happens.** Shelter-closure stories are
+findable but age out fast, so they are only seedable if caught within the
+quarter.
+
+**Cadence:** keep **strepzoo** in the monthly rotation (shelter closures do get
+covered, they just expire quickly). Check **influenza, brucella, corona** only
+quarterly, or when something breaks nationally. Do not spend a weekly sweep on
+them.
+
 Good source domains to trust: local TV/news (abc/cbs/fox/nbc affiliates),
 `*.gov` health departments, county animal-care pages, university vet schools
 (UC Davis, Texas A&M), AVMA, shelters/humane societies, USDA APHIS, CDC.
