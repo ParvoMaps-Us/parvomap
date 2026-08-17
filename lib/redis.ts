@@ -1,4 +1,7 @@
 import { Redis } from '@upstash/redis'
+// Cyclic by design (stats.ts needs getRedisClient): safe because neither module
+// touches the other at import time, only inside function bodies.
+import { recordReportStats } from '@/lib/stats'
 
 let redis: Redis | null = null
 
@@ -173,6 +176,14 @@ export async function publishVerifiedReport(report: PendingReport): Promise<void
     score:  report.timestamp,
     member: JSON.stringify(publicReport),
   })
+
+  // Permanent tally, incremented here rather than at the call site so no future
+  // publish path can silently skip it. The pin above is deleted once it passes
+  // its retention window; this count is the only thing that survives. Awaited on
+  // purpose — a floating promise gets killed when the serverless function
+  // returns. recordReportStats swallows its own errors, so a stats outage can
+  // never fail a verification.
+  await recordReportStats(publicReport)
 }
 
 /** Queue a delayed outreach email for a Utah reporter (fires ~30 min after submission) */
