@@ -109,10 +109,24 @@ function r2Url(objectKey: string): string {
 /** Upload bytes to R2 at objectKey. Throws on a non-2xx response. */
 export async function r2Put(objectKey: string, body: Uint8Array | string, contentType: string): Promise<void> {
   const aws = r2Client()
+
+  // Content-Length must be set explicitly, and the body must be sent as bytes.
+  //
+  // R2 rejects a chunked PUT with 411 MissingContentLength. Handing fetch a
+  // string (or letting it decide) makes some runtimes stream the body with
+  // Transfer-Encoding: chunked and omit Content-Length, which is exactly how
+  // this silently broke in production on 2026-07-09: no code change, a platform
+  // fetch change. Encoding to a Uint8Array first gives an exact byte count,
+  // which also keeps multi-byte UTF-8 correct where string .length would not.
+  const bytes = typeof body === 'string' ? new TextEncoder().encode(body) : body
+
   const res = await aws.fetch(r2Url(objectKey), {
     method: 'PUT',
-    body: body as BodyInit,
-    headers: { 'Content-Type': contentType },
+    body: bytes,
+    headers: {
+      'Content-Type': contentType,
+      'Content-Length': String(bytes.byteLength),
+    },
   })
   if (!res.ok) {
     throw new Error(`R2 PUT ${objectKey} failed: ${res.status} ${await res.text().catch(() => '')}`)
