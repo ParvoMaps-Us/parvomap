@@ -18,7 +18,7 @@ export interface DiseaseInfo {
 export const DISEASE_MAP: Record<string, DiseaseInfo> = {
   parvo: {
     name: 'Parvovirus', category: 'infectious', pinTtlDays: 365, severity: 'high', aka: 'Parvo, CPV',
-    blurb: 'A highly contagious viral infection that attacks the gastrointestinal tract. It is most dangerous — and often fatal without treatment — in unvaccinated puppies.',
+    blurb: 'A highly contagious viral infection that attacks the gastrointestinal tract. It is most dangerous, and often fatal without treatment, in unvaccinated puppies.',
     symptoms: ['Severe, often bloody diarrhea', 'Frequent vomiting', 'Lethargy and weakness', 'Loss of appetite', 'Fever', 'Rapid dehydration'],
     transmission: 'Spread fecal-orally; the virus is extremely hardy and survives months in soil, surfaces, and on shoes.',
     prevention: 'Core vaccination (puppy series + boosters); keep unvaccinated puppies away from unknown dogs and public ground.',
@@ -32,14 +32,14 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
   },
   kennel: {
     name: 'Kennel Cough', category: 'infectious', pinTtlDays: 90, severity: 'low', aka: 'CIRDC, Bordetella',
-    blurb: 'A contagious respiratory infection — usually mild — that spreads quickly where dogs gather, like boarding, daycare, and grooming.',
+    blurb: 'A contagious respiratory infection, usually mild, that spreads quickly where dogs gather, like boarding, daycare, and grooming.',
     symptoms: ['Persistent, honking cough', 'Retching or gagging', 'Runny nose', 'Mild fever', 'Usually normal appetite and energy'],
     transmission: 'Airborne and through close contact in crowded settings.',
     prevention: 'Bordetella and parainfluenza vaccines; avoid contact with coughing dogs.',
   },
   leptospira: {
     name: 'Leptospirosis', category: 'infectious', pinTtlDays: 90, severity: 'high', aka: 'Lepto',
-    blurb: 'A bacterial infection that can damage the kidneys and liver. It is zoonotic — it can spread to people.',
+    blurb: 'A bacterial infection that can damage the kidneys and liver. It is zoonotic, meaning it can spread to people.',
     symptoms: ['Fever', 'Lethargy', 'Vomiting', 'Increased thirst and urination', 'Jaundice (yellow gums/eyes)', 'Muscle pain'],
     transmission: 'Contact with urine from infected wildlife, or contaminated water, soil, and mud.',
     prevention: 'Vaccination; keep dogs away from stagnant water and rodent-prone areas.',
@@ -56,7 +56,7 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
     blurb: 'A bacterial infection that can cause sudden, severe hemorrhagic pneumonia in dogs. Usually seen in crowded settings like shelters, it can kill within 24–48 hours, so suspected cases are an emergency.',
     symptoms: ['Sudden high fever', 'Coughing', 'Rapid or labored breathing', 'Bloody nasal discharge or coughing up blood', 'Extreme lethargy or collapse', 'Rapid deterioration'],
     transmission: 'Spread through respiratory secretions and close contact in crowded settings such as shelters and boarding; often follows another respiratory infection.',
-    prevention: 'Reduce crowding and stress, isolate coughing dogs quickly, and disinfect shared spaces. There is no widely used vaccine — early veterinary care is critical.',
+    prevention: 'Reduce crowding and stress, isolate coughing dogs quickly, and disinfect shared spaces. There is no widely used vaccine, so early veterinary care is critical.',
   },
   giardia: {
     name: 'Giardia', category: 'infectious', pinTtlDays: 90, severity: 'low',
@@ -83,8 +83,8 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
     name: 'New World Screwworm', category: 'infectious', pinTtlDays: 365, severity: 'high', aka: 'NWS, Screwworm myiasis',
     blurb: 'A reportable parasitic infestation in which the larvae (maggots) of the New World screwworm fly burrow into the living flesh of warm-blooded animals. Wounds enlarge rapidly and can be fatal if untreated. After decades of US eradication, cases have re-emerged as the fly spreads north from Central America and Mexico.',
     symptoms: ['A wound that keeps enlarging instead of healing', 'Visible maggots deep within a wound', 'Foul-smelling or bloody discharge', 'Pain, head-shaking, or constant licking of one spot', 'Loss of appetite and lethargy', 'Withdrawing from people or other animals'],
-    transmission: 'Adult female flies lay eggs at the edges of open wounds — even tiny ones like tick bites or scratches — or on moist tissue (nostrils, eyes, genitals). The hatched larvae feed on living flesh. Not spread directly dog-to-dog.',
-    prevention: 'Keep wounds clean and covered, treat injuries promptly, and inspect animals after travel to affected areas. Screwworm is a reportable foreign animal disease — if you suspect it, contact your veterinarian and state animal-health officials immediately.',
+    transmission: 'Adult female flies lay eggs at the edges of open wounds, even tiny ones like tick bites or scratches, or on moist tissue (nostrils, eyes, genitals). The hatched larvae feed on living flesh. Not spread directly dog-to-dog.',
+    prevention: 'Keep wounds clean and covered, treat injuries promptly, and inspect animals after travel to affected areas. Screwworm is a reportable foreign animal disease; if you suspect it, contact your veterinarian and state animal-health officials immediately.',
   },
   rabies: {
     name: 'Rabies', category: 'infectious', pinTtlDays: 180, severity: 'high', aka: 'Rabies Virus',
@@ -116,7 +116,7 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
   },
   cyano: {
     name: 'Blue-green Algae', category: 'environmental', pinTtlDays: 30, severity: 'high', aka: 'Cyanobacteria',
-    blurb: 'A toxin produced by cyanobacteria in warm, stagnant water. Exposure can be rapidly fatal — treat any suspected case as an emergency.',
+    blurb: 'A toxin produced by cyanobacteria in warm, stagnant water. Exposure can be rapidly fatal; treat any suspected case as an emergency.',
     symptoms: ['Vomiting and diarrhea', 'Drooling', 'Weakness or collapse', 'Seizures or tremors', 'Difficulty breathing'],
     transmission: 'Drinking, swimming in, or licking fur after contact with contaminated water.',
     prevention: 'Keep dogs out of scummy, discolored, or foul-smelling water; rinse immediately after exposure.',
@@ -151,8 +151,8 @@ export const DISEASE_MAP: Record<string, DiseaseInfo> = {
   },
   tickspot: {
     name: 'Tick Sighting', category: 'tick-borne', pinTtlDays: 30, severity: 'info',
-    blurb: 'Not a disease — a community-reported sighting of ticks in an area, flagging local exposure risk for tick-borne illnesses.',
-    symptoms: ['No illness — an environmental risk marker', 'Watch for fever, lameness, or lethargy after exposure'],
+    blurb: 'Not a disease but a community-reported sighting of ticks in an area, flagging local exposure risk for tick-borne illnesses.',
+    symptoms: ['No illness; an environmental risk marker', 'Watch for fever, lameness, or lethargy after exposure'],
     transmission: 'Ticks can carry Lyme, RMSF, anaplasmosis, and ehrlichiosis.',
     prevention: 'Use tick preventives, avoid tall grass and brush, and check your dog after time outdoors.',
   },

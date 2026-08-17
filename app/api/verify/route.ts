@@ -6,8 +6,8 @@ import {
   getReports,
 } from '@/lib/redis'
 import {
-  getReportIdForToken,
-  deleteVerificationToken,
+  consumeVerificationToken,
+  restoreVerificationToken,
 } from '@/lib/verification'
 import {
   sendVerificationConfirmation,
@@ -54,9 +54,17 @@ export async function GET(req: NextRequest) {
     return Response.redirect(`${SITE}/?verified=error`)
   }
 
+  // Tracked outside the try so the catch can tell the two failure worlds
+  // apart: token consumed but nothing published (restore it, the link must
+  // keep working) vs published (never restore, a replay would re-publish).
+  let reportId: string | null = null
+  let published = false
+
   try {
-    // 1. Look up reportId from token
-    const reportId = await getReportIdForToken(token)
+    // 1. Atomically consume the token. A concurrent second request — mail
+    //    scanner prefetch, double-click — gets null here and stops, instead of
+    //    racing the whole flow and duplicating the emails below.
+    reportId = await consumeVerificationToken(token)
     if (!reportId) {
       return Response.redirect(`${SITE}/?verified=expired`)
     }
@@ -74,12 +82,10 @@ export async function GET(req: NextRequest) {
       report.verifiedClinic = true
     }
     await publishVerifiedReport(report)
+    published = true
 
-    // 4. Clean up pending record + token
-    await Promise.all([
-      deletePendingReport(reportId),
-      deleteVerificationToken(token),
-    ])
+    // 4. Clean up the pending record (the token is already gone).
+    await deletePendingReport(reportId)
 
     // 5. Count nearby verified reports (within 25 miles) for confirmation email
     let nearbyCount = 0
@@ -135,6 +141,15 @@ export async function GET(req: NextRequest) {
     return Response.redirect(`${SITE}/?verified=success`)
   } catch (e) {
     console.error('Verify GET error:', e)
+    // Token consumed but the report never published: put the token back so the
+    // reporter's link still works on a retry. If it DID publish, leave the
+    // token dead — restoring it would reopen the replay/duplicate-email hole
+    // this flow just closed.
+    if (reportId && !published) {
+      await restoreVerificationToken(token, reportId).catch(err =>
+        console.error('Token restore failed:', err)
+      )
+    }
     return Response.redirect(`${SITE}/?verified=error`)
   }
 }
