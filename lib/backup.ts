@@ -122,7 +122,10 @@ export async function r2Put(objectKey: string, body: Uint8Array | string, conten
 
   const res = await aws.fetch(r2Url(objectKey), {
     method: 'PUT',
-    body: bytes,
+    // TS's lib.dom BodyInit predates Uint8Array<ArrayBufferLike>; runtimes
+    // accept any ArrayBufferView. Hand it the underlying buffer slice instead
+    // of fighting the cast.
+    body: bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer,
     headers: {
       'Content-Type': contentType,
       'Content-Length': String(bytes.byteLength),
