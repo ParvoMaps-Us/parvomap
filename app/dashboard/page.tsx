@@ -3,6 +3,7 @@ import { getDashboardData, getFilterOptions, type Bucket, type DashboardData } f
 import { getDiseaseName, DISEASE_MAP } from '@/lib/diseases'
 import { listFlags, getVerifiedRaw, type Report, type FlagRecord } from '@/lib/redis'
 import { getDiseaseRequests, type DiseaseRequest } from '@/lib/alerts'
+import { getAllTimeStats, getAllYearStats, type AllTimeStats, type YearStats } from '@/lib/stats'
 import { getAdminFromCookies } from '@/lib/admin-auth'
 import { redirect } from 'next/navigation'
 import DiseaseChips from '@/app/clinic/dashboard/DiseaseChips'
@@ -126,12 +127,14 @@ export default async function DashboardPage({
   }
 
   const filter = { state: state || undefined, county: county || undefined, city: city || undefined, diseases }
-  const [data, options, flags, verified, diseaseRequests]: [DashboardData, Awaited<ReturnType<typeof getFilterOptions>>, FlagRecord[], { report: Report }[], DiseaseRequest[]] = await Promise.all([
+  const [data, options, flags, verified, diseaseRequests, allTime, yearStats]: [DashboardData, Awaited<ReturnType<typeof getFilterOptions>>, FlagRecord[], { report: Report }[], DiseaseRequest[], AllTimeStats, YearStats[]] = await Promise.all([
     getDashboardData(filter),
     getFilterOptions(state),
     listFlags(),
     getVerifiedRaw(),
     getDiseaseRequests(),
+    getAllTimeStats(),
+    getAllYearStats(),
   ])
   const reportById = new Map<string, Report>(verified.map(v => [v.report.id, v.report]))
   const qs = '&from=dashboard'
@@ -196,10 +199,40 @@ export default async function DashboardPage({
         </div>
       </form>
 
-      {/* ─── Diseases ─── */}
-      <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 12px' }}>🦠 Disease & hazard reports</h2>
+      {/* ─── Permanent record ───
+          Reads stats:alltime / stats:yearly:* — counters written once at
+          verification and never deleted, unlike every number below, which is
+          counted live off reports:verified and shrinks as pins expire. Ignores
+          the region filter on purpose: the permanent tallies keep only a state
+          split, and a number that silently ignored the filter would mislead. */}
+      <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 12px' }}>🗄 Permanent record <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-dim)' }}>· never deleted · all regions</span></h2>
       <div style={{ ...grid3, marginBottom: 14 }}>
-        <StatTile label="All time" value={data.disease.total} />
+        <StatTile label="Cases, all time" value={allTime.cases.total} />
+        <StatTile label="In dogs" value={allTime.cases.dog} />
+        <StatTile label="In wildlife" value={allTime.cases.wildlife} />
+        <StatTile label="Recorded since" value={allTime.firstReportAt ? new Date(allTime.firstReportAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '—'} />
+      </div>
+      <div style={{ ...grid2, marginBottom: 14 }}>
+        {yearStats.map(y => (
+          <BarList
+            key={y.year}
+            title={`${y.year} — ${y.cases.total} cases (${y.cases.dog} dog · ${y.cases.wildlife} wildlife)`}
+            buckets={Object.entries(y.byDisease)
+              .sort((a, b) => b[1].total - a[1].total)
+              .map(([k, s]) => ({ key: k, label: s.wildlife ? `${getDiseaseName(k)} (${s.wildlife} wild)` : getDiseaseName(k), count: s.total }))}
+            accent="var(--amber)"
+          />
+        ))}
+      </div>
+      <p style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 36 }}>
+        Counts only, no report details — cases stay counted here after their pins expire off the map.
+        {allTime.backfillThrough && ` Backfilled from R2 snapshots through ${allTime.backfillThrough}; 2025 is a floor, not a full count.`}
+      </p>
+
+      {/* ─── Diseases ─── */}
+      <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 12px' }}>🦠 Disease & hazard reports <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-dim)' }}>· live pins</span></h2>
+      <div style={{ ...grid3, marginBottom: 14 }}>
+        <StatTile label="Active pins" value={data.disease.total} />
         <StatTile label="Last 48 h" value={data.disease.last48} />
         <StatTile label="Last 7 days" value={data.disease.last7} />
         <StatTile label="Last 30 days" value={data.disease.last30} />
@@ -216,9 +249,9 @@ export default async function DashboardPage({
       </div>
 
       {/* ─── Lost dogs ─── */}
-      <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 12px' }}>🐶 Lost-dog reports</h2>
+      <h2 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 12px' }}>🐶 Lost-dog reports <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-dim)' }}>· live pins, 30-day retention</span></h2>
       <div style={{ ...grid3, marginBottom: 14 }}>
-        <StatTile label="All time" value={data.lost.total} />
+        <StatTile label="Active posts" value={data.lost.total} />
         <StatTile label="Last 7 days" value={data.lost.last7} />
         <StatTile label="Owner reports" value={data.lost.owner} />
         <StatTile label="Sightings" value={data.lost.sighting} />
