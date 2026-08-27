@@ -198,7 +198,7 @@ html.user-tabbing .skip-link:focus { top: 8px; }
 }
 /* Lighten the very dark CARTO basemap so land/coastlines/borders read clearly
    without abandoning the dark theme. Tune brightness to taste. */
-.map-tiles { filter: brightness(1.55) contrast(1.05); }
+.map-tiles { filter: invert(1) hue-rotate(180deg) brightness(0.72) contrast(1.08) saturate(0.35); }
 
 /* Visually hidden but available to screen readers. */
 .sr-only {

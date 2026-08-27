@@ -142,24 +142,19 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     const draggable = (map as any).dragging?._draggable
     if (draggable && L.Browser.touch) draggable.options.clickTolerance = 14
 
+    // 2026-08-27: CARTO began watermarking their formerly-free basemap tiles
+    // ("API KEY REQUIRED"). Tiles load fine, so tileerror never fired — the
+    // watermark shipped to users. Standard OSM tiles are keyless; the dark
+    // theme comes from a CSS invert on .map-tiles (globals.css).
     const tileLayer = L.tileLayer(
-      'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: 'abcd',
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        subdomains: 'abc',
         maxZoom: 19,
-        // Lighten CARTO's very dark basemap so land/borders are legible while
-        // keeping the dark theme. Applied via CSS on the .map-tiles class.
         className: 'map-tiles',
       }
     )
-
-    tileLayer.on('tileerror', () => {
-      L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        { attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' }
-      ).addTo(map)
-    })
 
     tileLayer.addTo(map)
 
