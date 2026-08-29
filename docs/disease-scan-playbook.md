@@ -358,3 +358,136 @@ Left alone by owner decision: NWS-PECOS-2026-06 (screwworm).
 **Still unaudited:** ~58 non-hazard `subject: 'dog'` pins in diseases that genuinely
 are canine (parvo, kennel cough, mange, giardia, lepto, strep zoo). Lower risk, since
 the default is probably right, but never verified case by case.
+
+---
+
+## Seed log
+
+### 2026-08-21 — 10-state low-coverage pass (383 → 388)
+Scope: the ten states with the thinnest coverage (LA, MS, NV, OK, AR, IL, IA, WV, CT, NH),
+18 pins between them at start. **5 seeded, 5 states empty.**
+
+Seeded ids:
+- `CYANO-HENDERSONLAKE-LA-2026-08` — Henderson Lake, St. Martin Parish, 8/20
+- `RABIES-DEKALB-IL-2026-06` — rabid bat, Leland, DeKalb County, 6/18, wildlife
+- `PARVO-BENTON-AR-2026-07` — Benton Animal Services, Saline County, 7/30, dog
+- `RABIES-NORTHSTONINGTON-CT-2026-06` — rabid raccoon, New London County, 6/10, wildlife
+- `CYANO-WASHOELAKE-NV-2026-07` — Washoe Lake State Park, Washoe County, 7/28
+
+Dropped, with cause (all controls fired at least once):
+- **Wrong year:** MS Tippah County rabid bat read as current in the snippet, was **May 2025**,
+  472d against rabies' 240d ceiling. Caught only by fetching.
+- **Age gate:** NV Lake Mead Government Wash (161d) and NV Lahontan Reservoir (102d), both
+  against cyano's 90d ceiling.
+- **Duplicate:** WV Fayette County shelter parvo was already `PARVO-FAYETTE-2026-06` at 0.0mi.
+- **Marginal, judgment drop:** WV Parkersburg distemper 3/30 was 144d against a 150d limit.
+  Legal to seed but would be auto-deleted within a week. Not worth the pin.
+- **No location (criterion 3):** OK statewide parvo coverage named no facility or county.
+- **Source would not load:** IL DuPage (empty body), IL Coles County (429), NV Lake Mohave (403).
+
+**Two geocode errors the county check caught, and a state bounding box would not have:**
+1. "Benton, Arkansas" resolved to **Benton County** in the northwest, ~200 miles from the
+   Saline County city of the same name. Same class as Deep Run NC landing in Baltimore.
+2. **Leland IL straddles the LaSalle/DeKalb county line.** First geocode put it in LaSalle.
+   DeKalb County Health issued the release, so the pin was moved to a Census-verified DeKalb
+   point and `locationDetail` says so explicitly.
+
+**Empty states and why:** MS (only a 2025 case), OK (no location named), IA (systematic DNR
+beach postings, the two microcystin-exceeding beaches were never named), NH (program pages
+only, no located incident), WV (its one live case was already pinned).
+
+**Note for the next pass:** actual seeded records do NOT carry `county`, `confidence`, `source`,
+or `kind` fields despite the prose above describing them. The live shape is: id, disease, zip,
+state, city, lat, lng, timestamp (ms), verified, locationDetail, sourceUrl, reporterType,
+subject. Sorted-set score == timestamp. Seeded news cases use 12:00 UTC on the incident date.
+
+### 2026-08-28 — 10-state deep scan (388 → 427)
+Scope: SD, MS, NV, OK, LA, IA, WV, ME, WY, CT. **39 seeded, 2 states empty (OK, LA).**
+
+Headliners: WY DEQ's WyoHCBs storymap is a goldmine — 22 current named-waterbody
+bloom advisories seeded in one pass (Boysen and Hawk Springs carry TOXIN advisories;
+Beck Lake and McKenzie Lake sample at dog parks). IA HHS epi update gave Iowa's first
+rabid cow since 2018 (Lyon Co) and first rabid skunk south of I-80 since 2012 (Decatur
+Co). NV seeded 3 county rabid bats + 2 named Lake Mohave HAB sites. ME rabid fox at
+Lisbon Falls verified via the everlit.audio full-text mirror after BDN blocked fetching.
+
+Per state: WY 24 (22 cyano + Casper shelter parvo + Sheridan rabid bat), NV 5, ME 3,
+IA 3, MS 1 (Hernando shelter parvo 10/2025), SD 1 (Wall Lake HAB), WV 1 (Ohio Co
+shelter parvo 1/31), CT 1 (Granby raccoon 3/9).
+
+Dropped highlights (controls fired everywhere):
+- **Wrong year traps re-dodged:** Tippah MS bat (5/2025), Tulsa rabies (2/2025), OKC
+  flu/strepzoo cluster (2023), Animal Foundation LV distemper (2/2025), ARL Des Moines
+  parvo (5/2025), news3lv parvo (2018!).
+- **Age gate:** Kanawha-Charleston distemper (162d vs 150), Parkersburg distemper (now
+  past gate for good), Waterville ME fox (380d), 3 CT rabies from 2025, South Worland
+  Pond (94d vs 90).
+- **Duplicate ID collision caught pre-seed:** agent proposed CYANO-GRAYROCKS-2026-07;
+  the existing cyano@Wheatland pin IS Grayrocks under that exact id. Always diff
+  candidate ids against live ids, not just city names.
+- **Lifted advisories dropped:** IA Marble Beach + Orleans (lifted 8/26), Lake DeSmet
+  WY (lifted 8/21). Rule of thumb: a lifted advisory is a resolved hazard, don't seed.
+- **Exposure is not a case:** Cara's House Ascension Parish LA distemper closure was
+  precautionary, no positive.
+- OK empty: every candidate failed on date, statewide-only, wrong state, or 404.
+  LA empty: all four candidates were dupes/stale/exposure-only.
+
+Note: NV county bats use the 7/23 NDA release date; locationDetail flags "identified
+earlier in 2026, exact date not disclosed."
+
+### 2026-08-28 — 10-state deep scan #2, Utah lead (427 → 447)
+Scope: UT, AK, DE, HI, NH, AR, AL, IL, MI, MO. **20 seeded; DE, HI, NH empty.**
+
+Headliners: **Alaska's first pin ever** (RABIES-BETHEL-AK-2026-02 — two rabid foxes,
+one shot by Bethel PD after attacking a chained dog; Y-K Delta winter uptick, 13 foxes
+region-wide). UT got 6: first rabid bat of Utah's 2026 (Washington Co) + 5 HABs from
+the Utah County Health Dept advisory dated 8/27 incl a DANGER-level bloom at Lindon
+Marina. Michigan's first rabies case of 2026 (Charlotte bat). Greene Co MO skunk bit a
+dog. Per state: UT 6, AL 3, IL 3, MI 3, AR 2, MO 2, AK 1.
+
+**Dedupe caught 4 exact-id overlaps** (nationwide passes had them): AL Auburn raccoon,
+Tallassee fox, Andalusia rabid dog; IL Macomb (PARVO-MCDONOUGH-2025-11). Always pull
+the target states' existing ids BEFORE trusting an agent's "new" list.
+
+Dropped highlights:
+- **Wrong-Delaware trap:** DE candidates were Delaware OHIO, Delaware Co PA, and
+  Delaware Co NY. Namesake counties are a real failure mode for small states.
+- **HI judgment drop:** Waianae lepto puppy sat exactly at the 150d ceiling — DOA.
+- **NH blocked, again:** NHDES + NH Bulletin are Akamai-403 even with browser UA;
+  three late-Aug cyano alerts unverifiable → correctly unseeded. NH needs a human
+  browser or a different outlet to ever get pins.
+- Wrong year re-dodged: Houston Co AL 2025 bat (a REAL 2026 Dothan bat was found
+  instead — verify, don't just avoid, known traps), Detroit rabid dog (2021),
+  St. Louis 19-dog parvo (2025), KC lepto (2024), Unalaska parvo (2016!).
+- Age gate: Chicago rabid dog now 252d (gone for good), Fayetteville AR distemper
+  157d, Jonesboro 152d — March distemper dies in August.
+
+Housekeeping flagged: UT has 2 duplicate cyano pairs to remove (CYANO-MANTUA-2026-07
+and CYANO-SALEMPOND-2026-07 duplicate their -UT- twins); removal was permission-blocked
+this session, pending owner approval.
+
+### 2026-08-29 — 10-state deep scan #3 (447 → 475)
+Scope: MN, NJ, VT, WI, AZ, TN, MT, NM, ND, VA. **28 seeded; MN and TN 0 new (fully
+covered by prior passes — ALL 4 TN candidates and both MN lakes were already pinned).**
+
+Headliners: rabid bobcat attacked 3 people + 3 dogs near Prescott AZ before a German
+shepherd killed it (RABIES-PRESCOTT-AZ-2026-05). Rabid cat attacked multiple people
+in Fairfax Co VA. Rabid bull calf, Surry Co VA. Booth Lake WI: 9 human illness
+reports, microcystin confirmed. VA's VDH street-level alerts gave 7 pins — best
+per-state source found yet, worth a dedicated quarterly VDH pass.
+
+Per state: ND 9 (NDDEQ advisory PDF is the official dated list — the allowed
+exception — but 6 of its 15 waterbodies were already pinned), VA 7, MT 4 (all county
+bats; all 5 MT cyano candidates were dups of July pins), WI 3, NJ 2, AZ 1, NM 1, VT 1.
+
+Dedupe scale this pass: ~26 of 54 candidates were already pinned. Confirms the
+playbook's ~2/3 expectation for well-covered states. Exact-id collisions again
+(PARVO-GALLUP-NM-2025-10, RABIES-FARHILLS/CHERRYHILL NJ, WI Shawano) — id-level diff
+against live pins remains mandatory.
+
+Also this morning (security, not scan): Next.js critical AVIF RCE patched — parvomap
+bumped to 16.3.3, built clean, pushed to main (commit 7b08be8), Vercel redeployed.
+
+Housekeeping backlog (pin removals pending owner approval, delete was
+permission-blocked): UT CYANO-MANTUA-2026-07 + CYANO-SALEMPOND-2026-07;
+MN CYANO-CORNELIA-2026-07 (duplicates CYANO-LAKECORNELIA-MN-2026-07).
