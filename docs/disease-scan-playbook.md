@@ -491,3 +491,32 @@ bumped to 16.3.3, built clean, pushed to main (commit 7b08be8), Vercel redeploye
 Housekeeping backlog (pin removals pending owner approval, delete was
 permission-blocked): UT CYANO-MANTUA-2026-07 + CYANO-SALEMPOND-2026-07;
 MN CYANO-CORNELIA-2026-07 (duplicates CYANO-LAKECORNELIA-MN-2026-07).
+
+### 2026-08-29 (evening) — 10-state deep scan #4 (472 → 501 in Redis)
+Scope: RI, GA, KY, NE, OH, TX, CA, CO, NC, ID. **29 seeded; OH and CO 0 new (every
+candidate already pinned, several by exact id).**
+
+Per state: ID 9 (5 county bats + 4 DEQ lakes; 3 DEQ lakes + Pocatello distemper were
+dups), RI 6 (RIDOH posts dated per-pond advisories every Friday — reliable source),
+GA 5, NC 3, KY 2 (two distinct Lexington bats, June + Aug), CA 2, TX 1 (first Val
+Verde screwworm pin), NE 1.
+
+The Lincolnton NC raccoon that surfaced in FIVE other states' searches all week was
+already pinned (RABIES-LINCOLNTON-NC-2026-02) — as were Seguin's 47-dog parvo
+euthanasia, Austin's Lady Bird algae, Walker Co GA distemper, and CO's exact-id
+Arvada/Deer Trail/Northglenn trio. Dedupe killed ~24 of 53 candidates.
+
+Judgment drops: NE Cub Creek (advisory lifted by scan day), GA Lake Lanier Six Mile
+(suspected, not confirmed — and already pinned anyway), RI Wenscott re-issue (same
+reservoir as existing pin), RI Watchaug (75d old, currency unconfirmable).
+
+**PRODUCT BUG FOUND AND FIXED: the 500-pin feed cap.** Crossing 500 total pins
+silently culled the oldest pin (PARVO-BUCHANAN-GA-2025-08) from /api/reports and the
+homepage render — ZADD succeeded, API count stayed 500. Raised `limit` 500 → 1000 in
+app/api/reports/route.ts, app/page.tsx, and the getReports default (lib/redis.ts).
+All three call sites must stay in step. Next ceiling is 1000 — revisit pagination
+before the map approaches it.
+
+Housekeeping backlog: NE has 3 duplicate cyano pairs to remove
+(CYANO-MAPLECREEK-2026-07, CYANO-ROCKFORD-2026-07, CYANO-MASKENTHINE-2026-07
+duplicate their -NE- twins). Pending owner approval.
