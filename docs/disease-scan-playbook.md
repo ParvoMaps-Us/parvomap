@@ -520,3 +520,38 @@ before the map approaches it.
 Housekeeping backlog: NE has 3 duplicate cyano pairs to remove
 (CYANO-MAPLECREEK-2026-07, CYANO-ROCKFORD-2026-07, CYANO-MASKENTHINE-2026-07
 duplicate their -NE- twins). Pending owner approval.
+
+### 2026-08-29/30 — 10-state deep scan #5, THE LAST TEN (501 → 547 so far, WA pending)
+Scope: FL, IN, KS, MA, MD, NY, OR, PA, SC, WA. **This completes all 50 states in one week.**
+
+**PROCESS FAILURE TO REMEMBER: six of the ten agents died overnight when the session was
+interrupted at 21:49.** They had done 150-220KB of work each and delivered nothing — no
+partial results are recoverable from a killed agent. Detected by comparing the output
+files' mtimes against the clock, not by waiting. Relaunched next morning.
+**Control: when a scan batch spans a session break, check agent mtimes before assuming
+"still running," and seed each state's results as they arrive rather than batching the
+seed at the end.** This batch was seeded in six increments for exactly that reason.
+
+Per state: MD 9 (county health depts post street-level alerts like VA — same quality tier),
+KS 10 (KDHE 8/28 list), IN 5, FL 5, NY 4, OR 4, SC 4, PA 3, MA 2.
+
+Headliners: rabid coyote attacked a person AND their dog at Curtis Dog Park, Wyncote PA,
+shot by police (Montgomery Co's first coyote). Rabid beaver bit a 10-year-old at Seneca
+Creek State Park MD. Rabid skunk in Fountain Inn SC exposed 2 dogs, 2 cats and 9 goats.
+Rabid bat on Martha's Vineyard — third ever recorded on the island. Rabid bobcat in
+Ogdensburg NY.
+
+Dedupe killed ~14 of 60 candidates, several found only under DIFFERENT ids for the same
+event: OR's Florence + Coos Bay parvo (pinned as PARVO-FLORENCE-2026-06 / PARVO-COOS-2026-06
+@ Coquille — the county-seat pin hid the Coos Bay match), MA's TJO Springfield parvo
+(PARVO-HAMPDEN-2026-07) and the upstream Charles River advisory (CYANO-CHARLESRIVER-2026-07).
+**Lesson: dedupe on the EVENT (facility + month), not the town string — a county-seat pin
+and a city-name candidate are the same case.**
+
+Judgment drops: KS Pittsburg parvo (July 2025, 415d vs a 425d gate — 10 days of life left,
+same call as Parkersburg), MA Stoughton pond (dog died but algae never confirmed), GA Lake
+Lanier and MI Muskegon precedent applied. NY caught a RETRACTION: the Canandaigua beach
+advisory was lifted 8/29 after testing clear.
+
+More housekeeping dupes found (removal pending owner approval): OR has 3 pairs
+(CYANO-SILTCOOS/-OR, CYANO-THIEFVALLEY/-OR, CYANO-AGENCYLAKE/-OR) on top of NE's 3.
