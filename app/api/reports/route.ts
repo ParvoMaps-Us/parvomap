@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     // overflow on the first client refresh. The cap is oldest-first, so a lower
     // limit culls the long-lived diseases (parvo 365d, rabies 180d) while recent
     // short-TTL cyano pins crowd the top of the feed.
-    const reports = await getReports({ limit: 500 })
+    const reports = await getReports({ limit: 1000 })
 
     // Strip private fields — never expose email, breed, source, notes publicly.
     // locationDetail is public (a hazard/exposure spot shown on the map).

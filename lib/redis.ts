@@ -199,7 +199,7 @@ const EMPTY_STATS = {
   topDisease: '', topStates: '',
 }
 
-export async function getReports({ limit = 500 }: { limit?: number } = {}): Promise<Report[]> {
+export async function getReports({ limit = 1000 }: { limit?: number } = {}): Promise<Report[]> {
   const client = getRedisClient()
   if (!client) return []
 
@@ -311,7 +311,7 @@ export async function getStats() {
 
   try {
     // Stats are disease/hazard surveillance — lost-dog reports don't count.
-    const reports = (await getReports({ limit: 500 })).filter(r => r.kind !== 'lost')
+    const reports = (await getReports({ limit: 1000 })).filter(r => r.kind !== 'lost')
     const now = Date.now()
     const recent48 = reports.filter(r => now - r.timestamp < 48 * 60 * 60 * 1000)
 

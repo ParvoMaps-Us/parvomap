@@ -25,7 +25,7 @@ export default async function HomePage({
     // Cap is a payload/render-size guard, not a hardware limit. 500 DOM markers
     // is still comfortable on mobile; going much past ~1000 would need canvas
     // rendering (preferCanvas + circleMarker) instead of Leaflet divIcons.
-    ;[stats, reports] = await Promise.all([getStats(), getReports({ limit: 500 })])
+    ;[stats, reports] = await Promise.all([getStats(), getReports({ limit: 1000 })])
   } catch (e) {
     console.error('Redis not available:', e)
   }
