@@ -570,3 +570,34 @@ NH needs a human browser or an alternate outlet; do not re-spend a scan slot on 
 
 Duplicate pairs awaiting removal (8): NE Maple Creek / Rockford / Maskenthine;
 OR Siltcoos / Thief Valley / Agency Lake; WA Lepto-Spokane; (UT/MN pairs already cleared).
+
+### 2026-08-30 — duplicate sweep (553 → 533, 20 removed)
+
+First systematic dedupe of the whole set, not just the pairs noticed during seeding.
+
+**Detection method matters.** A proximity match (<1.2mi, same state+disease) produced 19
+hits but was wrong in both directions: it flagged genuinely distinct cases that happen to
+be near each other (a Richmond raccoon AND fox; Lake Edina AND Lake Cornelia in the same
+town; Antelope AND Clear Lake both fallback-pinned at Rugby) while MISSING the real
+`-NE-`/`-OR-` suffix pairs whose coordinates had drifted apart. The method that worked:
+normalize the id (strip state token, dates, and the words LAKE/RESERVOIR/POND) and group
+by (state, disease, core).
+
+**27 candidate pairs, 20 removed, 7 preserved as distinct.** The 7 false positives are the
+important record, because a careless sweep would have destroyed real cases:
+- RABIES-PASADENA-MD -06 (raccoon, McGill Ct) vs -08 (bat, Almondbury Dr)
+- RABIES-LEXINGTON-KY -06 (Horse Park bat) vs -08 (bat in a kitchen)
+- RABIES-CHERRYHILL-NJ -02 vs -08 (six months apart)
+- RABIES-RIDGESPRING-SC -02 vs -07
+- RABIES-GREENWOOD-SC -06 vs -08
+- RABIES-GREENE-MO -04 (second county case) vs the March first-case
+- CYANO-UTAHLAKE -07 (Saratoga Springs Marina) vs -08 (lake-wide warning): different
+  scope and feature on a very large lake, left as two pins deliberately
+
+**Rule going forward: same place + same disease is NOT a duplicate. Same EVENT is.**
+Check the incident date and the animal/feature before removing anything.
+
+Removed: 1 same-id double-write (RABIES-JASPER-MO — a re-seed with reworded detail creates
+a NEW member because ZADD keys on the JSON string, so identical ids CAN coexist; watch for
+this after any re-run), 7 KS lakes where the July pin was superseded by the Aug 28 KDHE
+listing, 3 NE, 3 OR, plus AR DeSoto/Alma, MI Gun/Center, WA Lepto-Spokane, MO Greene.
