@@ -555,3 +555,18 @@ advisory was lifted 8/29 after testing clear.
 
 More housekeeping dupes found (removal pending owner approval): OR has 3 pairs
 (CYANO-SILTCOOS/-OR, CYANO-THIEFVALLEY/-OR, CYANO-AGENCYLAKE/-OR) on top of NE's 3.
+
+**Batch #5 final: WA came in last with 6 new (547 → 553).** Seattle rabid bat on University
+Way in the U District; rabid bat flew into a home in rural east Snohomish Co (3 people on
+PEP); SCRAPS Spokane Valley parvo (4 dogs euthanized); 3 Pierce/Whatcom county lake
+advisories. THREE of WA's 9 candidates were already pinned including an EXACT id match
+(LEPTO-SPOKANE-WA-2026-05) — and that turned up an 8th duplicate pair to clean.
+
+**WEEK TOTAL: 385 → 553 pins (+168), all 50 states deep-scanned in 5 batches.**
+Zero-pin states remaining: DE, HI, NH only. DE and HI genuinely have no qualifying current
+cases; NH is a TOOLING failure, not a coverage one — NHDES and NH Bulletin are Akamai-403
+even with a browser UA, so three real late-August cyano advisories could not be verified.
+NH needs a human browser or an alternate outlet; do not re-spend a scan slot on it blind.
+
+Duplicate pairs awaiting removal (8): NE Maple Creek / Rockford / Maskenthine;
+OR Siltcoos / Thief Valley / Agency Lake; WA Lepto-Spokane; (UT/MN pairs already cleared).
