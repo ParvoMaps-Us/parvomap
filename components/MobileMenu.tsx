@@ -46,7 +46,6 @@ export default function MobileMenu({ recallActive }: { recallActive: boolean }) 
             </Link>
             {PAID_ALERTS_LIVE && <Link href="/alerts" onClick={close}>Alerts</Link>}
             <Link href="/blog" onClick={close}>Blog</Link>
-            <Link href="/account" onClick={close}>Account</Link>
             <ProCta location="mobile_menu" className="mobile-menu-pro" onClick={close} />
           </nav>
         </>
