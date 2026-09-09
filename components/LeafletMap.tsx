@@ -463,15 +463,28 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           if (stack.length === 1) { addReportMarker(stack[0]); return }
           // Fan the stack around a small ring so every report is visible and
           // countable. Sorted by id, so a pin never jumps position between
-          // renders. Radius grows slightly with the stack so six pins do not
-          // crowd; ~130m at the low end, which is well inside the accuracy a
-          // ZIP-centroid pin already claims.
+          // renders.
+          //
+          // The ring is sized in SCREEN PIXELS, not metres, then converted to
+          // degrees at the current zoom. A fixed ground distance is wrong at
+          // every zoom but one: 130m is invisible at state level and throws a
+          // pin into the next neighbourhood at street level. Pixel-sized keeps
+          // the separation looking identical everywhere, and the real-world
+          // displacement stays tiny (~25m) exactly where it matters most, when
+          // someone is zoomed in on their own street.
           const ordered = [...stack].sort((a, b) => String(a.id).localeCompare(String(b.id)))
-          const radius = 0.0012 + 0.0004 * Math.min(ordered.length - 2, 4)
-          const latScale = Math.max(0.2, Math.cos((ordered[0].lat as number) * Math.PI / 180))
+          const lat0 = ordered[0].lat as number
+          const latRad = (lat0 * Math.PI) / 180
+          const metresPerPx = (156543.03392 * Math.cos(latRad)) / Math.pow(2, zoom)
+          const pxRadius = 13 + 2 * Math.min(ordered.length - 2, 4)
+          // Cap the ground distance so a zoomed-way-out view cannot fling pins
+          // across a county just to look tidy.
+          const radiusM = Math.min(pxRadius * metresPerPx, 120)
+          const dLatDeg = radiusM / 111320
+          const dLngDeg = radiusM / (111320 * Math.max(0.2, Math.cos(latRad)))
           ordered.forEach((r, i) => {
             const angle = (2 * Math.PI * i) / ordered.length
-            addReportMarker(r, radius * Math.cos(angle), (radius * Math.sin(angle)) / latScale)
+            addReportMarker(r, dLatDeg * Math.cos(angle), dLngDeg * Math.sin(angle))
           })
         })
       })
