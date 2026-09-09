@@ -622,7 +622,7 @@ export default function ReportForm() {
           </div>
 
           <div className="privacy-note">
-            🔒 Reports are anonymous. Email is used only to verify your report and send nearby alerts.
+            🔒 Reports are anonymous. Email is used only to verify your report.
             We never share or sell your information. ZIP code only — no street address collected.
           </div>
           </>)}
