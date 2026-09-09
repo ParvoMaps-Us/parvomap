@@ -89,8 +89,8 @@ export default function WelcomePopup() {
             Spotted a sick dog? File an anonymous report in seconds.
           </li>
           <li>
-            <span className="welcome-bullet">🔔</span>
-            Verify by email to publish your report and get nearby alerts.
+            <span className="welcome-bullet">✅</span>
+            Verify by email and your report goes live on the map.
           </li>
         </ul>
 
