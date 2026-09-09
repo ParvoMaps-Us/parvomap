@@ -259,8 +259,14 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
       })
     }
 
-    const addReportMarker = (report: Report) => {
+    // dLat/dLng shift only where the pin is DRAWN, never the underlying data.
+    // Same-ZIP reports geocode to one identical centroid, so without a fan-out
+    // they stack pixel-on-pixel and the newest pin silently hides every older
+    // one beneath it (two Dublin CA reports, 2026-09-08, looked like one).
+    const addReportMarker = (report: Report, dLat = 0, dLng = 0) => {
       if (!report.lat || !report.lng) return
+      const drawLat = report.lat + dLat
+      const drawLng = report.lng + dLng
 
       const color = pinColor(report)
 
@@ -339,10 +345,10 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           iconSize: [22, 22],
           iconAnchor: [11, 11],
         })
-        marker = L.marker([report.lat, report.lng], { icon }).bindPopup(popup).addTo(markerLayer)
+        marker = L.marker([drawLat, drawLng], { icon }).bindPopup(popup).addTo(markerLayer)
       } else {
         // Cheap glow halo behind the dot (non-interactive so clicks hit the core).
-        L.circleMarker([report.lat, report.lng], {
+        L.circleMarker([drawLat, drawLng], {
           renderer: canvasRenderer,
           radius: 8,
           stroke: false,
@@ -350,7 +356,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           fillOpacity: 0.25,
           interactive: false,
         }).addTo(markerLayer)
-        marker = L.circleMarker([report.lat, report.lng], {
+        marker = L.circleMarker([drawLat, drawLng], {
           renderer: canvasRenderer,
           radius: 5,
           fillColor: color,
@@ -359,7 +365,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           weight: 2,
         }).bindPopup(popup).addTo(markerLayer)
       }
-      wireMarker(marker, report.lat, report.lng, {
+      wireMarker(marker, drawLat, drawLng, {
         locationDetail: report.locationDetail,
         lat: report.lat,
         lng: report.lng,
@@ -443,8 +449,31 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         else cells.set(key, [r])
       })
       cells.forEach(group => {
-        if (group.length >= BIOHAZARD_THRESHOLD) addHotspotMarker(group)
-        else group.forEach(addReportMarker)
+        if (group.length >= BIOHAZARD_THRESHOLD) { addHotspotMarker(group); return }
+        // Sub-group by exact coordinate: a cell can span kilometres at low zoom,
+        // but reports sharing a ZIP centroid land on the identical point.
+        const stacks = new Map<string, Report[]>()
+        group.forEach(r => {
+          const k = `${r.lat!.toFixed(4)}_${r.lng!.toFixed(4)}`
+          const a = stacks.get(k)
+          if (a) a.push(r)
+          else stacks.set(k, [r])
+        })
+        stacks.forEach(stack => {
+          if (stack.length === 1) { addReportMarker(stack[0]); return }
+          // Fan the stack around a small ring so every report is visible and
+          // countable. Sorted by id, so a pin never jumps position between
+          // renders. Radius grows slightly with the stack so six pins do not
+          // crowd; ~130m at the low end, which is well inside the accuracy a
+          // ZIP-centroid pin already claims.
+          const ordered = [...stack].sort((a, b) => String(a.id).localeCompare(String(b.id)))
+          const radius = 0.0012 + 0.0004 * Math.min(ordered.length - 2, 4)
+          const latScale = Math.max(0.2, Math.cos((ordered[0].lat as number) * Math.PI / 180))
+          ordered.forEach((r, i) => {
+            const angle = (2 * Math.PI * i) / ordered.length
+            addReportMarker(r, radius * Math.cos(angle), (radius * Math.sin(angle)) / latScale)
+          })
+        })
       })
     }
 
