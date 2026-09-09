@@ -1321,10 +1321,9 @@ html body .leaflet-bar a:last-child {
     padding: 0 16px !important;
     height: 48px !important;
   }
-  /* Pin the filter bar just below the shorter mobile header. */
-  .filter-bar-wrap {
-    top: 48px;
-  }
+  /* NOTE: the filter bar is deliberately NOT pinned on mobile — see the
+     .filter-bar-wrap override further down in this same media query. An
+     earlier `top: 48px` rule lived here and contradicted it. */
   .logo {
     font-size: 22px !important;
   }
@@ -1414,7 +1413,15 @@ html body .leaflet-bar a:last-child {
   }
 
   /* Filter bar */
-  /* filter bar scrolls with the page (not sticky) — no top offset */
+  /* Scrolls away with the page rather than pinning. The intent was always here
+     in comment form, but only .filter-bar was restyled — the sticky lives on
+     the WRAPPER, so it stayed pinned at z-index 1500 and rode down the page
+     covering everything under it. */
+  .filter-bar-wrap {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+  }
   .filter-bar {
     height: 36px !important;
     padding: 0 4px !important;
