@@ -176,7 +176,7 @@ export async function sendVerificationEmail(
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
 
     <p style="color:#444;font-size:11px;line-height:1.6;">
-      ParvoMaps · US Canine Disease Tracker<br>
+      ParvoMaps · US Canine Disease &amp; Prevention Map<br>
       parvomaps.us · Reports are anonymous${BIOREST_ENABLED ? `<br><br>
       Yard decontamination in Utah?
       <a href="https://scoopie.us" style="color:#555;text-decoration:underline;">Scoopie BioRest™</a>` : ''}
@@ -395,7 +395,7 @@ export async function sendAlertMagicLink(email: string, manageUrl: string): Prom
       This link expires in 24 hours. If you did not request it, you can ignore this email.
     </p>
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
-    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease Tracker · parvomaps.us</p>
+    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease &amp; Prevention Map · parvomaps.us</p>
   </div>
 </body>
 </html>`,
@@ -432,7 +432,7 @@ export async function sendBillingPortalLink(email: string, portalUrl: string): P
       This link is single-use and expires shortly. If you did not request it, you can ignore this email — no changes were made.
     </p>
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
-    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease Tracker · parvomaps.us</p>
+    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease &amp; Prevention Map · parvomaps.us</p>
   </div>
 </body>
 </html>`,
@@ -465,7 +465,7 @@ export async function sendClinicMagicLink(email: string, dashboardUrl: string): 
       This link expires in 24 hours. If you did not request it, you can ignore this email.
     </p>
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
-    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease Tracker · parvomaps.us</p>
+    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease &amp; Prevention Map · parvomaps.us</p>
   </div>
 </body>
 </html>`,
@@ -553,7 +553,7 @@ export async function sendAdminMagicLink(email: string, loginUrl: string): Promi
       This link expires in 15 minutes. If you did not request it, someone has your admin password — rotate it.
     </p>
     <div style="border-top:1px solid #222;margin:32px 0;"></div>
-    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease Tracker · parvomaps.us</p>
+    <p style="color:#444;font-size:11px;line-height:1.6;">ParvoMaps · US Canine Disease &amp; Prevention Map · parvomaps.us</p>
   </div>
 </body>
 </html>`,
@@ -743,7 +743,7 @@ export async function sendSubscriptionWelcome(
       <a href="${cancelUrl}" style="color:#00ff88;text-decoration:underline;word-break:break-all;">${cancelUrl}</a>
     </p>
     <p style="color:#444;font-size:11px;line-height:1.6;">
-      ParvoMaps · US Canine Disease Tracker · parvomaps.us
+      ParvoMaps · US Canine Disease &amp; Prevention Map · parvomaps.us
     </p>
   </div>
 </body>

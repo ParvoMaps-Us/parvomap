@@ -14,7 +14,7 @@ export default async function Header() {
           Parvo<span style={{ color: '#f0f0f0' }}>Maps</span>{' '}
           <span className="logo-dot" />
         </div>
-        <div className="logo-tag header-tagline">US Canine Disease Tracker</div>
+        <div className="logo-tag header-tagline">US Canine Disease &amp; Prevention Map</div>
       </div>
       <nav>
         <Link href="/diseases" className="nav-link">Diseases</Link>
