@@ -4,9 +4,9 @@ import './globals.css'
 import KeyboardModality from '@/components/KeyboardModality'
 
 export const metadata: Metadata = {
-  title: 'ParvoMaps — US Canine Disease & Outbreak Tracker',
-  description: "Real-time, crowdsourced map of US canine disease outbreaks — parvo, distemper, Lyme, kennel cough, blue-green algae & more. See what's reported near you.",
-  keywords: 'parvo map, canine parvovirus tracker, dog disease outbreak map, parvo outbreak near me, kennel cough map, distemper outbreak, leptospirosis dogs, blue green algae dog warning, dog flu tracker, canine disease surveillance, parvotrack alternative',
+  title: 'ParvoMaps — US Canine Disease & Prevention Map',
+  description: "Real-time map of canine health hazards across the US — parvo and distemper outbreaks, confirmed rabies cases, and blue-green algae advisories. See what has been confirmed near you before you go.",
+  keywords: 'parvo map, canine parvovirus tracker, dog disease outbreak map, parvo outbreak near me, kennel cough map, distemper outbreak, leptospirosis dogs, blue green algae dog warning, dog flu tracker, canine disease surveillance, parvotrack alternative, rabies map, rabies alert near me, rabid animal reported near me, rabies cases by county, dog rabies prevention, algae bloom dog warning map',
   metadataBase: new URL('https://www.parvomaps.us'),
   alternates: {
     canonical: 'https://www.parvomaps.us',
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: 'https://www.parvomaps.us/',
-    title: 'ParvoMaps — Real-Time US Canine Disease Outbreak Tracker',
-    description: 'Community-powered map tracking parvo, distemper, kennel cough, leptospirosis, blue-green algae, and more. See what infectious diseases are reported near you. Protect your dog.',
+    title: 'ParvoMaps — US Canine Disease & Prevention Map',
+    description: 'Community-powered map of parvo and distemper outbreaks, confirmed rabies cases, and blue-green algae advisories across the US. See what has been confirmed near you before you go. Protect your dog.',
     siteName: 'ParvoMaps',
     locale: 'en_US',
     images: [
@@ -23,15 +23,15 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'ParvoMaps — US canine pathogen tracking & mapping',
+        alt: 'ParvoMaps — US canine disease & prevention map',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@parvomap',
-    title: 'ParvoMaps — US Canine Disease Outbreak Tracker',
-    description: 'Real-time crowdsourced map of parvo, distemper, kennel cough & blue-green algae dangers for dogs across the US.',
+    title: 'ParvoMaps — US Canine Disease & Prevention Map',
+    description: 'Real-time map of parvo, distemper, rabies and blue-green algae dangers for dogs across the US. Check before you go.',
     images: ['/og-image.png'],
   },
 }
@@ -41,7 +41,7 @@ const jsonLd = {
   '@type': 'WebApplication',
   name: 'ParvoMaps',
   url: 'https://www.parvomaps.us',
-  description: 'Real-time crowdsourced map tracking canine disease outbreaks across the United States including parvo, distemper, Lyme disease, kennel cough, and more.',
+  description: 'Real-time map of canine health hazards across the United States, including parvo and distemper outbreaks, confirmed rabies cases, and blue-green algae advisories.',
   applicationCategory: 'HealthApplication',
   operatingSystem: 'Any',
   offers: {

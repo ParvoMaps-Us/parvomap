@@ -601,3 +601,227 @@ Removed: 1 same-id double-write (RABIES-JASPER-MO — a re-seed with reworded de
 a NEW member because ZADD keys on the JSON string, so identical ids CAN coexist; watch for
 this after any re-run), 7 KS lakes where the July pin was superseded by the Aug 28 KDHE
 listing, 3 NE, 3 OR, plus AR DeSoto/Alma, MI Gun/Center, WA Lepto-Spokane, MO Greene.
+
+---
+
+## Watched but NOT tracked
+
+Diseases considered for `DISEASE_MAP` and deliberately left out. Recorded so the
+same research is not re-done every scan. Each has a named trigger that would flip
+the decision.
+
+### Blastomycosis — evaluated 2026-09-16, NOT added
+
+A real dog killer (dogs get sick and die; not dog-to-dog contagious) with genuine
+endemic geography: the Mississippi/Ohio/Missouri river valleys and the Great Lakes.
+Structurally it is a **place-based environmental hazard like cyano**, tied to moist
+riverbank soil and disturbed ground, not an outbreak.
+
+It fails criterion 3 the same way leptospirosis does:
+
+- **Minnesota** is the only state where canine blastomycosis is reportable, and MDH
+  does publish animal cases by county (2,836 confirmed, 1999-2023) — but the series
+  **ends at 2023** and is county-of-residence, not dated incidents. Nothing pinnable.
+- **Wisconsin's Northwoods** (Lincoln, Oneida, Vilas, Forest) produces county-level
+  *rate* advisories and "we are seeing an increase" notices — Lincoln County 2/19/26,
+  Oneida County 3/12/26, WXPR 4/3/26. No named town, lake, neighbourhood, or
+  confirmed animal in any of them. That is criterion 2's excluded "trend, not
+  incident" category.
+
+Adding it today would mean a 6-file change for a disease that can produce **zero**
+pins — the same announcement-shape trap as influenza, brucella, and corona.
+
+**Trigger to revisit:** MDH publishing canine blasto with *exposure sites* rather
+than county of residence, OR any county naming a specific shoreline/trail the way
+algae advisories name lakes. Until one of those happens, do not re-research it.
+
+### 2026-09-16 — 6-state pass in two batches (513 → 524, +11)
+
+First scan since the 8/30 dedupe sweep. Scope chosen by thinnest coverage among
+states that are NOT structurally dead: **TX, MI, MO** then **MN, TN, AL**.
+
+Seeded ids:
+- `PARVO-BOONE-MO-2026-09` — Central Missouri Humane Society, Columbia, 9/3, dog
+- `CYANO-CRYSTALLAKE-MI-2026-09` — Crystal Lake public beach, Crystal Twp, Montcalm Co, 9/2, microcystin confirmed
+- `RABIES-OTTAWA-MI-2026-07` — bat, Ottawa Co's first of 2026, 7/17, wildlife, county seat
+- `RABIES-KENT-MI-2026-05` — bat, Kent Co's first of 2026, 5/28, wildlife, county seat
+- `RABIES-BUDA-TX-2026-04` — skunk, 600 blk Roseberry St, Buda, Hays Co, 4/15, wildlife
+- `RABIES-KERR-TX-2026-03` — raccoon, 500 blk East Ln, Kerrville, 3/18, wildlife, contacted a family dog
+- `PARVO-MONROE-MI-2025-12` — Humane Society of Monroe County, 12/23/25, dog
+- `PARVO-PUTNAM-TN-2026-09` — Cookeville/Putnam Co Animal Shelter, 9/10, dog
+- `RABIES-COLBERT-AL-2026-09` — bat, east end of Tuscumbia, 9/2, wildlife, person + pet exposed
+- `RABIES-MONTGOMERY-AL-2026-08` — raccoon, Dalraida neighbourhood, confirmed 8/5, wildlife
+- `CYANO-LAKECORNELIA-MN-2026-08` — re-issued harmful-level advisory, 8/19
+
+**The wrong-year control fired EIGHT times in one day** — the highest yet, and every
+one looked current in the snippet: Fort Worth distemper (Mar 2025), Giddings parvo
+(2022), Abilene shelter parvo+distemper (~2020), Calhoun Co MI bat (Sept 2025),
+Memphis "nearly 100 euthanized" distemper (Jan 2025), Hawkins Co TN parvo (Jul 2025),
+Twin Cities canine influenza ~200 dogs (Apr 2023), Sumner Co TN distemper (Dec 2025,
+also past the age gate at 278d).
+
+Other drops: Hays Co TX fox rabies outbreak 1/12 missed the 240d rabies gate **by 7
+days**. Lake Nokomis MN 6/3 and Lake Ovid MI 5/27 past cyano's 90d. Hamlin and Bass
+Lakes MI **advisories were lifted 8/25** — same retraction rule as Canandaigua NY.
+Springfield-Greene MO "two bats in recent weeks" and Ingham Co MI "four bats this
+year" name no date or place. Morgan/Madison/Cullman Co AL bats exist only as counts
+in a statewide tally.
+
+**New tooling failure, same class as NH:** the Minnesota Board of Animal Health
+rabies alert page (`bah.mn.gov/rabies_alert`) sits behind Radware and returns a
+security-check page to any fetch. It ALSO serves a cert that only matches
+`bah.state.mn.us`, so the obvious hostname fails TLS first. **Minnesota's located
+rabies cases are invisible to this scan, not absent** — MN produced exactly one
+candidate for that reason. Do not spend another scan slot on MN rabies blind; it
+needs a human browser, same as NH's Akamai block.
+
+**Lake Cornelia is the first deliberate same-feature re-pin.** The 7/22 advisory was
+already pinned, was past cyano's 30d TTL, and was days from auto-deletion while a
+STRONGER 8/19 advisory was still active — which would have left an actively-advised
+lake unflagged. Owner's call was to add the August pin rather than update in place.
+Expect a future dedupe sweep to flag `LAKECORNELIA` as a pair: it is intentional,
+and the July pin will age out on its own. **A lifted-then-re-issued advisory is a new
+event; a still-running one is not.**
+
+Also confirmed as a dupe rather than a find: the "Lincoln County confirms 1st rabies
+case of 2026" lead is **North Carolina**, not Missouri or Tennessee (two different
+states' searches both surfaced it), and it is already `RABIES-LINCOLNTON-NC-2026-02`.
+
+Noted, not added: Austin Animal Center has a ~100-dog **canine pneumovirus** outbreak
+and pneumovirus is not in `DISEASE_MAP`. Blastomycosis was evaluated and declined —
+see "Watched but NOT tracked" above.
+
+### 2026-09-16 (cont.) — 11 more states, two batches (524 → 533, +9)
+
+Same day, continuing the rotation. Batch A: **WI, NE, AR, WV, VT**. Batch B: **AZ, OH, CO, KY, CT, NV**.
+Day total across all 17 states: **513 → 533, +20**.
+
+Seeded ids:
+- `CYANO-LAKEALTOONA-WI-2026-09` — Lake Altoona Beach, Eau Claire Co, 9/4, beach closed Labor Day weekend
+- `CYANO-BIGINDIAN-NE-2026-09` — Big Indian Lake (11A), Gage Co, 9/14
+- `CYANO-CUBCREEK-NE-2026-09` — Cub Creek Lake, Jefferson Co, alert extended 9/14
+- `RABIES-JOPLIN-MO-2026-09` — skunk in Joplin city limits, 9/11, tested after contacting a dog
+- `RABIES-ALAMOSA-CO-2026-08` — bat, Alamosa Co, 8/28, county seat
+- `CYANO-BLUEMESA-CO-2026-08` — Iola Basin, Blue Mesa Reservoir, Gunnison Co, 8/13
+- `CYANO-JOHNMARTIN-CO-2026-08` — west boat ramp cove, John Martin Reservoir SP, Bent Co, 8/7
+- `DISTEMPER-PINAL-AZ-2026-06` — Pinal Co Animal Care and Control, 6/3, county seat
+- `RABIES-LARIMER-CO-2026-05` — bat, Adriel Hills open space, NE Fort Collins, 5/19
+
+**PROCESS FAILURE, caught by the owner mid-scan: the full disease set was not being run.**
+Batch A initially got only parvo, distemper, rabies, and cyano — and two queries were
+BUNDLED ("parvo distemper", "Nebraska Arkansas"), which the "run each disease as its OWN
+query" rule exists to prevent. Owner asked "are you checking for all diseases, im really
+only seeing you search rabies and cyano." The missing set (kennel, screwworm, lepto,
+strepzoo, giardia, mange, ringworm) was then run properly and produced ZERO in those
+states — but that outcome was not knowable until the queries were actually run.
+**The bundling recurred in batch B ("Nevada Connecticut", "Ohio Colorado") even after
+being caught once.** Treat the no-bundling rule as a hard checklist item, not a habit.
+
+What the full set actually returned, which is the useful half of the lesson:
+- **screwworm** — every 2026 US detection is the TX/NM cluster and all are already pinned,
+  including the Lea County NM pet dog (`NWS-LEA-2026-06`).
+- **strepzoo** — Multnomah Co OR 2/14/26 is 214d against a 150d ceiling; Miami-Dade is 2025.
+- **ringworm / giardia / mange** — 2026 hits were cat-only (Hannibal MO, Shelbyville KY).
+- **kennel cough** — national H3N2 vaccine-shortage coverage, no facility named.
+This is the announcement-shape pattern the playbook already predicts, now confirmed again.
+
+**The wrong-year control fired FIVE more times:** Carpenters Lake KY HAB (Oct **2024** —
+the snippet printed "September 26" with no year, the exact documented trap), Boulder
+Reservoir CO (Sept **2025**), Geauga Co OH distemper (Feb **2025**), Sherwood AR shelter
+(**2025**, and the disease was cryptosporidiosis, not in `DISEASE_MAP`), Fairfield CT
+parvo (**2015**).
+
+**New geocode trap worth remembering: pin the feature, not the newspaper's county.**
+John Martin Reservoir was reported by the *Prowers* Journal, a Prowers County paper, but
+the west boat ramp cove is in **Bent** County, ~30 miles away. The outlet's home county is
+not evidence of the incident's county — same class of error as Lake Lanier's centroid.
+
+**Source-unreachable drops (control #4):** Greenbrier Co WV raccoon (WVNS 403s, and the
+only date available was inferred from the publication date — refused on principle, it is
+the snippet rule in another costume), McCracken Co KY parvo (429), Sherwood AR (KARK 403,
+reached via KATV instead and then dropped on year).
+
+**Judgment drop:** Strafford VT rabid bat that bit a resident, 2/4/26, is legal at 224d
+against a 240d ceiling but renders dimmed with ~16 days of life left. Same call as
+Parkersburg and Pittsburg.
+
+**Biggest un-mappable story of the day:** Arizona's statewide parvo surge — Arizona Humane
+Society cases QUADRUPLED year over year, 200+ ICU cases in two months, PACC up 250% in
+southern AZ, vets naming vaccine hesitancy as the cause. Real, sourced, dog-specific, and
+completely unpinnable: no facility or city attaches to any of it. Worth a blog post even
+though it can never be a pin.
+
+Empty states and why: OH, KY, CT, NV (all candidates were dupes, wrong-year, or
+unreachable), AR (nothing located), WV (only candidate unreachable), VT (only candidate
+past the practical age line), MN (see the Radware tooling note above).
+
+Out-of-scope finds parked for the next pass, both fresh and both qualifying:
+**Stafford County VA** parvo 9/14, and **Hendricks County IN** parvo 8/19 (dogs from a
+Danville hoarding case).
+
+### 2026-09-16 (cont.) — 10 more states, two batches (533 → 543, +10)
+
+Batch C: **CA, IL, NJ, GA, IA**. Batch D (southern pass): **SC, MS, LA, OK, FL**.
+**Day total: 513 → 543, +30 pins across 27 states.**
+
+Seeded ids:
+- `PARVO-STAFFORD-VA-2026-09` — Stafford Co Animal Shelter, VA, 9/14, adoption floor closed
+- `RABIES-MAPLEWOOD-NJ-2026-09` — raccoon, Maplewood, Essex Co, 9/11
+- `RABIES-MCDONOUGH-IL-2026-09` — bat inside a Macomb home, 9/3, household exposure
+- `RABIES-GWINNETT-GA-2026-06` — raccoon attacked a dog, Biltmore Oaks Dr, 6/5
+- `RABIES-ALAMEDA-CA-2026-05` — bat, Palo Verde Common, south Fremont, 5/26
+- `RABIES-HILLSBOROUGH-FL-2026-09` — unvaccinated cat, Gibsonton, 9/11, subject `other`
+- `RABIES-ANDERSON-SC-2026-09` — skunk, Daniel Dr & Williford Rd, 9/11
+- `RABIES-STJOHNS-FL-2026-08` — raccoon, St. Augustine South, 8/28
+- `RABIES-BREVARD-FL-2026-08` — raccoon, Andrews Ave, Melbourne, 8/27
+- `DISTEMPER-ASCENSION-LA-2026-06` — Cara's House, Gonzales, 6/18
+
+**THE WRONG-YEAR TRAP BIT MY OWN HANDOFF NOTE.** At the end of batch C I reported to the
+owner that three SC counties had "three dogs and four cats quarantined" as of 9/11/26 and
+parked it as a fresh lead. Fetching it in batch D showed the DPH release was **October
+2025**; the search summary had merged two different DPH releases into one answer. The only
+real Sept 2026 SC case was the Anderson skunk, whose exposure is one PERSON and no pets.
+**New control: a lead parked for a later pass is still a snippet. Re-verify it when it is
+picked up, never carry it forward as established fact** — including leads this process
+itself wrote down.
+
+**Biggest story of the day, and it CANNOT be pinned:** Louisiana confirmed rabies in a DOG
+on 9/11 — first in a Louisiana dog since **2014**, fifth in twenty years. LDH withheld
+details and located it only to "Region 4 / Acadiana," which is EIGHT parishes. No
+geocodable county, so criterion 3 kills it. Region-level is the same failure as a statewide
+advisory; do not pin it at Lafayette just because Lafayette is the hub. **Standing action:
+if LDH or a local outlet ever names the parish, seed immediately — and it is a blog post
+either way.** Second-biggest unpinnable: Arizona's statewide parvo surge (see above).
+
+**Florida's county health departments are the best-shaped source in the country for this
+map.** Every DOH-<county> rabies alert carries species + street + confirmation date +
+explicit boundary roads (e.g. Brevard: W Eau Gallie / Sarno / Croton / N Wickham). Three of
+batch D's five came from that one format. When a pass needs volume, start at
+`<county>.floridahealth.gov`. VA and MD district alerts are the next tier down.
+
+**Another straddle catch, same class as Leland IL:** the Gwinnett GA raccoon was reported on
+Biltmore Oaks Drive in the "Bethlehem area," but Bethlehem's centre geocodes to **Barrow**
+County while **Gwinnett** County Health issued the alert. Pinned at a Gwinnett-verified
+point with the reason in `locationDetail`.
+
+**California looked rich and was almost entirely already ours.** Both headline cases — the
+Angels Camp dog that tested positive after chasing a skunk (7 people on PEP) and the Rail
+Road Flat parvo cluster — were already pinned. Expect that dedupe rate in big states.
+
+Wrong-year drops this round (5): Broward/Davie FL raccoon (Sept **2025**), SC three-county
+release (Oct **2025**), Tehama Co / Red Bluff CA distemper with 20 dogs euthanized (Apr
+**2025**), McDonough Co IL parvo (Thanksgiving **2025**, already pinned), Hernando MS parvo
+(Oct **2025**, already pinned). Age-gate drops: Baldwin Park LA County distemper, 13 dogs,
+1/13/26 at 246d vs a 150d ceiling; California's three DANGER-level HAB advisories (Eastman,
+Harveston, Lago Los Osos) all mid-May at 119-125d vs cyano's 90d.
+
+One parked lead resolved as already-pinned: Hendricks Co IN parvo = `PARVO-DANVILLE-IN-2026-08`.
+
+**Oklahoma has now produced zero located cases across three separate passes** (8/21, and
+twice today). Treat it like LA/MS: real coverage exists but is announced without places.
+Do not spend a fresh scan slot on OK alone.
+
+**Day-level pattern worth carrying forward:** of 30 pins, **20 are rabies and 8 are cyano**.
+Parvo produced 4, distemper 2, and every other tracked disease produced ZERO despite being
+queried individually. That ratio is announcement shape, not incidence, and it is now
+measured rather than assumed.

@@ -39,7 +39,7 @@ export default async function HomePage({
       <a href="#main-content" className="skip-link">Skip to main content</a>
       {/* Document heading — the visual brand is the logo, so the page h1 is
           screen-reader-only. Comes before the map's h2 to keep heading order. */}
-      <h1 className="sr-only">ParvoMaps — Live US canine disease outbreak map</h1>
+      <h1 className="sr-only">ParvoMaps — US canine disease &amp; prevention map</h1>
       <WelcomePopup />
       {verified && <VerifiedBanner status={verified} />}
       {removed && <VerifiedBanner status={removed} param="removed" />}
@@ -68,7 +68,7 @@ export default async function HomePage({
         <section aria-label="Explore ParvoMaps" className="home-explore" style={{ maxWidth: 900, margin: '8px auto 0', padding: '24px', fontFamily: 'var(--mono)' }}>
           <h2 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Track dog diseases near you</h2>
           <p style={{ fontSize: 13.5, color: 'var(--text-muted)', lineHeight: 1.8, margin: '0 0 14px' }}>
-            ParvoMaps maps canine disease outbreaks across the US. Browse{' '}
+            ParvoMaps maps canine disease outbreaks and confirmed local hazards across the US. Browse{' '}
             <Link href="/diseases" style={{ color: 'var(--green)' }}>all tracked diseases</Link>, see{' '}
             <Link href="/outbreaks" style={{ color: 'var(--green)' }}>outbreaks by state</Link>, check{' '}
             <Link href="/recalls" style={{ color: 'var(--green)' }}>dog food recalls</Link>, or{' '}
