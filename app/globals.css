@@ -1435,17 +1435,14 @@ html body .leaflet-bar a:last-child {
      the WRAPPER, so it stayed pinned at z-index 1500 and rode down the page
      covering everything under it. */
   .filter-bar-wrap {
-    /* `relative` with no offsets lays out identically to `static` — it still
-       scrolls away with the page, which is the whole point above. But it can
-       carry a z-index, and the header NEEDS one: the backdrop-filter glass
-       makes this element a stacking context on its own, so everything inside
-       it (the hamburger dropdown included) is trapped at the header's level.
-       At z-index:auto that level is below the map, and the dropdown gets
-       painted over by the stats bar and Leaflet's canvas no matter what
-       z-index the menu itself carries. Do not change this back to `static`. */
-    position: relative !important;
+    /* Must stay BELOW the header (z-index 2000). It carries backdrop-filter, so
+       it is its own stacking context and sits later in the DOM than the header
+       — at an equal z-index it would paint over the open hamburger menu. It
+       needs no z-index of its own here because it is not pinned on mobile and
+       never overlaps anything. */
+    position: static !important;
     top: auto !important;
-    z-index: 2000 !important;
+    z-index: auto !important;
   }
   .filter-bar {
     height: 36px !important;
