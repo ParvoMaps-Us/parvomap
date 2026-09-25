@@ -1349,6 +1349,14 @@ html body .leaflet-bar a:last-child {
   }
   .menu-wrap {
     display: inline-flex !important;
+    /* The header gives up position:sticky and z-index:2000 on mobile (see the
+       header override above), and with it the stacking context that used to
+       keep this dropdown over the map. Without this the menu renders at 110,
+       under Leaflet's panes (~700), the drop-a-pin button (1000) and the
+       filter bar (1500) — you see the first item or two and the map covers
+       the rest. Re-establish the context on the wrapper itself. */
+    position: relative !important;
+    z-index: 2000 !important;
   }
   .btn-report {
     font-size: 11px !important;
