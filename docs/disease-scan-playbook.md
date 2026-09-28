@@ -635,6 +635,46 @@ pins — the same announcement-shape trap as influenza, brucella, and corona.
 than county of residence, OR any county naming a specific shoreline/trail the way
 algae advisories name lakes. Until one of those happens, do not re-research it.
 
+### Plague (*Yersinia pestis*) — evaluated 2026-09-27, APPROVED TO ADD, not yet built
+
+**Owner's call 2026-09-27: add it. Deferred only because no current case is pinnable.**
+This is the one entry in this section that is a build task, not a decision to skip.
+
+Why it qualifies where blastomycosis did not: plague produces **individual confirmed
+animal cases announced by a state health department with a county and a date** — the
+same announcement shape as rabies, which is the most mappable shape there is. Dogs
+catch it from infected fleas and from mouthing dead rodents and rabbits, and it is
+zoonotic, so the human-risk angle is exactly why the alerts get published at all.
+Cats get sicker than dogs and are the usual index animal.
+
+Geography is narrow and stable: **NM, AZ, CO**, plus CA/NV/UT/OR at lower rates.
+NMDOH is the model publisher — it announced the state's first animal case of 2026
+(a **dog in Santa Fe County, 3/13/2026**) with a press release, and Santa Fe County
+in particular has a long plague history.
+
+**Parked case, must be re-verified before seeding (this file's own rule):**
+Santa Fe Co NM dog, 3/13/2026, sourced to `nmhealth.org/news/awareness/2026/3/`.
+At 198d on 9/27 it is already past a 90d TTL, so it was NOT seeded. Do not carry
+the date forward as fact — re-fetch it.
+
+**Suggested config when built:** key `plague`, TTL **180d** (matching rabies rather
+than the 90d default — these are rare, individually-announced, formally-confirmed
+cases that stay newsworthy, and a 90d TTL would make most finds dead on arrival).
+Pin colour should read as high-severity. `subject` will usually be `'other'` (cat) or
+`'wildlife'` (prairie dog, rabbit, squirrel), sometimes `'dog'`.
+
+**The 6-file recipe** (same as every disease add, listed at the top of this file):
+`lib/diseases.ts` (entry + `pinTtlDays`), `components/Ticker.tsx` (display name),
+`components/Map.tsx` (pin colour), `components/FilterBar.tsx` and
+`components/ReportForm.tsx` (picker rows), `app/globals.css` (`--d-plague` +
+the `.pin[data-disease="plague"]` rule).
+
+**Build trigger:** do it before **spring 2027**. Plague announcements cluster
+May-September when flea activity peaks, so having the disease live before that
+season starts is the difference between catching cases and back-filling expired
+ones. A fresh NM/AZ/CO case appearing at any point is also reason to build
+immediately, since a 180d TTL gives roughly a six-month window to seed it.
+
 ### 2026-09-16 — 6-state pass in two batches (513 → 524, +11)
 
 First scan since the 8/30 dedupe sweep. Scope chosen by thinnest coverage among
