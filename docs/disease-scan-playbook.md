@@ -825,3 +825,77 @@ Do not spend a fresh scan slot on OK alone.
 Parvo produced 4, distemper 2, and every other tracked disease produced ZERO despite being
 queried individually. That ratio is announcement shape, not incidence, and it is now
 measured rather than assumed.
+
+### 2026-09-27 — 5-state pass, rabies/cyano deliberately deprioritised (491 → 492, +2 seeded, 1 removed)
+
+Scope: **TX, TN, MO, MI, NM**, chosen for large municipal shelter systems because the
+owner asked to steer away from rabies and cyano, and shelter parvo/distemper is the only
+other category that reliably gets announced with an address.
+
+Seeded:
+- `PARVO-BARTLETT-TN-2025-10` — City of Bartlett Animal Shelter, Shelby Co TN, 10/20/2025,
+  one dog positive, 10-day intake suspension. 342d old, inside parvo's 365d TTL.
+- `PARVO-CHEMUNG-NY-2026-08` — Elmira Animal Shelter, Chemung Co NY, 8/24/2026, closed one
+  week. Out of scope but found by the broad sweep and real.
+
+**REMOVED a wrong-year pin that was already live: `PARVO-STLOUIS-2026-04`.** It claimed
+the St. Louis County Animal Care & Control outbreak happened 4/19/**2026**. It was
+4/19/**2025** — confirmed by four independent outlets with the year in the URL path
+(hoodline `/2025/05/`, Spectrum `/2025/05/04/`, First Alert 4 `/2025/05/04/`, STLPR
+`2025-05-05`). At 526d against parvo's 425d ceiling it should never have been seeded. The
+full record is preserved at `docs/removed-pins/PARVO-STLOUIS-2026-04.json` so it can be
+restored if this reading is ever shown wrong. Its own `sourceUrl` (fox2now) 403s, so the
+pin could not be checked from its own source — which is control #4 firing a year late.
+
+**The catch was accidental, and that is the lesson.** It surfaced only because a Missouri
+lepto search returned the same shelter's story and the day of the week didn't fit: the
+article said "Saturday, April 19", and April 19 was a Saturday in 2025, not 2026.
+**New control: day-of-week is a free year check.** When an article names a weekday with a
+date, verify they agree with the year being claimed. It costs nothing and it is the only
+signal that catches a wrong-year pin that is already on the map.
+
+**Implied follow-up, NOT done:** if one pre-existing pin has a fabricated year, others may
+too. The ~58 unaudited `subject: 'dog'` pins from the 8/09 audit are a different list from
+this risk. A year audit would re-fetch every pin whose `sourceUrl` still loads and compare
+the body date to the stored timestamp. Worth a dedicated pass; do not fold it into a scan.
+
+Dropped, with cause — **10 of 12 candidates died on the date check**:
+- **Wrong year (7):** Kermit/Midland TX distemper (3/3/**2025**, the search summary asserted
+  "September 21, 2026" outright), Collin Co TX distemper (9/18/**2025**), Fort Worth TX
+  distemper 17 euthanised (3/28/**2025**), Kingsport TN parvo (4/1/**2022**), Las Cruces NM
+  distemper (8/**2018**), Transylvania Co NC flu+distemper (5/6/**2025**), Elkhart Co IN
+  parvo (8/27/**2025**).
+- **Age gate (3):** Austin TX pneumovirus ~100 dogs (12/17/2025, and pneumovirus is not in
+  `DISEASE_MAP` anyway), Sumner Co TN distemper 5 dogs (12/12/2025, 289d vs 150d),
+  Morristown TN distemper (10/**2021**).
+- **Not a disease case:** Grants NM shelter closure was **overcrowding**, not parvo. The
+  headline pairs it with Gallup's parvo outbreak and reads as one story; it is two.
+- **Already documented drop, re-confirmed:** Kansas City MO lepto two dogs euthanised is
+  Sept **2024**, exactly as the 8/14 log recorded.
+
+Duplicates (5) — every single one of the pass's strongest-looking finds:
+Guadalupe Co TX 47 dogs (`PARVO-GUADALUPE-2026-06`), Memphis MAS (`PARVO-SHELBY-2026-07`),
+Central MO Humane Society (`PARVO-BOONE-MO-2026-09`), Jerome ID (`PARVO-JEROME-2026-07`),
+TJO Springfield MA (`PARVO-HAMPDEN-2026-07`), Cowley Co KS (`PARVO-COWLEY-2026-04`).
+
+**Proximity note so a future dedupe sweep does not delete Bartlett:** it sits **5.6 mi**
+from `PARVO-SHELBY-2026-07`. Different facility (City of Bartlett vs Memphis Animal
+Services), different date, 9 months apart. Not a duplicate despite the distance.
+
+**Empty states and why:** MI produced **zero** across parvo and distemper — its only
+indexed parvo coverage is the 2022 northern-Michigan outbreak, which still dominates every
+query. NM: both leads were 2018 and overcrowding. TX: four real outbreaks, all 2025. MO and
+TN: everything current was already pinned.
+
+**What this pass actually measured:** steering away from rabies and cyano cuts the yield
+hard. 12 candidates produced 2 pins, and the binding constraint was not rarity or dedupe
+but **age** — 10 of 12 were real located outbreaks that happened too long ago. Shelter
+parvo coverage is heavily indexed and poorly dated, so search consistently surfaces last
+year's closure at the same shelter. Expect roughly this ratio on any non-rabies pass.
+
+**Two new diseases seen, neither mappable today:**
+- **Plague (*Y. pestis*) in a dog**, Santa Fe Co NM, first NM animal case of 2026, 3/13/2026.
+  A genuine dog case with a county. Not in `DISEASE_MAP`, and at 198d it would already be
+  past a 90d TTL. Real risk in NM/AZ/CO and worth adding before next spring, not now.
+- **Canine pneumovirus**, Austin Animal Center, ~100 dogs. Part of the CIRDC complex, so it
+  could arguably map under `kennel`, but the only located outbreak is 12/2025.

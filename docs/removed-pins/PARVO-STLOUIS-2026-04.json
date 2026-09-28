@@ -1,0 +1,20 @@
+[
+  {
+    "id": "PARVO-STLOUIS-2026-04",
+    "disease": "parvo",
+    "zip": "63132",
+    "state": "MO",
+    "city": "Olivette",
+    "county": "St. Louis County",
+    "lat": 38.6726,
+    "lng": -90.3998,
+    "timestamp": 1776600000000,
+    "verified": true,
+    "source": "positive-test",
+    "reporterType": "news",
+    "confidence": 1,
+    "sourceUrl": "https://fox2now.com/news/missouri/st-louis-county-faces-historic-canine-parvovirus-outbreak/",
+    "kind": "disease",
+    "subject": "dog"
+  }
+]
