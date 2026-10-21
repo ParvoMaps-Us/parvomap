@@ -34,6 +34,45 @@ function flagButtonHtml(id: string): string {
   return `<button class="flag-pin-btn" data-id="${escapeHtml(id)}" style="margin-top:8px;width:100%;background:transparent;color:#999;border:1px solid #2a2a2a;border-radius:3px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;cursor:pointer;">🚩 Report this pin</button>`
 }
 
+/** What owners actually call each disease, for the popup's personal question and share text. */
+const SPOKEN: Record<string, string> = {
+  parvo: 'parvo', kennel: 'kennel cough', leptospira: 'lepto', influenza: 'dog flu', strepzoo: 'strep zoo',
+  brucella: 'brucellosis', corona: 'canine coronavirus', rmsf: 'Rocky Mountain spotted fever', cyano: 'toxic algae',
+}
+const spoken = (d: string) => SPOKEN[d] || (DISEASE_MAP[d]?.name || d).toLowerCase()
+
+/**
+ * The popup's call to action. Most dog-disease cases never reach the news, so the
+ * map only fills in if owners add their own case or pass the pin to someone who had
+ * one. The question is personal and names the disease ("Has your dog had parvo?")
+ * because that lands harder than a generic "add a case". The share button sends a
+ * /?focus= deep link (handled in ZipSearch) so the friend opens the map on this spot.
+ */
+function caseCtaHtml(o: { disease: string; isHazard: boolean; tick: boolean; place: string; lat: number; lng: number }): string {
+  const name = spoken(o.disease)
+  const question =
+    o.disease === 'hotspot' ? 'Has your dog been sick around here?'
+    : o.tick ? 'Found ticks on your dog around here?'
+    : o.isHazard ? 'Did your dog get sick after swimming here?'
+    : o.disease === 'rabies' ? 'Was your dog bitten or exposed to a rabid animal?'
+    : `Has your dog had ${name}?`
+  const friend = o.isHazard || o.tick || o.disease === 'hotspot' ? 'Know someone who brings their dog here?' : 'Know a dog that had it?'
+  const shareText =
+    o.disease === 'hotspot' ? `Several dog disease cases were confirmed near ${o.place}. If your dog got sick too, add it on ParvoMaps (anonymous, 30 sec) so owners nearby know:`
+    : o.isHazard ? `Toxic algae was confirmed at ${o.place}. If your dog got sick after swimming there, add it on ParvoMaps (anonymous, 30 sec) so other owners know:`
+    : `${name.charAt(0).toUpperCase() + name.slice(1)} was confirmed near ${o.place}. If your dog had it too, add it on ParvoMaps (anonymous, 30 sec) so owners nearby know:`
+  const label = o.disease === 'hotspot' ? `Outbreak hotspot near ${o.place}` : `${DISEASE_MAP[o.disease]?.name || o.disease} near ${o.place}`
+  const path = `/?focus=${o.lat.toFixed(5)},${o.lng.toFixed(5)}&label=${encodeURIComponent(label)}`
+  const btn = "width:100%;border-radius:3px;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;"
+  return `
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid #2a2a2a;">
+      <div style="color:#fff;font-weight:700;font-size:12px;line-height:1.3;margin-bottom:5px;">${escapeHtml(question)}</div>
+      <button class="report-area-btn" style="${btn}background:#46f0a2;color:#000;border:none;">Add my dog's case</button>
+      <div style="color:#888;font-size:9px;letter-spacing:0.06em;text-align:center;margin-top:3px;">Anonymous · 30 seconds</div>
+      <button class="share-case-btn" data-text="${escapeHtml(shareText)}" data-path="${escapeHtml(path)}" style="display:block;width:100%;margin-top:7px;background:none;border:none;padding:2px 0;color:#46f0a2;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.35;text-align:center;text-decoration:underline;text-underline-offset:3px;cursor:pointer;">${escapeHtml(friend)} Send this to them →</button>
+    </div>`
+}
+
 /** Popup markup for a lost-dog pin: photo, name, details, exact address, contact. */
 function lostPopupHtml(report: Report, ageLabel: string): string {
   const isSighting = report.lostKind === 'sighting'
@@ -206,13 +245,8 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
     const flyZoom = (lat: number, lng: number) =>
       map.flyTo([lat, lng], Math.max(map.getZoom() + 4, 15), { duration: 0.6 })
 
-    // "Add a case here" CTA appended to popups; clicking it prefills the
-    // form's location and scrolls to the report section.
-    // Wording matters: this used to read "Report this area", which sat right
-    // above the "Report this pin" moderation button and read as "flag this as
-    // wrong". The two verbs are now distinct — ADD a case vs REPORT a problem.
-    const reportBtnHtml =
-      `<button class="report-area-btn" style="margin-top:10px;width:100%;background:#46f0a2;color:#000;border:none;border-radius:3px;padding:7px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Add a case here</button>`
+    // The popup CTA lives in caseCtaHtml(): "Add my dog's case" (prefills the form) + "Send this to them".
+    // "Add" vs "Report this pin" stay distinct verbs: ADD a case vs REPORT a problem.
 
     const wireMarker = (
       marker: any,
@@ -228,6 +262,26 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           map.closePopup()
           window.dispatchEvent(new CustomEvent('parvomap:report-area', { detail }))
         })
+
+        // "Send this to them": native share sheet on phones, copy-to-clipboard elsewhere.
+        const shareBtn = el?.querySelector('.share-case-btn') as HTMLButtonElement | null
+        if (shareBtn && !shareBtn.dataset.wired) {
+          shareBtn.dataset.wired = '1'
+          shareBtn.addEventListener('click', async () => {
+            const url = window.location.origin + (shareBtn.getAttribute('data-path') || '/')
+            const text = shareBtn.getAttribute('data-text') || ''
+            try {
+              if (navigator.share) {
+                await navigator.share({ title: 'ParvoMaps', text, url })
+                return
+              }
+              await navigator.clipboard.writeText(`${text} ${url}`)
+              shareBtn.textContent = '✓ Link copied, paste it to them'
+            } catch (err) {
+              if ((err as Error)?.name !== 'AbortError') shareBtn.textContent = 'Copy failed, try again'
+            }
+          })
+        }
 
         // Moderation: flag this pin as inappropriate/fake. Posts to /api/flag.
         const flagBtn = el?.querySelector('.flag-pin-btn') as HTMLButtonElement | null
@@ -330,8 +384,8 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
             <span style="color:${advisory ? '#f0b846' : '#e0e0e0'};font-weight:600;">${foundLabel}</span>
           </div>
           ${advisory ? `<div style="margin-top:7px;padding:6px 8px;background:#2a2010;border-left:2px solid #f0b846;color:#f0b846;font-size:10px;line-height:1.45;">${advisory}</div>` : ''}
-          ${report.verifiedClinic ? `<div style="margin-top:8px;color:#46f0a2;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Anonymous community report</div>`}
-          ${reportBtnHtml}
+          ${report.verifiedClinic ? `<div style="margin-top:8px;color:#46f0a2;font-weight:700;font-size:10px;letter-spacing:0.04em;">✓ Verified Pro Clinic report</div>` : `<div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">${report.reporterType === 'news' ? 'From a news or health department report' : 'Anonymous community report'}</div>`}
+          ${caseCtaHtml({ disease: report.disease, isHazard, tick: report.disease === 'tickspot', place: report.city || (report.zip ? `ZIP ${report.zip}` : report.state || 'this spot'), lat: report.lat, lng: report.lng })}
           ${flagButtonHtml(report.id)}
         </div>
       `)
@@ -405,7 +459,7 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
           <div style="color:#aaa;margin-bottom:6px;">${valid.length} reports in this area</div>
           ${breakdown}
           <div style="margin-top:8px;font-size:9px;color:#999;letter-spacing:0.08em;">Double-click to zoom in · individual reports</div>
-          ${reportBtnHtml}
+          ${caseCtaHtml({ disease: 'hotspot', isHazard: false, tick: false, place: area, lat, lng })}
         </div>
       `)
 

@@ -14,8 +14,30 @@ function track(action: string) {
   }
 }
 
+const SHARE_TEXT =
+  'If your dog ever had parvo or another contagious disease, add it to this map (anonymous, 30 seconds) so owners nearby get warned:'
+
 export default function WelcomePopup() {
   const [open, setOpen] = useState(false)
+  const [shareLabel, setShareLabel] = useState('Send to a friend')
+
+  // Most dog-disease cases never reach the news, so the map fills in only when owners
+  // add their own case or pass it to someone who had one. Share sheet on phones,
+  // copy-to-clipboard elsewhere. The popup stays open so they can still add their own.
+  async function share() {
+    track('welcome_popup_share_click')
+    const url = window.location.origin + '/'
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'ParvoMaps', text: SHARE_TEXT, url })
+        return
+      }
+      await navigator.clipboard.writeText(`${SHARE_TEXT} ${url}`)
+      setShareLabel('✓ Link copied')
+    } catch (err) {
+      if ((err as Error)?.name !== 'AbortError') setShareLabel('Copy failed, try again')
+    }
+  }
 
   // Show once per browser. Gate on localStorage so returning visitors aren't nagged.
   useEffect(() => {
@@ -68,47 +90,49 @@ export default function WelcomePopup() {
           ✕
         </button>
 
-        <div className="welcome-eyebrow">Welcome to</div>
+        <div className="welcome-eyebrow">Welcome to ParvoMaps</div>
         <h2 id="welcome-title" className="welcome-title">
-          ParvoMaps<span className="welcome-cursor">▌</span>
+          Has your dog had parvo?
         </h2>
 
         <p className="welcome-lede">
-          A community-powered early-warning map for <strong>parvo and other contagious
-          dog diseases</strong>, so you know what&apos;s spreading near you before your dog
-          is at risk.
+          Most cases <strong>never make the news</strong>. Every case you add warns the dog
+          owners near you before their dog catches it.
         </p>
 
         <ul className="welcome-points">
           <li>
+            <span className="welcome-bullet">🐶</span>
+            Your dog had parvo, distemper, lepto or kennel cough? Add it in 30 seconds.
+          </li>
+          <li>
+            <span className="welcome-bullet">💬</span>
+            Know someone whose dog had it? Send them this map.
+          </li>
+          <li>
             <span className="welcome-bullet">🗺️</span>
-            See verified disease reports plotted near you.
-          </li>
-          <li>
-            <span className="welcome-bullet">📍</span>
-            Spotted a sick dog? File an anonymous report in seconds.
-          </li>
-          <li>
-            <span className="welcome-bullet">✅</span>
-            Verify by email and your report goes live on the map.
+            See what&apos;s spreading near you, verified and sourced.
           </li>
         </ul>
 
         <div className="welcome-actions">
-          <button className="welcome-btn-primary" onClick={() => close('explore_click')}>
-            → Explore the map
-          </button>
-          <a
-            className="welcome-btn-ghost"
-            href="#report"
-            onClick={() => close('report_click')}
-          >
-            Report a case
+          <a className="welcome-btn-primary" href="#report" onClick={() => close('report_click')}>
+            → Add my dog&apos;s case
           </a>
+          <button className="welcome-btn-ghost" onClick={share}>
+            {shareLabel}
+          </button>
         </div>
 
+        <button
+          onClick={() => close('explore_click')}
+          style={{ display: 'block', margin: '14px auto 0', background: 'none', border: 'none', color: 'var(--text-dim, #888)', fontFamily: 'inherit', fontSize: 12, textDecoration: 'underline', textUnderlineOffset: 3, cursor: 'pointer' }}
+        >
+          Just explore the map
+        </button>
+
         <div className="welcome-foot">
-          Anonymous · no street address · we never sell your data
+          Anonymous · no name, no street address · we never sell your data
         </div>
       </div>
     </div>
