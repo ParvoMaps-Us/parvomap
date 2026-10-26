@@ -51,6 +51,8 @@ export default function Footer() {
           <a href="/privacy" style={{ color: 'inherit', textDecoration: 'underline' }}>Privacy</a>
           {' · '}
           <a href="/terms" style={{ color: 'inherit', textDecoration: 'underline' }}>Terms</a>
+          {' · '}
+          <a href="/accessibility" style={{ color: 'inherit', textDecoration: 'underline' }}>Accessibility</a>
         </div>
       </div>
     </footer>

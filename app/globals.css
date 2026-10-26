@@ -944,7 +944,7 @@ label {
   gap: 8px;
 }
 label .req { color: var(--red); font-size: 10px; }
-label .opt { color: var(--text-dim); font-size: 8px; font-weight: 400; }
+label .opt { color: var(--text-dim); font-size: 11px; font-weight: 400; }
 input, select, textarea {
   /* Concept field well — deep blue-black inset over the page, cool-white hairline,
      rounded, with a matured-green focus ring. Matches the #report-scoped fields so
@@ -1703,7 +1703,7 @@ html body .leaflet-bar a:last-child {
   --g-signal:  #46f0a2;
   --g-t1:      #eaf2f2;
   --g-t2:      #9fb0b5;
-  --g-t3:      #5f7077;
+  --g-t3:      #8a9aa1;   /* was #5f7077 (3.7:1); WCAG AA needs 4.5:1 on the dark panel, this is 6.6:1 */
 }
 /* Section heading */
 #report .section-num   { color: var(--g-signal); letter-spacing: .12em; }
@@ -1811,3 +1811,6 @@ html body .leaflet-bar a:last-child {
   box-shadow: 0 0 12px rgba(70, 240, 162, 0.25);
 }
 .focus-tooltip::before { display: none; }
+
+/* Accessibility (WCAG 1.4.1): links inside running text need more than color to stand out from the words around them. */
+main p a:not([class]), main li p a:not([class]) { text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; }
