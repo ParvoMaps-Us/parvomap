@@ -47,8 +47,23 @@ export function matchBrand(recall: Recall, brands: string[]): string | null {
 // pet-food formulation cues: thiamine (a classic pet-food deficiency recall),
 // freeze-dried, kibble, "raw food". "animal food/feed" and "pet food/treat"
 // stay phrase-bound; bare "pet" is avoided (it appears as plastics "PET").
+// Plurals count: FDA titles usually say "for Dogs", and a singular-only list
+// missed the Sept 2026 "Fi Recalls Supplements for Dogs" notice entirely.
 const PET_RE =
-  /\b(dog|cat|canine|feline|puppy|kitten|kibble|thiamine)\b|\bpet (food|treat)|\banimal (food|feed)\b|\bfreeze-?dried\b|\braw food\b/i
+  /\b(dogs?|cats?|canines?|felines?|pupp(y|ies)|kittens?|kibbles?|thiamine)\b|\bpet (food|treat)|\banimal (foods?|feeds?)\b|\bfreeze-?dried\b|\braw foods?\b/i
+
+// Human foods whose names hold a pet word: "Hot Dog Buns", "Corn Dogs", "Chili
+// Dog Sauce", "Hush Puppies", and the herbal supplement "Cat's Claw". They are
+// blanked out before PET_RE runs, so the phrase alone never makes a pet recall
+// but a real pet word elsewhere in the same notice still counts. Words with the
+// pet word glued inside ("hotdogs", "Hushpuppies", "catfish") already fail
+// PET_RE's \b, so they need no entry here.
+const HUMAN_FOOD_RE = /\b(hot|corn|chill?i)[\s-]dogs?\b|\bhush[\s-]pupp(y|ies)\b|\bcat['\u2019]?s? claw\b/gi
+
+/** Does this recall text name a pet product? */
+function isPetItem(text: string): boolean {
+  return PET_RE.test(text.replace(HUMAN_FOOD_RE, ' '))
+}
 
 // ─── What KIND of product got recalled ────────────────────────────────────────
 // PET_RE above matches any pet item in the FDA feed, and that feed carries far
@@ -57,7 +72,8 @@ const PET_RE =
 // to "stop feeding it and check the best-by date" is wrong and confusing when
 // the product is an injectable. We classify at read time from the title +
 // summary rather than storing a field, so every already-archived recall gets
-// the correct copy with no backfill.
+// the correct copy with no backfill. Each word list below also takes plurals
+// ("Probiotics for Dogs", "Dewormers"), since FDA titles use them.
 
 export type RecallKind = 'food' | 'medication' | 'supplement' | 'device'
 
@@ -66,19 +82,22 @@ export type RecallKind = 'food' | 'medication' | 'supplement' | 'device'
 // and company-name fragments like "Animal Health", which all appear in ordinary
 // food notices (Revival Animal Health recalls milk replacer).
 const MED_RE =
-  /\b(injection|injectable|intramuscular|intravenous|subcutaneous|tablets?|capsules?|caplets?|oral (solution|suspension|paste|gel)|ointment|eye drops|ear drops|otic|ophthalmic|transdermal|vaccine|antibiotic|dewormer|anthelmintic|sterile|vials?|ampules?|prescription|pharmaceutical|USP|NADA|ANADA)\b|\bmg\s?\/\s?mL\b|\bi\.m\.\s/i
+  /\b(injections?|injectables?|intramuscular|intravenous|subcutaneous|tablets?|capsules?|caplets?|oral (solutions?|suspensions?|pastes?|gels?)|ointments?|eye drops|ear drops|otic|ophthalmic|transdermal|vaccines?|antibiotics?|dewormers?|anthelmintics?|sterile|vials?|ampules?|prescriptions?|pharmaceuticals?|USP|NADA|ANADA)\b|\bmg\s?\/\s?mL\b|\bi\.m\.\s/i
+// "medical device" stays singular on purpose: FDA's warehouse-wide recalls are
+// titled "...Drugs, Medical Devices, Cosmetics... and Pet Food", and matching
+// the plural would move them off the food page.
 const DEVICE_RE =
-  /\b(needle sets?|syringes?|catheters?|infusion (set|pump)|medical device|surgical|implant)\b/i
+  /\b(needle sets?|syringes?|catheters?|infusion (sets?|pumps?)|medical device|surgical|implants?)\b/i
 // A supplement is a PRODUCT, so match product words only. A nutrient named as
 // the reason for a recall ("low levels of thiamine (Vitamin B1)", "excess
 // vitamin D") is the single most common FOOD recall there is — matching bare
 // "vitamin" here sent Go Raw's freeze-dried chicken to the medication page.
 const SUPP_RE =
-  /\b(supplements?|nutraceutical|probiotic|CBD)\b|\b(chews?|tablets?|powder) for (joint|hip|skin|calming)\b/i
+  /\b(supplements?|nutraceuticals?|probiotics?|CBD)\b|\b(chews?|tablets?|powders?) for (joints?|hips?|skin|calming)\b/i
 // Unambiguous food words. Checked before supplements so a nutrient-deficiency
 // recall on a real food product lands on the food page.
 const FOOD_RE =
-  /\b(pet food|dog food|cat food|kibble|freeze-?dried|recipe|treats?|biscuits?|jerky|canned|milk replacer|formula|raw (food|diet)|feed)\b/i
+  /\b(pet foods?|dog foods?|cat foods?|kibbles?|freeze-?dried|recipes?|treats?|biscuits?|jerk(y|ies)|canned|milk replacers?|formulas?|raw (foods?|diets?)|feeds?)\b/i
 
 /** Classify a recall so the page and email give the right instructions.
  *  Order matters: a hard dosage form beats everything, then food words beat the
@@ -203,7 +222,7 @@ export async function getPetFoodRecalls(): Promise<Recall[]> {
       const description = tag(block, 'description')
       // Check both title and description — some pet recalls carry the pet signal
       // only in the body (or only in the brand/formulation, hence the cues above).
-      if (!PET_RE.test(`${title} ${description}`)) continue
+      if (!isPetItem(`${title} ${description}`)) continue
       // FDA's RSS uses http:// links that 301 to https — upgrade so we don't
       // emit insecure/redirecting external links (SEO: avoids the broken-link flag).
       const url = tag(block, 'link').replace(/^http:\/\//i, 'https://')

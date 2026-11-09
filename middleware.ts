@@ -47,8 +47,11 @@ export function middleware(req: NextRequest) {
 
   // Pass the nonce + CSP forward on the request so Next.js can apply the nonce
   // to its inline scripts, and surface the nonce to server components via header.
+  // x-pathname lets layout.tsx skip GA on pages whose URL can carry an email or
+  // token. set() overwrites any value the client sent.
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set('x-nonce', nonce)
+  requestHeaders.set('x-pathname', path)
   requestHeaders.set('Content-Security-Policy', csp)
 
   const res = NextResponse.next({ request: { headers: requestHeaders } })

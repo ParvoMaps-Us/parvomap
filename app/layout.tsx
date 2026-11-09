@@ -59,9 +59,25 @@ const jsonLd = {
   },
 }
 
+// No GA on pages whose URL can carry a subscriber's email or sign-in token
+// (emailed links like /alerts/unsubscribe?e=...&t=...). GA logs the full page
+// URL and its terms forbid personal info. Loose startsWith match on purpose: it
+// only errs toward no GA.
+const NO_GA_PREFIXES = ['/alerts', '/clinic', '/account', '/admin', '/dashboard', '/api', '/unsubscribe']
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const headersList = await headers()
   // Nonce set by middleware.ts — required for inline scripts under the CSP.
-  const nonce = (await headers()).get('x-nonce') ?? undefined
+  const nonce = headersList.get('x-nonce') ?? undefined
+  // Path also set by middleware.ts; missing means no GA. The root layout renders
+  // on full page loads only (not client-side nav), so this decides GA for the
+  // visit. Sec-GPC / DNT: 1 also means no GA (Global Privacy Control, Do Not Track).
+  const path = headersList.get('x-pathname')
+  const loadGA =
+    path !== null &&
+    !NO_GA_PREFIXES.some(p => path.startsWith(p)) &&
+    headersList.get('sec-gpc') !== '1' &&
+    headersList.get('dnt') !== '1'
   return (
     <html lang="en">
       <head>
@@ -78,21 +94,29 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
         {/* Google tag (gtag.js) — GA4 property G-8LNR8C5J3F.
             Nonce'd so it's trusted under the strict-dynamic CSP; gtag.js then
-            loads its own chunks via strict-dynamic. */}
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-8LNR8C5J3F"
-          nonce={nonce}
-        />
-        <script
-          nonce={nonce}
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];
+            loads its own chunks via strict-dynamic. Google signals and ad
+            personalization are off. */}
+        {loadGA && (
+          <>
+            <script
+              async
+              src="https://www.googletagmanager.com/gtag/js?id=G-8LNR8C5J3F"
+              nonce={nonce}
+            />
+            <script
+              nonce={nonce}
+              dangerouslySetInnerHTML={{
+                __html: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-8LNR8C5J3F');`,
-          }}
-        />
+gtag('config', 'G-8LNR8C5J3F', {
+  allow_google_signals: false,
+  allow_ad_personalization_signals: false
+});`,
+              }}
+            />
+          </>
+        )}
       </head>
       <body>
         <KeyboardModality />
