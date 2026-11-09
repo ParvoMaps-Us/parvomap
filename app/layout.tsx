@@ -82,8 +82,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <head>
         {/* impact.com site ownership check (11/9). Public tag, not a secret.
-            Impact reads `value`; `content` added for standard meta parsers. */}
-        <meta name="impact-site-verification" content="8357f46f-da02-4080-80fa-264370792693" {...{ value: '8357f46f-da02-4080-80fa-264370792693' }} />
+            Exactly Impact's form: name then value, nothing between (the first try, with `content` in the middle, failed their check). */}
+        <meta name="impact-site-verification" {...{ value: '8357f46f-da02-4080-80fa-264370792693' }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
