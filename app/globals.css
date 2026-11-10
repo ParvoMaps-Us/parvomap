@@ -1903,3 +1903,98 @@ main p a:not([class]), main li p a:not([class]) { text-decoration: underline; te
   .ins-title { font-size: 23px; }
   .ins-btn { width: 100%; justify-content: center; }
 }
+
+/* ─── FREE ALERT SIGNUP (components/AlertSignup.tsx) ─── */
+.alert-signup {
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+}
+.alert-signup--box {
+  max-width: 820px;
+  margin: 28px auto;
+  padding: 20px;
+  border: 1px solid rgba(70,240,162,0.35);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(70,240,162,0.07), transparent 70%), var(--bg-card);
+}
+.alert-signup--inline {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+}
+.alert-signup-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text);
+  margin: 0 0 6px;
+  text-wrap: balance;
+}
+.alert-signup--inline .alert-signup-title { font-size: 19px; }
+.alert-signup-lead {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 0 14px;
+}
+.alert-signup-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+.alert-signup-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.alert-signup-field--email { flex: 1 1 220px; }
+.alert-signup-field--zip { flex: 0 1 120px; }
+.alert-signup-field label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.alert-signup-field input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(210,235,240,0.5);
+  background: var(--bg-surface);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px; /* 16px stops iOS from zooming the page on focus */
+}
+.alert-signup-field input:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.alert-signup-form button {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: var(--green);
+  color: #04130c;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.alert-signup-form button:hover { background: var(--green-dim); }
+.alert-signup-form button:active { transform: scale(0.98); }
+.alert-signup-form button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.alert-signup-form button:disabled { opacity: 0.6; cursor: wait; }
+.alert-signup-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.alert-signup-error { margin: 10px 0 0; font-size: 14px; color: #fca5a5; }
+.alert-signup-done { margin: 0; font-size: 15px; line-height: 1.65; color: var(--text); }
+.alert-signup-done strong { color: var(--green); }
+.alert-signup-fine { margin: 12px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--text-muted); }
+.alert-signup-fine a { color: var(--green); text-decoration: underline; text-underline-offset: 2px; }
+@media (max-width: 520px) {
+  .alert-signup-field--zip { flex: 1 1 100%; }
+  .alert-signup-form button { width: 100%; }
+}

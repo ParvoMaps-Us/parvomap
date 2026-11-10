@@ -16,7 +16,7 @@ const li = { fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.7, marginBo
 const ul = { margin: '0 0 12px', paddingLeft: 20, listStyleType: 'disc' as const }
 
 const EMAIL = 'parvomaps.us@gmail.com'
-const UPDATED = 'October 1, 2026'
+const UPDATED = 'November 9, 2026'
 
 // The paid tier (Guardian / Guardian Annual / Pro Clinic) is OFF —
 // see lib/flags.ts PAID_ALERTS_LIVE. /pro, /clinic, and /alerts all 404 while
@@ -71,6 +71,13 @@ export default function TermsPage() {
         <li style={li}>ParvoMaps is not a registered charity or nonprofit. Contributions are <strong>not tax-deductible</strong> as charitable donations.</li>
         <li style={li}>Contributions are processed by Stripe and, except where required by law, are non-refundable.</li>
       </ul>
+
+      <h2 style={h2}>Paid links</h2>
+      <p style={p}>
+        Some links on the Service are paid links. We may earn a fee if you use one. Each paid link is marked where
+        it shows. We are not an insurance company or an insurance agent. Nothing on the Service is insurance
+        advice. The insurer decides what is covered.
+      </p>
 
       <h2 style={h2}>Disclaimers</h2>
       <p style={p}>

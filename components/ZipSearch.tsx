@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Report } from '@/lib/redis'
 import { getDiseaseName } from '@/lib/diseases'
 import { milesBetween } from '@/lib/coords'
+import AlertSignup from '@/components/AlertSignup'
 
 const RADIUS_MILES = 50
 
@@ -29,7 +30,7 @@ export default function ZipSearch({ reports = [] }: Props) {
   const [zip, setZip] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [result, setResult] = useState<{ label: string; hits: Hit[] } | null>(null)
+  const [result, setResult] = useState<{ label: string; zip: string; hits: Hit[] } | null>(null)
   const reportsRef = useRef(reports)
   reportsRef.current = reports
 
@@ -84,7 +85,7 @@ export default function ZipSearch({ reports = [] }: Props) {
         return
       }
       const label = [data.city, data.state].filter(Boolean).join(', ') || clean
-      setResult({ label, hits: nearby(data.lat, data.lng) })
+      setResult({ label, zip: clean, hits: nearby(data.lat, data.lng) })
       focusMap(data.lat, data.lng, `${clean} · ${label}`)
     } catch {
       setError('Lookup failed. Check your connection and try again.')
@@ -166,6 +167,11 @@ export default function ZipSearch({ reports = [] }: Props) {
           </>
         )}
       </div>
+
+      {/* The moment someone has just asked "is it near me" is the best time to offer
+          alerts. Outside the live region so the form is not read out on every search.
+          `key` resets the form when they look up a different ZIP. */}
+      {result && <AlertSignup key={result.zip} placement="zip-search" zip={result.zip} variant="inline" />}
     </section>
   )
 }

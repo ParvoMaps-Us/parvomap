@@ -1,10 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-export default function UnsubscribeButton({ email, token }: { email: string; token: string }) {
+export default function UnsubscribeButton({ email, token, showBilling = false }: { email: string; token: string; showBilling?: boolean }) {
   const [status, setStatus] = useState<'idle' | 'working' | 'done'>('idle')
   const [error, setError] = useState<string | null>(null)
+  const doneRef = useRef<HTMLDivElement>(null)
+
+  // The button is replaced by the result; move focus there.
+  useEffect(() => {
+    if (status === 'done') doneRef.current?.focus()
+  }, [status])
 
   async function unsubscribe() {
     setError(null)
@@ -30,17 +36,21 @@ export default function UnsubscribeButton({ email, token }: { email: string; tok
 
   if (status === 'done') {
     return (
-      <div style={{ border: '1px solid var(--green)', background: 'var(--green-dim)', borderRadius: 6, padding: '14px 16px', fontSize: 13, color: 'var(--green)', lineHeight: 1.6 }}>
-        ✓ Done — you’ve been unsubscribed from ParvoMaps alerts. Your subscription billing is unaffected;
-        manage that at <a href="/account" style={{ color: 'var(--green)' }}>parvomaps.us/account</a>.
+      <div role="status" tabIndex={-1} ref={doneRef} style={{ border: '1px solid var(--green)', background: 'var(--green-dim)', borderRadius: 6, padding: '14px 16px', fontSize: 13, color: 'var(--green)', lineHeight: 1.6 }}>
+        ✓ Done. You will not get any more ParvoMaps alert emails.
+        {showBilling && (
+          <> Your subscription billing is unaffected. Manage that at{' '}
+            <a href="/account" style={{ color: 'var(--green)' }}>parvomaps.us/account</a>.</>
+        )}
       </div>
     )
   }
 
   return (
     <div>
-      {error && <p style={{ color: 'var(--red)', fontSize: 13, marginBottom: 12 }}>{error}</p>}
+      {error && <p role="alert" style={{ color: '#fca5a5', fontSize: 13, marginBottom: 12 }}>{error}</p>}
       <button
+        type="button"
         onClick={unsubscribe}
         disabled={status === 'working'}
         style={{ padding: '11px 22px', borderRadius: 6, border: '1px solid var(--red)', cursor: 'pointer', fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 700, background: 'transparent', color: 'var(--red)' }}

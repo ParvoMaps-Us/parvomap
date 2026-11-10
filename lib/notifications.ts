@@ -752,3 +752,170 @@ export async function sendSubscriptionWelcome(
 </html>`,
   })
 }
+
+// ─── FREE ALERTS (11/2026) ────────────────────────────────────────────────────
+// Three emails: the double opt-in confirmation, the "new case near you" alert
+// (one email for one or many pins; also used for paid subscribers), and the
+// pet-food recall alert. Everything interpolated is escaped; links are http(s).
+
+const SITE_URL = 'https://www.parvomaps.us'
+const oneLine = (s: string) => s.replace(/[\r\n]+/g, ' ').trim()
+const httpUrl = (u?: string | null) => (u && /^https?:\/\//i.test(u) ? u : null)
+
+function unsubLink(email: string): string {
+  return `${SITE_URL}/alerts/unsubscribe?e=${encodeURIComponent(email)}&t=${signUnsubToken(email)}`
+}
+
+/** Headers that put the mail app's own Unsubscribe button on a message
+ *  (RFC 8058 one-click). The POST lands on /api/alerts/unsubscribe. */
+function listUnsubHeaders(email: string): Record<string, string> {
+  const url = `${SITE_URL}/api/alerts/unsubscribe?e=${encodeURIComponent(email)}&t=${signUnsubToken(email)}`
+  return { 'List-Unsubscribe': `<${url}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' }
+}
+
+function shell(inner: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Inter',Arial,sans-serif;color:#f0f0f0;">
+  <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
+    <div style="margin-bottom:28px;">
+      <span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#00ff88;">PARVO</span><span style="font-size:22px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#f0f0f0;">MAPS</span>
+    </div>
+${inner}
+  </div>
+</body>
+</html>`
+}
+
+const btn = (href: string, label: string) =>
+  `<a href="${esc(href)}" style="display:inline-block;background:#00ff88;color:#000;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;padding:14px 28px;">${label}</a>`
+
+/** Step 2 of a free signup: nothing is sent to this address again unless the
+ *  button on the linked page is pressed. */
+export async function sendFreeAlertConfirm(
+  email: string,
+  confirmUrl: string,
+  zip: string,
+  place?: string,
+): Promise<void> {
+  const where = place ? `ZIP ${esc(zip)} (${esc(place)})` : `ZIP ${esc(zip)}`
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject: 'Turn on your ParvoMaps alerts',
+    html: shell(`    <h1 style="font-size:22px;font-weight:700;color:#f0f0f0;margin:0 0 12px;">One more step</h1>
+    <p style="color:#bbb;font-size:15px;margin:0 0 22px;line-height:1.6;">
+      Tap the button to turn on free alerts for ${where}. We will email you when a new disease case is added to the map within about 10 miles, and when pet food is recalled.
+    </p>
+    ${btn(confirmUrl, 'Turn on my alerts')}
+    <p style="color:#888;font-size:13px;margin:24px 0 0;line-height:1.6;">
+      This link works for 24 hours. If you did not ask for this, ignore this email. You will not be added to the list.
+    </p>
+    <div style="border-top:1px solid #222;margin:28px 0;"></div>
+    <p style="color:#999;font-size:11px;line-height:1.6;">ParvoMaps · US dog disease map · parvomaps.us</p>`),
+  })
+}
+
+function caseName(r: Report): string {
+  if (r.kind === 'lost') return r.dogName ? `Lost dog (${r.dogName})` : 'Lost dog'
+  return getDiseaseName(r.disease)
+}
+
+function caseDate(ts: number): string {
+  return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+}
+
+/** "New case near you". One email for one or many pins. */
+export async function sendCaseAlert(email: string, reports: Report[], zip: string): Promise<void> {
+  if (reports.length === 0) return
+  const area = zip ? `ZIP ${oneLine(zip)}` : 'your area'
+  const first = reports[0]
+  const subject = reports.length === 1
+    // "confirmed" only when the pin links a source (news or an agency notice).
+    // A visitor's own report is "reported".
+    ? `${oneLine(caseName(first))} ${first.kind !== 'lost' && httpUrl(first.sourceUrl) ? 'confirmed' : 'reported'} near ${area}`
+    : `${reports.length} new reports near ${area}`
+
+  const items = reports.slice(0, 10).map(r => {
+    const place = [r.city, r.state].filter(Boolean).join(', ')
+    const lat = Number(r.lat), lng = Number(r.lng)
+    const mapUrl = r.lat != null && r.lng != null && Number.isFinite(lat) && Number.isFinite(lng)
+      ? `${SITE_URL}/?focus=${lat},${lng}&label=${encodeURIComponent(caseName(r))}`
+      : `${SITE_URL}/`
+    const src = httpUrl(r.sourceUrl)
+    const who = r.kind === 'lost' ? ''
+      : r.subject === 'wildlife' ? 'Found in a wild animal, not a dog.'
+      : r.subject === 'other' ? 'Found in another animal, not a dog.'
+      : ''
+    return `    <div style="border:1px solid #222;border-radius:8px;padding:16px;margin-bottom:12px;">
+      <div style="font-size:16px;font-weight:700;color:#f0f0f0;margin-bottom:4px;">${esc(caseName(r))}</div>
+      <div style="font-size:13px;color:#999;margin-bottom:8px;">${esc(place || area)} · ${esc(caseDate(r.timestamp))}</div>
+      ${who ? `<div style="font-size:13px;color:#bbb;margin-bottom:8px;">${who}</div>` : ''}
+      <a href="${esc(mapUrl)}" style="font-size:13px;color:#00ff88;">See it on the map</a>${src ? ` &nbsp;·&nbsp; <a href="${esc(src)}" style="font-size:13px;color:#00ff88;">Read the source</a>` : ''}
+    </div>`
+  }).join('\n')
+  const more = reports.length > 10 ? `    <p style="color:#999;font-size:13px;margin:0 0 12px;">Plus ${reports.length - 10} more on the map.</p>\n` : ''
+
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject,
+    headers: listUnsubHeaders(email),
+    html: shell(`    <h1 style="font-size:22px;font-weight:700;color:#f0f0f0;margin:0 0 10px;">${reports.length === 1 ? 'A new report' : `${reports.length} new reports`} near ${esc(area)}</h1>
+    <p style="color:#bbb;font-size:15px;margin:0 0 18px;line-height:1.6;">
+      ${reports.length === 1 ? 'This was just added' : 'These were just added'} to the map inside your alert area.
+    </p>
+${items}
+${more}    <p style="color:#bbb;font-size:14px;margin:18px 0 0;line-height:1.6;">
+      Keep your dog's shots up to date. If your dog seems sick, call your vet. This email is not vet advice.
+    </p>
+    <div style="border-top:1px solid #222;margin:28px 0;"></div>
+    <p style="color:#999;font-size:11px;line-height:1.7;">
+      You get this because you signed up for ParvoMaps alerts near ${esc(area)}.
+      <a href="${esc(unsubLink(email))}" style="color:#bbb;text-decoration:underline;">Unsubscribe</a>
+    </p>`),
+  })
+}
+
+/** Free tier: new FDA pet-food recalls, one email for one or many. */
+export async function sendFreeRecallAlert(
+  email: string,
+  recalls: { title: string; url: string; summary: string; date: string }[],
+): Promise<void> {
+  if (recalls.length === 0) return
+  const subject = recalls.length === 1
+    ? `Pet food recall: ${oneLine(recalls[0].title).slice(0, 110)}`
+    : `${recalls.length} new pet food recalls`
+  const items = recalls.slice(0, 5).map(r => {
+    const url = httpUrl(r.url) ?? 'https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts'
+    return `    <div style="border:1px solid #222;border-radius:8px;padding:16px;margin-bottom:12px;">
+      <div style="font-size:15px;font-weight:700;color:#f0f0f0;margin-bottom:6px;">${esc(r.title)}</div>
+      ${r.date ? `<div style="font-size:12px;color:#999;margin-bottom:8px;">${esc(r.date)} · FDA</div>` : ''}
+      ${r.summary ? `<div style="font-size:13px;color:#bbb;line-height:1.6;margin-bottom:8px;">${esc(r.summary)}…</div>` : ''}
+      <a href="${esc(url)}" style="font-size:13px;color:#00ff88;">Read the FDA notice</a>
+    </div>`
+  }).join('\n')
+
+  await sendEmail({
+    from:    FROM_ALERTS,
+    to:      email,
+    subject,
+    headers: listUnsubHeaders(email),
+    html: shell(`    <h1 style="font-size:22px;font-weight:700;color:#f0f0f0;margin:0 0 10px;">${recalls.length === 1 ? 'New pet food recall' : 'New pet food recalls'}</h1>
+    <p style="color:#bbb;font-size:15px;margin:0 0 18px;line-height:1.6;">
+      The FDA posted ${recalls.length === 1 ? 'this recall' : 'these recalls'}. Check the brand and the lot number on your bag.
+    </p>
+${items}
+    <p style="color:#bbb;font-size:14px;margin:18px 0 0;line-height:1.6;">
+      Not every bag of a brand is recalled. Match your lot number to the FDA notice. If your dog seems sick, call your vet. This email is not vet advice.
+    </p>
+    <div style="border-top:1px solid #222;margin:28px 0;"></div>
+    <p style="color:#999;font-size:11px;line-height:1.7;">
+      You get this because you signed up for free ParvoMaps alerts.
+      <a href="${SITE_URL}/recalls" style="color:#bbb;text-decoration:underline;">All recalls</a>
+      ·
+      <a href="${esc(unsubLink(email))}" style="color:#bbb;text-decoration:underline;">Unsubscribe</a>
+    </p>`),
+  })
+}

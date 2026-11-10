@@ -7,6 +7,8 @@ import { getStateStats, type Bucket } from '@/lib/dashboard'
 import { buildMetadata } from '@/lib/seo'
 import { toSlug } from '@/lib/states'
 import { wrap, card, StatTile, BarList, Section, ReportCard, jsonLdSafe } from '../ui'
+import InsuranceBox from '@/components/InsuranceBox'
+import AlertSignup from '@/components/AlertSignup'
 
 // Same caching stance as the disease pages: the render is dynamic (per-request
 // CSP nonce rules out static generation) but the Redis aggregate is shared and
@@ -117,6 +119,8 @@ export default async function StateOutbreaksPage({ params }: { params: Promise<{
         <StatTile label="Last 30 days" value={stats.last30} />
       </div>
 
+      <AlertSignup placement="state" />
+
       {stats.byDisease.length > 0 && (
         <Section title={`What's been reported in ${info.name}`}>
           <div style={card}>
@@ -141,6 +145,9 @@ export default async function StateOutbreaksPage({ params }: { params: Promise<{
           </div>
         </Section>
       )}
+
+      {/* Affiliate puppy insurance box. Hidden until INSURANCE_AFFILIATE_URL is set (lib/insurance.ts). */}
+      <InsuranceBox placement="state" />
 
       <Section title="Common questions">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

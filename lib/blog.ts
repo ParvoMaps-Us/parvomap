@@ -72,6 +72,218 @@ export interface BlogPost {
  */
 const POSTS: BlogPost[] = [
   {
+    slug: 'arizona-screwworm-dog-cochise-county',
+    title: 'Screwworm Found in an Arizona Dog: What Dog Owners Should Know',
+    description:
+      'USDA confirmed New World screwworm in a dog in Cochise County, Arizona on October 28, 2026. What happened, the signs to check for, and what to do.',
+    category: 'Prevention & Risk',
+    datePublished: '2026-11-09',
+    author: 'ParvoMaps',
+    coverImage: '/article-images/new-world-screwworm-dogs-wound-check.webp',
+    coverAlt: "An owner's hands parting the fur around a small healing wound on a dog's leg to inspect it in daylight",
+    readingMinutes: 5,
+    body: [
+      {
+        type: 'paragraph',
+        content: [
+          'On October 28, 2026, the USDA confirmed New World screwworm in a dog in Cochise County, Arizona. USDA said it was the first time the pest had been found in the state. Here is what we know, what to look for on your own dog, and what to do if you see it. This post is not medical advice. If you are worried about your dog, call a vet.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Happened',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The dog lived on a ranch in Cochise County, in the southeast corner of Arizona. Local news reports say a vet looked at the dog on October 26 and found a wound on its back with many maggots in it. Samples went to a USDA lab in Ames, Iowa. The lab confirmed New World screwworm, and USDA shared the news on October 28.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'State officials told reporters the dog had no known travel to other states or counties. They also said the dog was being treated and was expected to live. Officials have not said which town the ranch is near. Our ',
+          { text: 'map pin for this case', href: '/outbreaks/arizona/screwworm' },
+          ' sits at Bisbee, the county seat, only because the exact spot is not public.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Officials Are Doing',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'USDA and the Arizona Department of Agriculture are working on it together. USDA said the plan includes a zone of 20 kilometers (about 12 miles) around the case with limits on moving animals, more animal checks and fly traps, and outreach to local vets and ranchers. They are also releasing sterile flies. Sterile flies mate with wild flies, and the eggs never hatch. Over time the wild flies die out. The state vet told reporters that about one million sterile flies had already been released in the area.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What Screwworm Is and How a Dog Gets It',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'New World screwworm is a fly. The female lays her eggs on an open wound or a body opening of a warm-blooded animal. The eggs hatch into maggots. Most maggots eat dead tissue. These eat living flesh and dig deeper as they feed. That makes the wound bigger and draws more flies.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'The wound does not have to be big. USDA says a wound as small as a tick bite can draw the fly. Cuts, scrapes, sores, and surgery sites are all ways in. We cover the basics in more detail in ',
+          { text: 'Can Dogs Get New World Screwworm?', href: '/blog/new-world-screwworm-in-dogs' },
+          ' and on our ',
+          { text: 'screwworm page', href: '/diseases/screwworm' },
+          '.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Signs to Check For',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'USDA asks animal owners in the area to check their animals every day. Look for a wound that drains or gets bigger instead of healing. Look for maggots or small egg clumps in or around a wound. Notice a bad smell or bloody fluid coming from a sore. Check around the ears, nose, belly button, and private parts too.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Watch how your dog acts. Screwworm hurts. A dog may seem cranky or restless, stop eating, hide, shake its head, or lick one spot over and over. USDA says maggots may show up by the third day. It also says an animal left untreated can die within about a week. So speed matters.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'What to Do if You See These Signs',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Call your vet right away and say you are worried about screwworm. Do not try to handle it by yourself at home. A vet can find out what the maggots are, treat the wound, and choose the right medicine and dose. The FDA has cleared several medicines for screwworm in dogs. Until you get to the vet, keep your dog away from other animals. Not sure how urgent a wound is? Read ',
+          { text: 'when to take your dog to the emergency vet', href: '/blog/when-to-take-dog-to-emergency-vet' },
+          '.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Screwworm also has to be reported so officials can track it. USDA says anyone who suspects a case should contact a vet, a state animal health official, or USDA. For pets, the USDA route is simple: your vet checks the animal and reports it. You can find the steps on the ',
+          { text: 'USDA screwworm reporting page', href: 'https://www.aphis.usda.gov/animals/animal-health/livestock-and-poultry-disease/stop-screwworm/report-suspected-cases-screwworm' },
+          '. In Arizona, the state animal health official is the State Veterinarian at the ',
+          { text: 'Arizona Department of Agriculture', href: 'https://agriculture.az.gov/divisions/animal-services/state-veterinarians-office/new-world-screwworm' },
+          '.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Who Is at Risk and Where',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Risk is highest near a confirmed case. Right now USDA lists screwworm zones in parts of Texas, New Mexico, and Arizona. Dogs that spend a lot of time outside are more at risk, and so are dogs with open wounds or fresh surgery cuts. The dog in this case lived on a ranch.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'One confirmed dog does not mean screwworm is all over Arizona. USDA still rates the risk to animals and people in the US as very low. This post is about the first Arizona case. Less than a week later, Arizona reported a second case in the same county. It was a horse near Hereford, about 45 miles from the dog. Case counts can change, and USDA updates its list of confirmed cases each day at ',
+          { text: 'screwworm.gov', href: 'https://www.screwworm.gov/' },
+          '. You can also see what we have pinned for ',
+          { text: 'Arizona', href: '/outbreaks/arizona' },
+          ', ',
+          { text: 'New Mexico', href: '/outbreaks/new-mexico/screwworm' },
+          ', and ',
+          { text: 'Texas', href: '/outbreaks/texas/screwworm' },
+          '.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'How to Lower the Risk',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Check your dog for cuts, scrapes, and tick bites often. Check every day if you live near a confirmed case. Keep wounds clean, dry, and covered when you can. Keep a dog with a wound or a fresh surgery cut indoors more until it heals. Stay on top of tick control, since a tick bite can be enough to draw the fly. Ask your vet which products make sense for your dog.',
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'Know what is near you. The ',
+          { text: 'ParvoMaps outbreak map', href: '/' },
+          ' shows reported dog disease and pest cases across the US, and it is free.',
+        ],
+      },
+      {
+        type: 'heading',
+        text: 'Sources',
+      },
+      {
+        type: 'paragraph',
+        content: [
+          'We checked these pages on November 9, 2026: ',
+          { text: 'USDA APHIS, "USDA Confirms New World Screwworm in Arizona" (October 28, 2026)', href: 'https://www.aphis.usda.gov/node/8340' },
+          '; ',
+          { text: 'USDA APHIS, Report Suspected Cases of Screwworm', href: 'https://www.aphis.usda.gov/animals/animal-health/livestock-and-poultry-disease/stop-screwworm/report-suspected-cases-screwworm' },
+          '; ',
+          { text: 'USDA APHIS, New World Screwworm overview', href: 'https://www.aphis.usda.gov/livestock-poultry-disease/stop-screwworm' },
+          '; ',
+          { text: 'USDA APHIS brochure, "New World Screwworm: What You Need to Know"', href: 'https://www.aphis.usda.gov/sites/default/files/new-world-screwworm-what-you-need-to-know-brochure.pdf' },
+          '; ',
+          { text: 'FOX 10 Phoenix (October 28, 2026)', href: 'https://fox10phoenix.com/news/new-world-screwworm-case-confirmed-arizona-usda' },
+          '; ',
+          { text: 'KJZZ (October 28, 2026)', href: 'https://www.kjzz.org/fronteras-desk/2026-10-28/arizona-reports-1st-new-world-screwworm-case-in-an-infected-dog-in-cochise-county' },
+          '; ',
+          { text: 'KJZZ, second case (November 3, 2026)', href: 'https://www.kjzz.org/fronteras-desk/2026-11-03/arizona-reports-2nd-new-world-screwworm-case-in-cochise-county' },
+          '; ',
+          { text: 'AZFamily (October 28, 2026)', href: 'https://www.azfamily.com/2026/10/29/arizona-confirms-first-case-flesh-eating-parasite-cochise-county-dog/' },
+          '; ',
+          { text: 'CDC, About New World Screwworm', href: 'https://www.cdc.gov/new-world-screwworm/about/index.html' },
+          '; ',
+          { text: 'FDA, Animal Drugs for New World Screwworm', href: 'https://www.fda.gov/animal-veterinary/safety-health/animal-drugs-new-world-screwworm' },
+          '; ',
+          { text: 'Texas A&M veterinary school, screwworm guidance for working dogs', href: 'https://vetmed.tamu.edu/vet/response/new-world-screwworm/k9-handlers/' },
+          '.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is this really the first screwworm case in Arizona?',
+        answer:
+          'Yes, according to USDA. Its October 28, 2026 notice says this is the first detection of New World screwworm in Arizona.',
+      },
+      {
+        question: 'Where in Cochise County was the dog?',
+        answer:
+          'Officials have not named the town. Reports say the dog lived on a ranch in the county. Our map pin sits at Bisbee, the county seat, as a stand-in.',
+      },
+      {
+        question: 'Can my dog catch screwworm from another dog?',
+        answer:
+          'It spreads when a fly lays eggs on a wound. It does not start without the fly. But an infested wound draws more flies, so keep a sick dog apart and call a vet.',
+      },
+      {
+        question: 'Can people get screwworm?',
+        answer:
+          'Yes, but it is not common. CDC says most cases are in animals. USDA rates the risk to people in the US as very low. Keep your own cuts clean and covered.',
+      },
+      {
+        question: 'Should I pull the maggots out myself?',
+        answer:
+          'No. Call your vet right away. A vet can find out if they are screwworms, treat the wound, and report the case.',
+      },
+      {
+        question: 'Can screwworm be treated?',
+        answer:
+          'Yes. The Arizona state vet called it very treatable, and the FDA has cleared several medicines for dogs. Early care matters most, so do not wait.',
+      },
+    ],
+  },
+  {
     slug: 'strep-zoo-in-dogs',
     title: 'Strep Zoo in Dogs: The Fast-Moving Shelter Illness to Know',
     description:

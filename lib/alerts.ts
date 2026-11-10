@@ -1,3 +1,4 @@
+import { createHash } from 'crypto'
 import { getRedisClient, type Report } from '@/lib/redis'
 
 // ─── Subscriber lookup ────────────────────────────────────────────────────────
@@ -133,7 +134,22 @@ export interface AlertPrefs {
   /** Dog-food brands the subscriber feeds — they get a recall alert when one of
    *  these shows up in an FDA pet-food recall. Lowercased, deduped. (Paid perk.) */
   foodBrands?: string[]
+  /** 'free' = a free alert signup (confirmed by email, no subscription). Absent
+   *  on paid records, which are gated on a live subscription instead. */
+  tier?: 'free'
+  /** When the free signup's confirmation link was used (double opt-in). */
+  confirmedAt?: number
+  /** Free tier: also email new pet-food recalls. Absent/true = on. */
+  recalls?: boolean
   updatedAt: number
+}
+
+/** Free tier limits: one ZIP, this radius, all diseases, no lost-dog alerts. */
+export const FREE_RADIUS_MILES = 10
+
+/** A free signup that finished the email confirmation step. */
+export function isConfirmedFree(p: Pick<AlertPrefs, 'tier' | 'confirmedAt'>): boolean {
+  return p.tier === 'free' && !!p.confirmedAt
 }
 
 const PREFS_HASH = 'alert_prefs'
@@ -153,6 +169,27 @@ export async function deleteAlertPrefs(email: string): Promise<void> {
   const client = getRedisClient()
   if (!client) return
   await client.hdel(PREFS_HASH, keyFor(email))
+}
+
+/**
+ * Remove this address's entries from the "already sent" sets. Called on
+ * unsubscribe so nothing derived from the address stays behind (the privacy
+ * page promises that). Safe to lose: the sweep and the recall cron only send
+ * things that are new, so a later re-signup cannot replay old alerts.
+ */
+export async function forgetAlertHistory(email: string): Promise<void> {
+  const client = getRedisClient()
+  if (!client) return
+  const prefix = `${emailHash(email)}|`
+  for (const key of ['alert_sent', 'recall_alerts_sent']) {
+    let cursor = '0'
+    do {
+      const [next, members] = await client.sscan(key, cursor, { match: `${prefix}*`, count: 500 })
+      cursor = String(next)
+      const mine = (members as string[]).filter(m => String(m).startsWith(prefix))
+      if (mine.length) await client.srem(key, mine[0], ...mine.slice(1))
+    } while (cursor !== '0')
+  }
 }
 
 export async function getAlertPrefs(email: string): Promise<AlertPrefs | null> {
@@ -189,8 +226,14 @@ export async function getAllAlertPrefs(): Promise<AlertPrefs[]> {
 // emailed, so the recall-alert cron never double-sends the same recall.
 const RECALL_SENT_SET = 'recall_alerts_sent'
 
+/** Stable stand-in for an address in dedupe sets. The "already sent" sets
+ *  outlive an unsubscribe, so they must not hold the address itself. */
+export function emailHash(email: string): string {
+  return createHash('sha256').update(keyFor(email)).digest('hex').slice(0, 32)
+}
+
 function recallSentMember(email: string, recallUrl: string): string {
-  return `${keyFor(email)}|${recallUrl}`
+  return `${emailHash(email)}|${recallUrl}`
 }
 
 export async function wasRecallAlerted(email: string, recallUrl: string): Promise<boolean> {
@@ -219,7 +262,7 @@ function distanceMiles(lat1: number, lng1: number, lat2: number, lng2: number): 
 }
 
 /** Does a published report match a subscriber's preferences? */
-function matches(report: Report, prefs: AlertPrefs): boolean {
+export function matchesPrefs(report: Report, prefs: AlertPrefs): boolean {
   const isLost = report.kind === 'lost'
 
   // Type/topic filter.
@@ -237,22 +280,4 @@ function matches(report: Report, prefs: AlertPrefs): boolean {
   return !!report.zip && report.zip === prefs.zip
 }
 
-/**
- * Emails of active subscribers who should be alerted about this report.
- * Excludes a given email (e.g. the reporter themselves) when provided.
- */
-export async function findMatchingAlertEmails(report: Report, excludeEmail?: string): Promise<string[]> {
-  const prefs = await getAllAlertPrefs()
-  const exclude = excludeEmail?.trim().toLowerCase()
-  const emails = new Set<string>()
-  for (const p of prefs) {
-    if (exclude && p.email.toLowerCase() === exclude) continue
-    if (matches(report, p)) emails.add(p.email)
-  }
-  // Re-check active subscription so cancelled members stop receiving alerts.
-  const active: string[] = []
-  for (const email of emails) {
-    if (await isActiveSubscriber(email)) active.push(email)
-  }
-  return active
-}
+// Delivery (who gets emailed, dedupe, the hourly sweep) lives in lib/alert-delivery.ts.

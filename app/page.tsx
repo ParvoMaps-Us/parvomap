@@ -9,6 +9,8 @@ import Footer from '@/components/Footer'
 import VerifiedBanner from '@/components/VerifiedBanner'
 import WelcomePopup from '@/components/WelcomePopup'
 import ZipSearch from '@/components/ZipSearch'
+import InsuranceBox from '@/components/InsuranceBox'
+import AlertSignup from '@/components/AlertSignup'
 import { getReports, getStats, toPublicReport } from '@/lib/redis'
 
 export default async function HomePage({
@@ -60,7 +62,13 @@ export default async function HomePage({
             </span>
           </div>
         )}
+        {/* Free ZIP alerts signup: above the report form, because most visitors come to
+            ask "is it near me", not to file a report. */}
+        <AlertSignup placement="home" />
         <ReportForm />
+
+        {/* Affiliate puppy insurance box. Hidden until INSURANCE_AFFILIATE_URL is set (lib/insurance.ts). */}
+        <InsuranceBox placement="home" />
 
         {/* Contextual internal links — give the homepage real in-content links to
             the hubs and headline disease pages (SEO: un-orphans content, spreads

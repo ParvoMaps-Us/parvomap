@@ -12,9 +12,9 @@ import {
 import {
   sendVerificationConfirmation,
   sendInternalAlert,
-  sendAlertNotification,
 } from '@/lib/notifications'
-import { findMatchingAlertEmails, isProClinic } from '@/lib/alerts'
+import { isProClinic } from '@/lib/alerts'
+import { deliverAlerts, markReportSeen } from '@/lib/alert-delivery'
 import { isUtahZip } from '@/lib/utah-zips'
 import { getLeadType } from '@/lib/lead'
 import { BIOREST_ENABLED } from '@/lib/flags'
@@ -83,6 +83,9 @@ export async function GET(req: NextRequest) {
     }
     await publishVerifiedReport(report)
     published = true
+    // Tell the hourly alert sweep this pin is handled here, so it is not
+    // delivered twice (the per-person claim in deliverAlerts is the backstop).
+    await markReportSeen(report.id).catch(e => console.error('markReportSeen failed:', e))
 
     // 4. Clean up the pending record (the token is already gone).
     await deletePendingReport(reportId)
@@ -118,21 +121,18 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Subscriber alerts: notify paying members whose area + interests match this
-    // newly published report. Excludes the reporter's own email. Best-effort —
-    // a delivery failure must not break verification.
-    try {
-      const matchEmails = await findMatchingAlertEmails(report, report.email ?? undefined)
-      for (const to of matchEmails) {
-        emailJobs.push(
-          sendAlertNotification(to, report).catch(e =>
-            console.error('Alert notification failed:', to, e)
-          )
-        )
-      }
-    } catch (e) {
-      console.error('Alert matching failed:', e)
-    }
+    // Alerts: email everyone (free signups and paid members) whose area matches
+    // this new pin. Excludes the reporter's own email. Best-effort: a delivery
+    // failure must not break verification.
+    // The pending record still says verified:false (publishVerifiedReport builds
+    // its own copy), so pass a verified copy or the age/verified gate drops it.
+    // sourceUrl is cleared: on this path it is whatever the visitor typed, and
+    // it must not be mailed to the list as a "source" link.
+    emailJobs.push(
+      deliverAlerts([{ ...report, verified: true, sourceUrl: undefined }], { excludeEmail: report.email ?? undefined, dailyCap: true })
+        .then(() => undefined)
+        .catch(e => console.error('Alert delivery failed:', e))
+    )
 
     // Await so the serverless function stays alive until the sends complete —
     // a fire-and-forget here gets frozen/dropped after the redirect returns.

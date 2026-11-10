@@ -40,6 +40,11 @@ export default function PrivacyPage() {
           you type in or pin on the map, or your device location if you tap the location button.</li>
         <li style={li}><strong>Email address.</strong> Optionally provided to verify a report or receive alerts, and required
           for a subscription. We use it to contact you about your reports, alerts, and account.</li>
+        <li style={li}><strong>Free alerts.</strong> If you sign up for free alerts, we keep your email and your ZIP code
+          so we can email you about cases near you and pet food recalls. We send one email first to confirm it is
+          you. If you do not confirm within 24 hours, we delete the sign-up. Every alert has an unsubscribe link.
+          When you unsubscribe, we delete your email and ZIP code from the alert list. We also keep the map point
+          for the middle of your ZIP and the date you confirmed, and we delete those too.</li>
         <li style={li}><strong>Subscription &amp; payment.</strong> Payments, including subscriptions and one-time voluntary
           contributions, are processed by Stripe. We do not store your card
           number. We keep a Stripe customer ID, your plan, and subscription status.</li>
@@ -102,11 +107,28 @@ export default function PrivacyPage() {
       </ul>
       <p style={p}>We do not sell your personal information or share it for targeted ads.</p>
 
+      <h2 id="affiliate-links" style={h2}>Affiliate links</h2>
+      <p style={p}>
+        Some pages may show a link to a pet insurance company. It is a paid link. If you click it and sign up, we
+        may earn a fee. It costs you nothing extra. The link is marked on the page where it shows.
+      </p>
+      <p style={p}>
+        The link takes you to the insurance company through a tracking service, such as impact.com. That
+        service and the insurance company may set cookies on their own sites to count the sign-up. Their privacy
+        policies cover what they collect. We do not send them your email, your ZIP code, or anything else you gave us.
+        The tracking service can see your IP address and that you came from parvomaps.us. We count clicks on this
+        link with Google Analytics, unless your browser sends a privacy signal.
+      </p>
+      <p style={p}>
+        We are not an insurance company or an insurance agent. We do not sell insurance or give insurance advice.
+      </p>
+
       <h2 style={h2}>Data retention</h2>
       <ul style={ul}>
         <li style={li}>Parvovirus pins remain for 12 months; other disease pins for 90 days.</li>
         <li style={li}>Lost-dog reports and their photos are removed after 30 days, or sooner if marked found.</li>
         <li style={li}>Subscriber records are kept while your subscription is active and as needed for legal/accounting purposes.</li>
+        <li style={li}>Free alert sign-ups are kept until you unsubscribe.</li>
         <li style={li}>We keep encrypted off-site backups for up to 30 days. Information removed from the live Service may persist in these backups until they expire.</li>
       </ul>
 

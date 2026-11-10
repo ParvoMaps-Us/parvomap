@@ -575,7 +575,8 @@ export default function LeafletMap({ reports, pinColor, recencyClass }: Props) {
         interactive: false,
       }).addTo(map)
       if (label) {
-        focusMarker.bindTooltip(String(label), {
+        // label can come from the page URL (?label=...), so it is untrusted HTML.
+        focusMarker.bindTooltip(escapeHtml(String(label).slice(0, 80)), {
           permanent: true, direction: 'top', offset: [0, -26],
           className: 'focus-tooltip',
         }).openTooltip()
