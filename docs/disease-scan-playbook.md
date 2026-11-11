@@ -939,3 +939,45 @@ year's closure at the same shelter. Expect roughly this ratio on any non-rabies 
   past a 90d TTL. Real risk in NM/AZ/CO and worth adding before next spring, not now.
 - **Canine pneumovirus**, Austin Animal Center, ~100 dogs. Part of the CIRDC complex, so it
   could arguably map under `kennel`, but the only located outbreak is 12/2025.
+
+### 2026-10-07 — 5-state pass: FL, VA, MD, NC, UT (431 → 460, +29)
+
+Scope chosen for source quality: FL/VA/MD county health alerts (the best-shaped sources
+in the country), NC (no dedicated pass yet), UT (home state).
+
+Per state: **VA 13, FL 9 (4 rabies + 5 cyano), MD 3, NC 2, UT 2.**
+
+Headliners: rabid bat found inside a bedroom in Petersburg VA (9/25); rabid skunk got into a
+dog pen in Jarratt VA (8/25, direct contact with the dog); rabid kitten in Thaxton VA put three
+people on PEP; rabid bobcat at Rainbow Park, Marion Co FL; rabid fox in Davidson/Huntersville
+NC exposed two people and a vaccinated pet. **VDH's 2026 regional news-release index was the
+single best source of the pass** — 13 located, dated releases on one page
+(`vdh.virginia.gov/news/public-relations-contacts/2026-regional-news-releases/`). Start VA there.
+
+**Florida DOH PDFs return binary to WebFetch.** The fetch still saves the PDF locally; run
+`pdftotext` on it (or curl + pdftotext) to read the date out of the body. Do not skip them —
+they are the best source in the state.
+
+**Day-of-week control fired twice, both times on a search SUMMARY that asserted 2026:**
+- Lake Anna VA algae "Friday, Sept. 22, 2026" — Sept 22 2026 is a Tuesday; it is the 2023 story.
+- Franklin Co NC shelter parvo "Friday, February 21" — a Friday only in 2025. Dropped.
+
+Wrong-year drops (fetched): Lothian MD raccoon (Sept **2023**), Weber Co UT shelter parvo
+(Feb **2025**, the annual recurring trap), KJZZ "24 Utah waterbodies under warning" (Oct
+**2023**), Wye Mills Lake + Potomac MD algae (Aug **2024**).
+
+Other drops: Bumpass VA raccoon (Dixie Belle Ln won't geocode and ZIP 23024 straddles
+Louisa/Hanover; issuing district is Hanover but the point can't be verified — not guessed),
+Harford Humane Society parvo (article has no date anywhere), Chesapeake VA raccoon 3/4 (217d,
+~3 weeks of life left), FL Alachua strep zoo (June, near ceiling), NC Waterville/Fontana and
+Lake Norman/Wylie (undated or Akamai-blocked).
+
+Duplicates: Winter Springs FL raccoon, Burlington NC fox, Church Hill Richmond raccoon,
+Weber UT bat (`RABIES-WEBER-2026-07`). Richmond Shoreham Dr raccoon 8/12 is NOT the Henrico
+Raymond Ave raccoon of the same date — different street, different jurisdiction.
+
+Geocode trap: "Rainbow Bay, Wasatch County" resolved ~25 miles from Deer Creek (Strawberry
+side); pinned at Deer Creek State Park with the bay named in locationDetail.
+
+Process note: strep zoo was not run per-state for VA/MD/NC/UT this pass; lepto and kennel
+cough were run individually for all five and returned nothing located and current.
