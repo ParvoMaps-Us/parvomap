@@ -62,13 +62,10 @@ export function middleware(req: NextRequest) {
 export const config = {
   // Run on pages, not on static assets, the image optimizer, or favicon —
   // those don't execute our scripts and don't need a nonce.
-  matcher: [
-    {
-      source: '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)',
-      missing: [
-        { type: 'header', key: 'next-router-prefetch' },
-        { type: 'header', key: 'purpose', value: 'prefetch' },
-      ],
-    },
-  ],
+  //
+  // No `missing` prefetch exclusion (removed 11/11/2026, Cass review #9): the
+  // Next.js CSP example skips prefetch requests to save a nonce, but any client
+  // can send that header, and skipping this function also skips the admin 404
+  // above and the CSP. Every matched request must run it.
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)'],
 }
